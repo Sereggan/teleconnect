@@ -14,14 +14,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Tariff'
+              $ref: '#/components/schemas/TariffDTO'
       responses:
         '201':
           description: Tariff created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tariff'
+                $ref: '#/components/schemas/TariffDTO'
     get:
       summary: Get all tariffs
       operationId: getAllTariffs
@@ -33,7 +33,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Tariff'
+                  $ref: '#/components/schemas/TariffDTO'
   /api/tariffs/{id}:
     get:
       summary: Get a tariff by ID
@@ -50,7 +50,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tariff'
+                $ref: '#/components/schemas/TariffDTO'
     put:
       summary: Update a tariff
       operationId: updateTariff
@@ -66,14 +66,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Tariff'
+              $ref: '#/components/schemas/TariffDTO'
       responses:
         '200':
           description: Tariff updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tariff'
+                $ref: '#/components/schemas/TariffDTO'
     delete:
       summary: Delete a tariff
       operationId: deleteTariff
@@ -88,7 +88,7 @@ paths:
           description: Tariff deleted
 components:
   schemas:
-    Tariff:
+    TariffDTO:
       type: object
       properties:
         id:
