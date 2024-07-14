@@ -1,0 +1,116 @@
+openapi: 3.0.1
+info:
+  title: TeleConnect Manager API
+  description: API for managing tariffs in the TeleConnect Manager application
+  version: 1.0.0
+paths:
+  /api/tariffs:
+    post:
+      summary: Create a new tariff
+      operationId: createTariff
+      requestBody:
+        description: Tariff to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tariff'
+      responses:
+        '201':
+          description: Tariff created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tariff'
+    get:
+      summary: Get all tariffs
+      operationId: getAllTariffs
+      responses:
+        '200':
+          description: A list of tariffs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tariff'
+  /api/tariffs/{id}:
+    get:
+      summary: Get a tariff by ID
+      operationId: getTariffById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tariff details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tariff'
+    put:
+      summary: Update a tariff
+      operationId: updateTariff
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Tariff to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tariff'
+      responses:
+        '200':
+          description: Tariff updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tariff'
+    delete:
+      summary: Delete a tariff
+      operationId: deleteTariff
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Tariff deleted
+components:
+  schemas:
+    Tariff:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: number
+        dataLimit:
+          type: integer
+        callMinutes:
+          type: integer
+        smsLimit:
+          type: integer
+        description:
+          type: string
+        validFrom:
+          type: string
+          format: date
+        validTo:
+          type: string
+          format: date
+      required:
+        - name
+        - price

@@ -38,6 +38,4 @@ public class TariffController {
     public Tariff updateTariff(@RequestBody Tariff tariff){
         return tariff;
     }
-
-    // delete
 }

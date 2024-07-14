@@ -14,4 +14,7 @@ public class Tariff {
     private Double price;
     private String description;
     private Boolean isActive;
+    private Integer dataLimit;
+    private Integer callMinutes;
+    private Integer smsLimit;
 }
