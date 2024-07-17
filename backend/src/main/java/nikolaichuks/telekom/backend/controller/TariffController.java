@@ -1,10 +1,13 @@
 package nikolaichuks.telekom.backend.controller;
 
+import lombok.RequiredArgsConstructor;
 import nikolaichuks.telekom.backend.model.Tariff;
+import nikolaichuks.telekom.backend.repository.TariffRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController()
 @RequestMapping("/tariff")
 public class TariffController {
@@ -17,7 +20,6 @@ public class TariffController {
                 .price(123.0)
                 .build();
     }
-
 
 
     @GetMapping("/listTariffs")
@@ -35,7 +37,7 @@ public class TariffController {
     }
 
     @PatchMapping("")
-    public Tariff updateTariff(@RequestBody Tariff tariff){
+    public Tariff updateTariff(@RequestBody Tariff tariff) {
         return tariff;
     }
 }
