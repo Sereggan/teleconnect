@@ -3,11 +3,16 @@ info:
   title: TeleConnect Manager API
   description: API for managing tariffs in the TeleConnect Manager application
   version: 1.0.0
+tags:
+  - name: tariff
+    description: API to interact with tariffs
 paths:
-  /api/tariffs:
+  /tariff:
     post:
       summary: Create a new tariff
       operationId: createTariff
+      tags:
+        - tariff
       requestBody:
         description: Tariff to create
         required: true
@@ -25,6 +30,8 @@ paths:
     get:
       summary: Get all tariffs
       operationId: getAllTariffs
+      tags:
+        - tariff
       responses:
         '200':
           description: A list of tariffs
@@ -34,10 +41,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TariffDTO'
-  /api/tariffs/{id}:
+  /tariff/{id}:
     get:
       summary: Get a tariff by ID
       operationId: getTariffById
+      tags:
+        - tariff
       parameters:
         - name: id
           in: path
@@ -54,6 +63,8 @@ paths:
     put:
       summary: Update a tariff
       operationId: updateTariff
+      tags:
+        - tariff
       parameters:
         - name: id
           in: path
@@ -77,6 +88,8 @@ paths:
     delete:
       summary: Delete a tariff
       operationId: deleteTariff
+      tags:
+        - tariff
       parameters:
         - name: id
           in: path
@@ -97,6 +110,7 @@ components:
           type: string
         price:
           type: number
+          format: double
         dataLimit:
           type: integer
         callMinutes:
@@ -111,6 +125,8 @@ components:
         validTo:
           type: string
           format: date
+        isActive:
+          type: boolean
       required:
         - name
         - price

@@ -1,43 +1,38 @@
 package nikolaichuks.telekom.backend.controller;
 
 import lombok.RequiredArgsConstructor;
-import nikolaichuks.telekom.backend.model.Tariff;
-import nikolaichuks.telekom.backend.repository.TariffRepository;
-import org.springframework.web.bind.annotation.*;
+import nikolaichuks.telekom.backend.service.TariffService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+import telekom.tariff.api.TariffApi;
+import telekom.tariff.model.TariffDTO;
 
 import java.util.List;
 
+@RestController
 @RequiredArgsConstructor
-@RestController()
-@RequestMapping("/tariff")
-public class TariffController {
+public class TariffController implements TariffApi {
 
-    @GetMapping("/{id}")
-    public Tariff getTariff(@PathVariable Integer id) {
-        return Tariff.builder()
-                .id(id)
-                .name("First tariff")
-                .price(123.0)
-                .build();
+    private final TariffService tariffService;
+
+    @Override
+    public ResponseEntity<TariffDTO> getTariffById(Integer id) {
+        return ResponseEntity.ok(tariffService.getTariffById(id));
     }
 
 
-    @GetMapping("/listTariffs")
-    public List<Tariff> getTariffs() {
-        return List.of(Tariff.builder()
-                .id(1)
-                .name("First tariff")
-                .price(123.0)
-                .build());
+    @Override
+    public ResponseEntity<List<TariffDTO>> getAllTariffs() {
+        return ResponseEntity.ok(List.of(new TariffDTO().id(2)));
     }
 
-    @PostMapping("")
-    public Tariff createTariff(@RequestBody Tariff tariff) {
-        return tariff;
+    @Override
+    public ResponseEntity<TariffDTO> createTariff(TariffDTO tariffDTO) {
+        return ResponseEntity.ok(new TariffDTO().id(3));
     }
 
-    @PatchMapping("")
-    public Tariff updateTariff(@RequestBody Tariff tariff) {
-        return tariff;
+    @Override
+    public ResponseEntity<TariffDTO> updateTariff(Integer id, TariffDTO tariffDTO) {
+        return ResponseEntity.ok(new TariffDTO().id(4));
     }
 }
