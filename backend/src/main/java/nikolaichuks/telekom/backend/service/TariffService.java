@@ -1,5 +1,6 @@
 package nikolaichuks.telekom.backend.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.telekom.backend.model.Tariff;
@@ -14,8 +15,9 @@ import java.util.List;
 public class TariffService {
 
     private final TariffRepository tariffRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public Tariff createTariff(TariffDTO tariffDTO) {
+    public TariffDTO createTariff(TariffDTO tariffDTO) {
         Tariff tariff = Tariff.builder()
                 .name(tariffDTO.getName())
                 .description(tariffDTO.getDescription())
@@ -25,10 +27,11 @@ public class TariffService {
                 .callMinutes(tariffDTO.getCallMinutes())
                 .isActive(tariffDTO.getIsActive())
                 .build();
-        return tariffRepository.save(tariff);
+
+        return objectMapper.convertValue(tariffRepository.save(tariff), TariffDTO.class);
     }
 
-    public Tariff updateTariff(Integer id, TariffDTO tariffDTO) {
+    public TariffDTO updateTariff(Integer id, TariffDTO tariffDTO) {
         return tariffRepository.findById(id)
                 .map(tariff -> tariff.setName(tariffDTO.getName())
                         .setDescription(tariffDTO.getDescription())
@@ -38,22 +41,20 @@ public class TariffService {
                         .setSmsLimit(tariffDTO.getSmsLimit())
                         .setIsActive(tariffDTO.getIsActive()))
                 .map(tariffRepository::save)
-                .orElseThrow(() -> {
-                    return new EntityNotFoundException("Tariff not found");
-                });
+                .map(updatedTariff -> objectMapper.convertValue(updatedTariff, TariffDTO.class))
+                .orElseThrow(() -> new EntityNotFoundException("Tariff not found"));
     }
 
     public TariffDTO getTariffById(Integer id) {
         return tariffRepository.findById(id)
-                .map(tariff -> {
-                    return new TariffDTO();
-                }).orElseThrow(() -> {
-            return new EntityNotFoundException("Tariff not found");
-        });
+                .map(tariff -> objectMapper.convertValue(tariff, TariffDTO.class))
+                .orElseThrow(() -> new EntityNotFoundException("Tariff not found"));
     }
 
-    public List<Tariff> getAllTariffs() {
-        return tariffRepository.findAll();
+    public List<TariffDTO> getAllTariffs() {
+        return tariffRepository.findAll().stream()
+                .map(tariff -> objectMapper.convertValue(tariff, TariffDTO.class))
+                .toList();
     }
 
 //    public List<Tariff> searchTariffs(String criteria) {
