@@ -1,4 +1,4 @@
-package nikolaichuks.telekom.backend.model;
+package nikolaichuks.teleconnect.backend.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

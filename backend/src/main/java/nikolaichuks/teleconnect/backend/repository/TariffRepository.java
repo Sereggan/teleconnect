@@ -1,6 +1,6 @@
-package nikolaichuks.telekom.backend.repository;
+package nikolaichuks.teleconnect.backend.repository;
 
-import nikolaichuks.telekom.backend.model.Tariff;
+import nikolaichuks.teleconnect.backend.model.Tariff;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 

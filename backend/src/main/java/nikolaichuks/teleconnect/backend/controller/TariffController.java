@@ -1,11 +1,11 @@
-package nikolaichuks.telekom.backend.controller;
+package nikolaichuks.teleconnect.backend.controller;
 
 import lombok.RequiredArgsConstructor;
-import nikolaichuks.telekom.backend.service.TariffService;
+import nikolaichuks.teleconnect.backend.service.TariffService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import telekom.tariff.api.TariffApi;
-import telekom.tariff.model.TariffDTO;
+import teleconnect.tariff.api.TariffApi;
+import teleconnect.tariff.model.TariffDTO;
 
 import java.util.List;
 

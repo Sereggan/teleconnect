@@ -1,4 +1,4 @@
-package nikolaichuks.telekom.backend;
+package nikolaichuks.teleconnect.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

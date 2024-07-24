@@ -8,7 +8,7 @@
         <version>3.3.1</version>
         <relativePath/>
     </parent>
-    <groupId>nikolaichuks.telekom</groupId>
+    <groupId>nikolaichuks.teleconnect</groupId>
     <artifactId>backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>teleConnect</name>
@@ -19,6 +19,7 @@
         <postgresql.version>42.7.2</postgresql.version>
         <springdoc.version>2.3.0</springdoc.version>
         <jackson.databind.nullable.version>0.2.6</jackson.databind.nullable.version>
+        <jackson.databind.datatype.jdk8.version>2.17.2</jackson.databind.datatype.jdk8.version>
         <openapi-generator.version>7.7.0</openapi-generator.version>
     </properties>
     <dependencies>
@@ -68,7 +69,11 @@
             <artifactId>jackson-databind-nullable</artifactId>
             <version>${jackson.databind.nullable.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+            <version>${jackson.databind.datatype.jdk8.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -79,6 +84,7 @@
                 <version>${openapi-generator.version}</version>
                 <executions>
                     <execution>
+                        <id>generate-tariif-api</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -86,8 +92,27 @@
                             <inputSpec>${project.basedir}/config/api/tariff.yaml</inputSpec>
                             <output>${project.build.directory}/generated-sources</output>
                             <generatorName>spring</generatorName>
-                            <apiPackage>telekom.tariff.api</apiPackage>
-                            <modelPackage>telekom.tariff.model</modelPackage>
+                            <apiPackage>teleconnect.tariff.api</apiPackage>
+                            <modelPackage>teleconnect.tariff.model</modelPackage>
+                            <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
+                                <dateLibrary>java8</dateLibrary>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <useTags>true</useTags>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-user-api</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/config/api/user.yaml</inputSpec>
+                            <output>${project.build.directory}/generated-sources</output>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>teleconnect.user.api</apiPackage>
+                            <modelPackage>teleconnect.user.model</modelPackage>
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <dateLibrary>java8</dateLibrary>
