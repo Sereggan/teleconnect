@@ -108,12 +108,24 @@ components:
           type: integer
         username:
           type: string
+          nullable: false
+        phoneNumber:
+          type: string
+          nullable: false
         password:
           type: string
+          nullable: false
         email:
+          type: string
+          nullable: false
+        name:
+          type: string
+        surname:
           type: string
         role:
           type: string
+        tariffId:
+          type: integer
       required:
         - username
         - password

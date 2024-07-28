@@ -11,7 +11,7 @@ DROP SEQUENCE IF EXISTS tariff_id_seq;
 CREATE SEQUENCE IF NOT EXISTS tariff_id_seq START WITH 1;
 
 CREATE TABLE IF NOT EXISTS tariff (
-    id INTEGER DEFAULT nextval('tariff_id_seq'),
+    id INTEGER DEFAULT nextval('tariff_id_seq') UNIQUE,
     name VARCHAR(100) NOT NULL PRIMARY KEY,
     price NUMERIC(10, 2) NOT NULL,
     description VARCHAR(255),
@@ -33,8 +33,13 @@ CREATE SEQUENCE IF NOT EXISTS users_id_seq START WITH 1;
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER DEFAULT nextval('users_id_seq') PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE,
+    phone_number VARCHAR(15) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL,
+    name VARCHAR(30) NOT NULL,
+    surname VARCHAR(30) NOT NULL,
     role_id INTEGER NOT NULL,
-    CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES user_role(id)
+    tariff_id INTEGER,
+    CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES user_role(id),
+    CONSTRAINT fk_tariff FOREIGN KEY (tariff_id) REFERENCES tariff(id)
     );

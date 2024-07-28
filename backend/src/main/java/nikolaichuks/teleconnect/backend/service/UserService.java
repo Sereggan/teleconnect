@@ -3,15 +3,16 @@ package nikolaichuks.teleconnect.backend.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import nikolaichuks.teleconnect.backend.model.User;
 import nikolaichuks.teleconnect.backend.model.UserRole;
 import nikolaichuks.teleconnect.backend.model.UserRoleName;
-import nikolaichuks.teleconnect.backend.model.User;
-import nikolaichuks.teleconnect.backend.repository.UserRoleRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
+import nikolaichuks.teleconnect.backend.repository.UserRoleRepository;
 import org.springframework.stereotype.Service;
 import teleconnect.user.model.UserDto;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -68,9 +69,14 @@ public class UserService {
         UserDto userDTO = new UserDto();
         userDTO.setId(user.getId());
         userDTO.setUsername(user.getUsername());
+        userDTO.setPhoneNumber(user.getPhoneNumber());
+        userDTO.setName(user.getName());
+        userDTO.setSurname(user.getSurname());
         userDTO.setPassword(user.getPassword());
         userDTO.setEmail(user.getEmail());
         userDTO.setRole(user.getRole().getName().name());
+        Optional.ofNullable(user.getTariff())
+                .ifPresent(tariff -> userDTO.setTariffId(tariff.getId()));
         return userDTO;
     }
 }

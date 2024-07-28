@@ -23,13 +23,26 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Column(nullable = false, unique = true)
+    private String phoneNumber;
+
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String surname;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private UserRole role;
+
+    @OneToOne
+    @JoinColumn(name = "tariff_id")
+    private Tariff tariff;
 }
