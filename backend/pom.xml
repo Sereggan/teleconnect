@@ -21,6 +21,7 @@
         <jackson.databind.nullable.version>0.2.6</jackson.databind.nullable.version>
         <jackson.databind.datatype.jdk8.version>2.17.2</jackson.databind.datatype.jdk8.version>
         <openapi-generator.version>7.7.0</openapi-generator.version>
+        <modelmapper.version>3.2.0</modelmapper.version>
     </properties>
     <dependencies>
         <dependency>
@@ -73,6 +74,11 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jdk8</artifactId>
             <version>${jackson.databind.datatype.jdk8.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>${modelmapper.version}</version>
         </dependency>
     </dependencies>
 

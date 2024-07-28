@@ -1,8 +1,8 @@
 package nikolaichuks.teleconnect.backend.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
 import nikolaichuks.teleconnect.backend.model.User;
 import nikolaichuks.teleconnect.backend.model.UserRole;
 import nikolaichuks.teleconnect.backend.model.UserRoleName;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import teleconnect.user.model.UserDto;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +19,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
-    private final ObjectMapper mapper;
+    private final MapperUtil mapper;
 
     public UserDto createUser(UserDto userDTO) {
         UserRole role = userRoleRepository.findByName(UserRoleName.valueOf(userDTO.getRole()))
@@ -33,7 +32,7 @@ public class UserService {
                 .role(role)
                 .build();
 
-        return mapper.convertValue(userRepository.save(user), UserDto.class);
+        return mapper.mapUserToUserDto(userRepository.save(user));
     }
 
     public UserDto updateUser(Integer id, UserDto userDetails) {
@@ -48,7 +47,7 @@ public class UserService {
             user.setPassword(userDetails.getPassword());
         }
         user.setRole(role);
-        return mapper.convertValue(userRepository.save(user), UserDto.class);
+        return mapper.mapUserToUserDto(userRepository.save(user));
     }
 
     public void deleteUser(Integer id) {
@@ -56,27 +55,14 @@ public class UserService {
     }
 
     public UserDto getUserById(Integer id) {
-        return mapper.convertValue(userRepository.findById(id), UserDto.class);
+        return userRepository.findById(id)
+                .map(mapper::mapUserToUserDto)
+                .orElse(null);
     }
 
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(this::mapToDTO)
+                .map(mapper::mapUserToUserDto)
                 .toList();
-    }
-
-    private UserDto mapToDTO(User user) {
-        UserDto userDTO = new UserDto();
-        userDTO.setId(user.getId());
-        userDTO.setUsername(user.getUsername());
-        userDTO.setPhoneNumber(user.getPhoneNumber());
-        userDTO.setName(user.getName());
-        userDTO.setSurname(user.getSurname());
-        userDTO.setPassword(user.getPassword());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setRole(user.getRole().getName().name());
-        Optional.ofNullable(user.getTariff())
-                .ifPresent(tariff -> userDTO.setTariffId(tariff.getId()));
-        return userDTO;
     }
 }
