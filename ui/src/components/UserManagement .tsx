@@ -1,0 +1,26 @@
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { users, User } from "./dummyData";
+
+const UserManagement = () => {
+  const [userList, setUsers] = useState<User[]>([]);
+  useEffect(() => {
+    setUsers(users);
+  }, []);
+
+  return (
+    <div>
+      <h2>User Management</h2>
+      <Link to="/users/new">Add New User</Link>
+      <ul>
+        {userList.map((user) => (
+          <li key={user.id}>
+            <Link to={`/users/${user.id}`}>{user.username}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default UserManagement;
