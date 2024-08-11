@@ -1,6 +1,5 @@
 export interface User {
   id: number;
-  username: string;
   phoneNumber: string;
   email: string;
   name: string;
@@ -22,7 +21,7 @@ export interface Tariff {
 
 export const tariffs: Tariff[] = [
   {
-    id: 1,
+    id: 0,
     name: "Basic Plan",
     price: 19.99,
     description: "Basic mobile plan",
@@ -32,7 +31,7 @@ export const tariffs: Tariff[] = [
     isActive: true,
   },
   {
-    id: 2,
+    id: 1,
     name: "Premium Plan",
     price: 39.99,
     description: "Premium mobile plan",
@@ -41,12 +40,21 @@ export const tariffs: Tariff[] = [
     smsLimit: 500,
     isActive: true,
   },
+  {
+    id: 2,
+    name: "Not defined inactive Plan",
+    price: 39.99,
+    description: "Not defined inactive Plan",
+    dataLimit: 10000,
+    callMinutes: 2000,
+    smsLimit: 500,
+    isActive: false,
+  },
 ];
 
 export const users: User[] = [
   {
-    id: 1,
-    username: "admin",
+    id: 0,
     phoneNumber: "0000000000",
     email: "admin@example.com",
     name: "Admin",
@@ -54,8 +62,7 @@ export const users: User[] = [
     role: "ROLE_ADMIN",
   },
   {
-    id: 2,
-    username: "employee",
+    id: 1,
     phoneNumber: "1111111111",
     email: "employee@example.com",
     name: "Employee",
@@ -63,8 +70,7 @@ export const users: User[] = [
     role: "ROLE_EMPLOYEE",
   },
   {
-    id: 3,
-    username: "customer",
+    id: 2,
     phoneNumber: "1234567890",
     email: "customer@example.com",
     name: "Customer",
