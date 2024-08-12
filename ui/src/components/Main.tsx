@@ -1,18 +1,18 @@
-import Navbar from "./Navbar";
-import TariffCard from "./TariffCard";
-import { tariffs } from "./dummyData";
+import { Link } from "react-router-dom";
 
 function Main() {
   return (
-    <>
-      <Navbar />
-      <p>List of tariffs:</p>
-      <div>
-        {tariffs.map((t) =>
-          t.isActive ? <TariffCard key={t.id} tariff={t} /> : null
-        )}
-      </div>
-    </>
+    <div>
+      <p>What do you want to do today?):</p>
+      <ul>
+        <li>
+          <Link to="/users">User Management</Link>
+        </li>
+        <li>
+          <Link to="/tariffs">Tariff Management</Link>
+        </li>
+      </ul>
+    </div>
   );
 }
 

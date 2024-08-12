@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { tariffs, Tariff } from "./dummyData";
-import Navbar from "./Navbar";
+import TariffCard from "./TariffCard";
+import { Link } from "react-router-dom";
 
 const TariffManagement: React.FC = () => {
   const [tariffList, setTariffList] = useState<Tariff[]>([]);
@@ -12,17 +12,12 @@ const TariffManagement: React.FC = () => {
 
   return (
     <>
-      <Navbar />
+      <Link to="/tariffs/add">Add New Tariff</Link>
+      <p>List of tariffs:</p>
       <div>
-        <h2>Tariff Management</h2>
-        <Link to="/tariffs/new">Add New Tariff</Link>
-        <ul>
-          {tariffList.map((tariff) => (
-            <li key={tariff.id}>
-              <Link to={`/tariffs/${tariff.id}`}>{tariff.name}</Link>
-            </li>
-          ))}
-        </ul>
+        {tariffList.map((t) =>
+          t.isActive ? <TariffCard key={t.id} tariff={t} /> : null
+        )}
       </div>
     </>
   );

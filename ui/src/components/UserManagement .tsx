@@ -1,27 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { users, User } from "./dummyData";
-import Navbar from "./Navbar";
+import UserCard from "./UserCard";
+import { Link } from "react-router-dom";
 
-const UserManagement = () => {
-  const [userList, setUsers] = useState<User[]>([]);
+const UserManagement: React.FC = () => {
+  const [userList, setUserList] = useState<User[]>([]);
+
   useEffect(() => {
-    setUsers(users);
+    setUserList(users);
   }, []);
 
   return (
     <>
-      <Navbar />
+      <Link to="/users/add">Add New User</Link>
+      <p>List of users:</p>
       <div>
-        <h2>User Management</h2>
-        <Link to="/users/new">Add New User</Link>
-        <ul>
-          {userList.map((user) => (
-            <li key={user.id}>
-              <Link to={`/users/${user.id}`}>{user.email}</Link>
-            </li>
-          ))}
-        </ul>
+        {userList.map((user) => (
+          <UserCard key={user.id} user={user} />
+        ))}
       </div>
     </>
   );

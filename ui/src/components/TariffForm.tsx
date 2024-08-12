@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { tariffs, Tariff } from "./dummyData";
-import Navbar from "./Navbar";
 
-function TariffDetail() {
+function TariffForm() {
   const { id } = useParams<{ id: string }>();
-  const [tariff, setTariff] = useState<Tariff | null>(null);
+  const [tariff, setTariff] = useState<Tariff>({
+    id: 0,
+    name: "",
+    price: 0,
+    description: "",
+    dataLimit: 0,
+    callMinutes: 0,
+    smsLimit: 0,
+    isActive: true,
+  });
 
   useEffect(() => {
     if (id !== undefined) {
@@ -14,25 +22,22 @@ function TariffDetail() {
     }
   }, [id]);
 
-  if (!tariff) return <div>Loading...</div>;
-
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = event.target;
-    setTariff((prevTariff) =>
-      prevTariff ? { ...prevTariff, [name]: value } : null
-    );
+    const { name, value, type, checked } = event.target;
+    setTariff((prevTariff) => ({
+      ...prevTariff,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    console.log(event);
+    event.preventDefault;
   }
 
   return (
     <>
-      <Navbar />
       <form onSubmit={handleSubmit}>
         <div>
-          <h2>Tariff Detail</h2>
           <label>
             Name:
             <input
@@ -40,6 +45,7 @@ function TariffDetail() {
               name="name"
               value={tariff.name}
               onChange={handleChange}
+              required
             />
           </label>
           <br />
@@ -50,7 +56,9 @@ function TariffDetail() {
               name="price"
               value={tariff.price}
               onChange={handleChange}
-            />
+              required
+            />{" "}
+            Euro
           </label>
           <br />
           <label>
@@ -60,6 +68,7 @@ function TariffDetail() {
               name="description"
               value={tariff.description}
               onChange={handleChange}
+              required
             />
           </label>
           <br />
@@ -71,6 +80,7 @@ function TariffDetail() {
               value={tariff.dataLimit}
               onChange={handleChange}
             />
+            MB
           </label>
           <br />
           <label>
@@ -93,7 +103,15 @@ function TariffDetail() {
             />
           </label>
           <br />
-          <label>Active: {tariff.isActive ? "Yes" : "No"}</label>
+          <label>
+            Active:
+            <input
+              type="checkbox"
+              name="isActive"
+              checked={tariff.isActive}
+              onChange={handleChange}
+            />
+          </label>{" "}
         </div>
         {<button type="submit">Save Tariff</button>}
       </form>
@@ -101,4 +119,4 @@ function TariffDetail() {
   );
 }
 
-export default TariffDetail;
+export default TariffForm;

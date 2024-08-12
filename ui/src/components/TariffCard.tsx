@@ -11,6 +11,7 @@ function TariffCard({ tariff }: { tariff: Tariff }) {
       <p>Data limit: {tariff.dataLimit} MB</p>
       <p>SMS limit: {tariff.smsLimit}</p>
       <Link to={`/tariffs/${tariff.id}`}>Tariff Info</Link>
+      <Link to={`/tariffs/edit/${tariff.id}`}>Edit Tariff</Link>
     </div>
   );
 }
