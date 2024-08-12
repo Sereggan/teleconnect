@@ -1,33 +1,23 @@
 package nikolaichuks.teleconnect.backend.model;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+@Getter
+@RequiredArgsConstructor
+public enum UserRole {
+    ROLE_ADMIN("Administrator"),
+    ROLE_EMPLOYEE("Employee"),
+    ROLE_CUSTOMER("Customer");
 
-import java.util.Set;
+    private final String name;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Accessors(chain = true)
-@Data
-@Entity
-@Builder
-@Table(name = "user_role")
-public class UserRole {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, unique = true)
-    private UserRoleName name;
-
-    @OneToMany(mappedBy = "role")
-    private Set<User> users;
-
+    public static UserRole fromString(String role) {
+        for (UserRole roleName : UserRole.values()) {
+            if (roleName.name().equalsIgnoreCase(role)) {
+                return roleName;
+            }
+        }
+        throw new IllegalArgumentException("No enum constant for the role: " + role);
+    }
 }

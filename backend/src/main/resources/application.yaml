@@ -1,8 +1,8 @@
 spring:
   application:
-    name: telekom-shop
+    name: teleconnect
   datasource:
-    url: jdbc:postgresql://localhost:5432/TelekomShop
+    url: jdbc:postgresql://localhost:5432/teleconnect
     username: username
     password: password
     driver-class-name: org.postgresql.Driver

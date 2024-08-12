@@ -34,4 +34,10 @@ public class TariffController implements TariffApi {
     public ResponseEntity<TariffDTO> updateTariff(Integer id, TariffDTO tariffDTO) {
         return ResponseEntity.ok(tariffService.updateTariff(id, tariffDTO));
     }
+
+    @Override
+    public ResponseEntity<Void> deleteTariff(Integer id) {
+        tariffService.deleteTariff(id);
+        return ResponseEntity.ok().build();
+    }
 }

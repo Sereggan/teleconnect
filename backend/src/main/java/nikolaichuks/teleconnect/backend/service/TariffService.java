@@ -57,4 +57,7 @@ public class TariffService {
                 .toList();
     }
 
+    public void deleteTariff(Integer id){
+        tariffRepository.deleteById(id);
+    }
 }
