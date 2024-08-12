@@ -1,4 +1,3 @@
-import React from "react";
 import { User } from "./dummyData";
 import { Link } from "react-router-dom";
 

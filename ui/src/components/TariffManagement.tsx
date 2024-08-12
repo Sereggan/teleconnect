@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { tariffs, Tariff } from "./dummyData";
 import TariffCard from "./TariffCard";
 import { Link } from "react-router-dom";
 
-const TariffManagement: React.FC = () => {
+function TariffManagement() {
   const [tariffList, setTariffList] = useState<Tariff[]>([]);
 
   useEffect(() => {
@@ -21,6 +21,6 @@ const TariffManagement: React.FC = () => {
       </div>
     </>
   );
-};
+}
 
 export default TariffManagement;

@@ -1,4 +1,3 @@
-import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Main from "./components/Main";
 import UserManagement from "./components/UserManagement ";

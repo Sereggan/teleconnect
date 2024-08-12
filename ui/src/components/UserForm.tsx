@@ -42,7 +42,6 @@ function UserForm() {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // Логика сохранения данных пользователя
   }
 
   return (
