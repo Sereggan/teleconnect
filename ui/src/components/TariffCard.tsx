@@ -1,19 +1,34 @@
 import { Link } from "react-router-dom";
 import { Tariff } from "./dummyData";
+import { Card } from "react-bootstrap";
 
-function TariffCard({ tariff }: { tariff: Tariff }) {
+export default function TariffCard({ tariff }: { tariff: Tariff }) {
   return (
-    <div className="card">
-      <p>{tariff.name}</p>
-      <p>{tariff.description}</p>
-      <p>Price: {tariff.price} Euro</p>
-      <p>Call minutes: {tariff.callMinutes} minutes</p>
-      <p>Data limit: {tariff.dataLimit} MB</p>
-      <p>SMS limit: {tariff.smsLimit}</p>
-      <Link to={`/tariffs/${tariff.id}`}>Tariff Info</Link>
-      <Link to={`/tariffs/edit/${tariff.id}`}>Edit Tariff</Link>
-    </div>
+    <Card className="mb-3">
+      <Card.Body>
+        <Card.Title>{tariff.name}</Card.Title>
+        <Card.Text>{tariff.description}</Card.Text>
+        <ul className="list-unstyled">
+          <li>
+            <strong>Price:</strong> {tariff.price} Euro
+          </li>
+          <li>
+            <strong>Call minutes:</strong> {tariff.callMinutes} minutes
+          </li>
+          <li>
+            <strong>Data limit:</strong> {tariff.dataLimit} MB
+          </li>
+          <li>
+            <strong>SMS limit:</strong> {tariff.smsLimit}
+          </li>
+        </ul>
+        <Link to={`/tariffs/${tariff.id}`} className="btn btn-primary me-2">
+          Tariff Info
+        </Link>
+        <Link to={`/tariffs/edit/${tariff.id}`} className="btn btn-secondary">
+          Edit Tariff
+        </Link>
+      </Card.Body>
+    </Card>
   );
 }
-
-export default TariffCard;
