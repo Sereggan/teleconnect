@@ -106,9 +106,6 @@ components:
       properties:
         id:
           type: integer
-        username:
-          type: string
-          nullable: false
         phoneNumber:
           type: string
           nullable: false

@@ -1,5 +1,6 @@
 package nikolaichuks.teleconnect.backend.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
 import nikolaichuks.teleconnect.backend.model.User;
@@ -25,7 +26,7 @@ public class UserService {
 
     public UserDto updateUser(Integer id, UserDto userDetails) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
         user.setName(userDetails.getName());
         user.setSurname(userDetails.getSurname());
         user.setPhoneNumber(userDetails.getPhoneNumber());
