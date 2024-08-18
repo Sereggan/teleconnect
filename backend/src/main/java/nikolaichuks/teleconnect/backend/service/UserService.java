@@ -1,12 +1,14 @@
 package nikolaichuks.teleconnect.backend.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
 import nikolaichuks.teleconnect.backend.model.User;
 import nikolaichuks.teleconnect.backend.model.UserRole;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import teleconnect.user.model.UserDto;
 
 import java.util.List;
@@ -24,9 +26,9 @@ public class UserService {
         return mapper.mapUserToUserDto(userRepository.save(user));
     }
 
-    public UserDto updateUser(Integer id, UserDto userDetails) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    public UserDto updateUser(UserDto userDetails) {
+        User user = userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new CustomRestException("User not found", HttpStatus.NOT_FOUND));
         user.setName(userDetails.getName());
         user.setSurname(userDetails.getSurname());
         user.setPhoneNumber(userDetails.getPhoneNumber());

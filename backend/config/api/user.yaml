@@ -41,6 +41,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDto'
+    put:
+      summary: Update a user
+      operationId: updateUser
+      tags:
+        - user
+      requestBody:
+        description: User to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
   /users/{id}:
     get:
       summary: Get a user by ID
@@ -60,31 +79,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDto'
-    put:
-      summary: Update a user
-      operationId: updateUser
-      tags:
-        - user
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        description: User to update
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserDto'
-      responses:
-        '200':
-          description: User updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserDto'
+        '404':
+          description: User not found
     delete:
       summary: Delete a user
       operationId: deleteUser

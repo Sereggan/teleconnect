@@ -2,9 +2,11 @@ package nikolaichuks.teleconnect.backend.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
 import nikolaichuks.teleconnect.backend.model.Tariff;
 import nikolaichuks.teleconnect.backend.repository.TariffRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import teleconnect.tariff.model.TariffDTO;
 
@@ -22,9 +24,9 @@ public class TariffService {
         return mapper.mapTariffToTariffDTO(tariffRepository.save(tariff));
     }
 
-    public TariffDTO updateTariff(Integer id, TariffDTO tariffDTO) {
-        Tariff existingTariff = tariffRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tariff not found"));
+    public TariffDTO updateTariff(TariffDTO tariffDTO) {
+        Tariff existingTariff = tariffRepository.findById(tariffDTO.getId())
+                .orElseThrow(() -> new CustomRestException("Tariff not found", HttpStatus.NOT_FOUND));
 
         existingTariff.setName(tariffDTO.getName())
                 .setDescription(tariffDTO.getDescription())

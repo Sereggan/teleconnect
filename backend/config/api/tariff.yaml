@@ -27,6 +27,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TariffDTO'
+    put:
+      summary: Update a tariff
+      operationId: updateTariff
+      tags:
+        - tariff
+      requestBody:
+        description: Tariff to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TariffDTO'
+      responses:
+        '200':
+          description: Tariff updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TariffDTO'
     get:
       summary: Get all tariffs
       operationId: getAllTariffs
@@ -41,6 +60,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TariffDTO'
+
   /tariff/{id}:
     get:
       summary: Get a tariff by ID
@@ -60,31 +80,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TariffDTO'
-    put:
-      summary: Update a tariff
-      operationId: updateTariff
-      tags:
-        - tariff
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        description: Tariff to update
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TariffDTO'
-      responses:
-        '200':
-          description: Tariff updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TariffDTO'
+        '404':
+          description: Tariff not found
     delete:
       summary: Delete a tariff
       operationId: deleteTariff
@@ -99,6 +96,8 @@ paths:
       responses:
         '204':
           description: Tariff deleted
+        '404':
+          description: Tariff not found
 components:
   schemas:
     TariffDTO:

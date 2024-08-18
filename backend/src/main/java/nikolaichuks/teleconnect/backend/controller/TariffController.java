@@ -31,8 +31,8 @@ public class TariffController implements TariffApi {
     }
 
     @Override
-    public ResponseEntity<TariffDTO> updateTariff(Integer id, TariffDTO tariffDTO) {
-        return ResponseEntity.ok(tariffService.updateTariff(id, tariffDTO));
+    public ResponseEntity<TariffDTO> updateTariff(TariffDTO tariffDTO) {
+        return ResponseEntity.ok(tariffService.updateTariff(tariffDTO));
     }
 
     @Override
