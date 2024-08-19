@@ -1,8 +1,6 @@
--- Drop existing tables
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS tariff CASCADE;
 
--- Drop existing sequences
 DROP SEQUENCE IF EXISTS users_id_seq;
 DROP SEQUENCE IF EXISTS tariff_id_seq;
 
@@ -12,11 +10,16 @@ CREATE TABLE IF NOT EXISTS tariff (
     id INTEGER DEFAULT nextval('tariff_id_seq') UNIQUE,
     name VARCHAR(100) NOT NULL PRIMARY KEY,
     price NUMERIC(10, 2) NOT NULL,
-    description VARCHAR(255),
+    description VARCHAR
+(
+    255
+) NOT NULL,
     is_active BOOLEAN DEFAULT FALSE,
     data_limit INTEGER DEFAULT 0,
     call_minutes INTEGER DEFAULT 0,
-    sms_limit INTEGER DEFAULT 0
+    sms_limit INTEGER DEFAULT 0,
+    valid_from DATE,
+    valid_to DATE
     );
 
 CREATE SEQUENCE IF NOT EXISTS users_id_seq START WITH 1;

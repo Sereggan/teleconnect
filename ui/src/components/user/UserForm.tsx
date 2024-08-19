@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { users, User, tariffs } from "./dummyData";
+import { users, User, tariffs } from "../dummyData";
 
 function UserForm() {
   const { id } = useParams<{ id: string }>();

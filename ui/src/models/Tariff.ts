@@ -7,4 +7,6 @@ export interface Tariff {
   callMinutes: number;
   smsLimit: number;
   isActive: boolean;
+  validFrom?: string;
+  validTo?: string;
 }

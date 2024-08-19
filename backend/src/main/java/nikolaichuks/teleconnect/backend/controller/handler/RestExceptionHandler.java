@@ -16,7 +16,7 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(new ApiErrorResponse(ex.getStatus(), ex.getMessage()), ex.getStatus());
     }
 
-    @ExceptionHandler({CustomRestException.class})
+    @ExceptionHandler({DataIntegrityViolationException.class})
     protected ResponseEntity<ApiErrorResponse> handleApiException(DataIntegrityViolationException ex) {
         return new ResponseEntity<>(new ApiErrorResponse(HttpStatus.CONFLICT, "Such entity already exists"), HttpStatus.CONFLICT);
     }

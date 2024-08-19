@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Tariff } from "./dummyData";
+import { Tariff } from "../dummyData";
 import { Card } from "react-bootstrap";
 
 export default function TariffCard({ tariff }: { tariff: Tariff }) {

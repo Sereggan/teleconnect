@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { users, User } from "./dummyData";
+import { users, User } from "../dummyData";
 import UserCard from "./UserCard";
 import { Link } from "react-router-dom";
 

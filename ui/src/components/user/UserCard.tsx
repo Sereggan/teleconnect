@@ -1,4 +1,4 @@
-import { User } from "./dummyData";
+import { User } from "../dummyData";
 import { Link } from "react-router-dom";
 
 function UserCard({ user }: { user: User }) {

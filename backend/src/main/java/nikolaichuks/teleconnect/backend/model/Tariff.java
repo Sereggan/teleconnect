@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDate;
+
 /**
  * Tariff entity
  */
@@ -29,4 +31,6 @@ public class Tariff {
     private Integer dataLimit;
     private Integer callMinutes;
     private Integer smsLimit;
+    private LocalDate validFrom;
+    private LocalDate validTo;
 }

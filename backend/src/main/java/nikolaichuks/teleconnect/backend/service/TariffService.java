@@ -2,6 +2,7 @@ package nikolaichuks.teleconnect.backend.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
 import nikolaichuks.teleconnect.backend.model.Tariff;
@@ -34,11 +35,14 @@ public class TariffService {
                 .setCallMinutes(tariffDTO.getCallMinutes())
                 .setDataLimit(tariffDTO.getDataLimit())
                 .setSmsLimit(tariffDTO.getSmsLimit())
+                .setValidFrom(tariffDTO.getValidFrom())
+                .setValidTo(tariffDTO.getValidTo())
                 .setIsActive(tariffDTO.getIsActive());
 
         return mapper.mapTariffToTariffDTO(tariffRepository.save(existingTariff));
     }
 
+    @SneakyThrows
     public TariffDTO getTariffById(Integer id) {
         return tariffRepository.findById(id)
                 .map(mapper::mapTariffToTariffDTO)
