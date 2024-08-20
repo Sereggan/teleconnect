@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Tariff } from "../dummyData";
+import { Tariff } from "../../models/Tariff";
 import { Card } from "react-bootstrap";
 
 export default function TariffCard({ tariff }: { tariff: Tariff }) {
@@ -20,6 +20,21 @@ export default function TariffCard({ tariff }: { tariff: Tariff }) {
           </li>
           <li>
             <strong>SMS limit:</strong> {tariff.smsLimit}
+          </li>
+          {tariff.validFrom && (
+            <li>
+              <strong>Valid From:</strong>{" "}
+              {new Date(tariff.validFrom).toLocaleDateString()}
+            </li>
+          )}
+          {tariff.validTo && (
+            <li>
+              <strong>Valid To:</strong>{" "}
+              {new Date(tariff.validTo).toLocaleDateString()}
+            </li>
+          )}
+          <li>
+            <strong>Active:</strong> {tariff.isActive ? "Yes" : "No"}
           </li>
         </ul>
         <Link to={`/tariffs/${tariff.id}`} className="btn btn-primary me-2">

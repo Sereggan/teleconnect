@@ -49,7 +49,7 @@ export default function TariffManagement() {
             </Col>
           ) : (
             tariffList
-              .sort((a, b) => a.id - b.id)
+              .sort((a, b) => (a.id == null || b.id == null ? 0 : a.id - b.id))
               .map((t) => (
                 <Col key={t.id} md={4} className="d-flex align-items-stretch">
                   <TariffCard tariff={t} />

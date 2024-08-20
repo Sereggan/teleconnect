@@ -5,6 +5,7 @@ import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
 import nikolaichuks.teleconnect.backend.model.User;
 import nikolaichuks.teleconnect.backend.model.UserRole;
+import nikolaichuks.teleconnect.backend.repository.TariffRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final MapperUtil mapper;
+    private final TariffRepository tariffRepository;
 
     public UserDto createUser(UserDto userDTO) {
         User user = mapper.mapUserDtoToUser(userDTO);
@@ -36,6 +38,11 @@ public class UserService {
             user.setPassword(userDetails.getPassword());
         }
         user.setRole(UserRole.fromString(userDetails.getRole()));
+        if (userDetails.getTariffId() != null) {
+            tariffRepository.findById(userDetails.getTariffId())
+                    .ifPresent(user::setTariff);
+        }
+
         return mapper.mapUserToUserDto(userRepository.save(user));
     }
 

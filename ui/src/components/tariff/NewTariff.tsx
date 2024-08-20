@@ -5,7 +5,6 @@ import { Tariff } from "../../models/Tariff";
 
 export default function NewTariff() {
   const [tariff, setTariff] = useState<Tariff>({
-    id: 0,
     name: "",
     price: 0,
     description: "",
@@ -13,8 +12,6 @@ export default function NewTariff() {
     callMinutes: 0,
     smsLimit: 0,
     isActive: true,
-    validFrom: "",
-    validTo: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

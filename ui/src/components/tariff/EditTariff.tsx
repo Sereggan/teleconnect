@@ -55,119 +55,111 @@ export default function EditTariff() {
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Something went wrong, please try again...</div>;
-  }
-
-  if (!tariff) {
-    return null;
-  }
-
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            Name:
-            <input
-              type="text"
-              name="name"
-              value={tariff.name}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <br />
-          <label>
-            Price:
-            <input
-              type="number"
-              name="price"
-              value={tariff.price}
-              onChange={handleChange}
-              required
-            />{" "}
-            Euro
-          </label>
-          <br />
-          <label>
-            Description:
-            <input
-              type="text"
-              name="description"
-              value={tariff.description}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <br />
-          <label>
-            Data Limit:
-            <input
-              type="number"
-              name="dataLimit"
-              value={tariff.dataLimit}
-              onChange={handleChange}
-            />
-            MB
-          </label>
-          <br />
-          <label>
-            Call Minutes:
-            <input
-              type="number"
-              name="callMinutes"
-              value={tariff.callMinutes}
-              onChange={handleChange}
-            />
-          </label>
-          <br />
-          <label>
-            SMS Limit:
-            <input
-              type="number"
-              name="smsLimit"
-              value={tariff.smsLimit}
-              onChange={handleChange}
-            />
-          </label>
-          <br />
-          <label>
-            Valid From:
-            <input
-              type="date"
-              name="validFrom"
-              value={tariff.validFrom || ""}
-              onChange={handleChange}
-            />
-          </label>
-          <br />
-          <label>
-            Valid To:
-            <input
-              type="date"
-              name="validTo"
-              value={tariff.validTo || ""}
-              onChange={handleChange}
-            />
-          </label>
-          <br />
-          <label>
-            Active:
-            <input
-              type="checkbox"
-              name="isActive"
-              checked={tariff.isActive}
-              onChange={handleChange}
-            />
-          </label>{" "}
-        </div>
-        <button type="submit">Save Tariff</button>
-      </form>
+      {error && <div>Something went wrong, please try again...</div>}
+      {isLoading && <div>Loading...</div>}
+      {!isLoading && !error && tariff && (
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>
+              Name:
+              <input
+                type="text"
+                name="name"
+                value={tariff.name}
+                onChange={handleChange}
+                required
+              />
+            </label>
+            <br />
+            <label>
+              Price:
+              <input
+                type="number"
+                name="price"
+                value={tariff.price}
+                onChange={handleChange}
+                required
+              />{" "}
+              Euro
+            </label>
+            <br />
+            <label>
+              Description:
+              <input
+                type="text"
+                name="description"
+                value={tariff.description}
+                onChange={handleChange}
+                required
+              />
+            </label>
+            <br />
+            <label>
+              Data Limit:
+              <input
+                type="number"
+                name="dataLimit"
+                value={tariff.dataLimit || ""}
+                onChange={handleChange}
+              />
+              MB
+            </label>
+            <br />
+            <label>
+              Call Minutes:
+              <input
+                type="number"
+                name="callMinutes"
+                value={tariff.callMinutes || ""}
+                onChange={handleChange}
+              />
+            </label>
+            <br />
+            <label>
+              SMS Limit:
+              <input
+                type="number"
+                name="smsLimit"
+                value={tariff.smsLimit || ""}
+                onChange={handleChange}
+              />
+            </label>
+            <br />
+            <label>
+              Valid From:
+              <input
+                type="date"
+                name="validFrom"
+                value={tariff.validFrom || ""}
+                onChange={handleChange}
+              />
+            </label>
+            <br />
+            <label>
+              Valid To:
+              <input
+                type="date"
+                name="validTo"
+                value={tariff.validTo || ""}
+                onChange={handleChange}
+              />
+            </label>
+            <br />
+            <label>
+              Active:
+              <input
+                type="checkbox"
+                name="isActive"
+                checked={tariff.isActive}
+                onChange={handleChange}
+              />
+            </label>{" "}
+          </div>
+          <button type="submit">Save Tariff</button>
+        </form>
+      )}
     </>
   );
 }
