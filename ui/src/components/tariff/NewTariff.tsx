@@ -12,6 +12,7 @@ export default function NewTariff() {
     callMinutes: 0,
     smsLimit: 0,
     isActive: true,
+    isUsed: undefined,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -141,7 +142,17 @@ export default function NewTariff() {
                   checked={tariff.isActive}
                   onChange={handleChange}
                 />
-              </label>{" "}
+                <br />
+              </label>
+              <label>
+                Is used by users:
+                <input
+                  type="checkbox"
+                  name="isUsed"
+                  checked={tariff.isUsed}
+                  onChange={handleChange}
+                />
+              </label>
             </div>
             <button type="submit">Create Tariff</button>
           </form>

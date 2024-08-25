@@ -4,9 +4,25 @@ import { Tariff } from "../models/Tariff";
 const basePath: string = "http://localhost:8080";
 const tariffEndpoint: string = "/tariff";
 
-export const getAllTariffs = async (): Promise<Tariff[] | undefined> => {
+export const getAllTariffs = async (
+  queryParams: {
+    priceMin?: number;
+    priceMax?: number;
+    dataLimitMin?: number;
+    dataLimitMax?: number;
+    callMinutesMin?: number;
+    callMinutesMax?: number;
+    smsLimitMin?: number;
+    smsLimitMax?: number;
+    isActive?: boolean;
+    isUsed?: boolean;
+  } = {}
+): Promise<Tariff[] | undefined> => {
   const response: AxiosResponse<Tariff[]> = await axios.get(
-    basePath + tariffEndpoint
+    basePath + tariffEndpoint,
+    {
+      params: queryParams,
+    }
   );
   return response.data;
 };
