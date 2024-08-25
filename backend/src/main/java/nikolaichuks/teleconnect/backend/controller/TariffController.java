@@ -2,6 +2,7 @@ package nikolaichuks.teleconnect.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.service.TariffService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import teleconnect.tariff.api.TariffApi;
@@ -21,13 +22,28 @@ public class TariffController implements TariffApi {
     }
 
     @Override
-    public ResponseEntity<List<TariffDTO>> getAllTariffs() {
-        return ResponseEntity.ok(tariffService.getAllTariffs());
+    public ResponseEntity<List<TariffDTO>> getAllTariffs(Double priceMin,
+                                                         Double priceMax,
+                                                         Integer dataLimitMin,
+                                                         Integer dataLimitMax,
+                                                         Integer callMinutesMin,
+                                                         Integer callMinutesMax,
+                                                         Integer smsLimitMin,
+                                                         Integer smsLimitMax,
+                                                         Boolean isActive,
+                                                         Boolean isUsed) {
+        List<TariffDTO> tariffs = tariffService.getAllTariffs(priceMin, priceMax, dataLimitMin,
+                dataLimitMax, callMinutesMin, callMinutesMax, smsLimitMin, smsLimitMax, isActive, isUsed);
+        if (tariffs.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(tariffs);
+        }
     }
 
     @Override
     public ResponseEntity<TariffDTO> createTariff(TariffDTO tariffDTO) {
-        return ResponseEntity.ok(tariffService.createTariff(tariffDTO));
+        return new ResponseEntity<>(tariffService.createTariff(tariffDTO), HttpStatus.CREATED);
     }
 
     @Override
@@ -40,4 +56,20 @@ public class TariffController implements TariffApi {
         tariffService.deleteTariff(id);
         return ResponseEntity.ok().build();
     }
+
+//    @Override
+//    public ResponseEntity<List<TariffDTO>> searchTariffs(
+//            Double priceMin,
+//            Double priceMax,
+//            Integer dataLimitMin,
+//            Integer dataLimitMax,
+//            Integer callMinutesMin,
+//            Integer callMinutesMax,
+//            Integer smsLimitMin,
+//            Integer smsLimitMax,
+//            Boolean isActive,
+//            Boolean isUsed
+//    ) {
+//        return
+//    }
 }

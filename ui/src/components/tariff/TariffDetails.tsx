@@ -22,7 +22,7 @@ export default function TariffDetails() {
             setError("Tariff not found");
           }
         } catch (error: any) {
-          setError(error);
+          setError(error.message || "Error fetching tariff");
         } finally {
           setIsLoading(false);
         }
@@ -56,8 +56,23 @@ export default function TariffDetails() {
           <p>
             <strong>SMS Limit:</strong> {tariff.smsLimit}
           </p>
+          {tariff.validFrom && (
+            <p>
+              <strong>Valid From:</strong>{" "}
+              {new Date(tariff.validFrom).toLocaleDateString()}
+            </p>
+          )}
+          {tariff.validTo && (
+            <p>
+              <strong>Valid To:</strong>{" "}
+              {new Date(tariff.validTo).toLocaleDateString()}
+            </p>
+          )}
           <p>
             <strong>Active:</strong> {tariff.isActive ? "Yes" : "No"}
+          </p>
+          <p>
+            <strong>Is used by users:</strong> {tariff.isUsed ? "Yes" : "No"}
           </p>
         </div>
       )}

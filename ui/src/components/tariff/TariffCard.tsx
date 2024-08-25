@@ -36,6 +36,11 @@ export default function TariffCard({ tariff }: { tariff: Tariff }) {
           <li>
             <strong>Active:</strong> {tariff.isActive ? "Yes" : "No"}
           </li>
+          <li>
+            <p>
+              <strong>Is used by users:</strong> {tariff.isUsed ? "Yes" : "No"}
+            </p>
+          </li>
         </ul>
         <Link to={`/tariffs/${tariff.id}`} className="btn btn-primary me-2">
           Tariff Info

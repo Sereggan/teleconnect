@@ -1,12 +1,14 @@
 package nikolaichuks.teleconnect.backend.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
 import nikolaichuks.teleconnect.backend.model.Tariff;
 import nikolaichuks.teleconnect.backend.repository.TariffRepository;
+import nikolaichuks.teleconnect.backend.repository.UserRepository;
+import nikolaichuks.teleconnect.backend.specification.TariffSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import teleconnect.tariff.model.TariffDTO;
@@ -19,6 +21,8 @@ public class TariffService {
 
     private final TariffRepository tariffRepository;
     private final MapperUtil mapper;
+    private final UserRepository userRepository;
+    private final TariffSpecification tariffSpecification;
 
     public TariffDTO createTariff(TariffDTO tariffDTO) {
         Tariff tariff = mapper.mapTariffDTOToTariff(tariffDTO);
@@ -39,23 +43,39 @@ public class TariffService {
                 .setValidTo(tariffDTO.getValidTo())
                 .setIsActive(tariffDTO.getIsActive());
 
-        return mapper.mapTariffToTariffDTO(tariffRepository.save(existingTariff));
+        var mappedTariff = mapper.mapTariffToTariffDTO(tariffRepository.save(existingTariff));
+        mappedTariff.setIsUsed(userRepository.existsByTariff_Id(mappedTariff.getId()));
+        return mappedTariff;
     }
 
     @SneakyThrows
     public TariffDTO getTariffById(Integer id) {
         return tariffRepository.findById(id)
                 .map(mapper::mapTariffToTariffDTO)
-                .orElseThrow(() -> new EntityNotFoundException("Tariff not found"));
+                .map(tariffDTO -> {
+                    tariffDTO.setIsUsed(userRepository.existsByTariff_Id(tariffDTO.getId()));
+                    return tariffDTO;
+                })
+                .orElseThrow(() -> new CustomRestException("Tariff not found", HttpStatus.NOT_FOUND));
     }
 
-    public List<TariffDTO> getAllTariffs() {
-        return tariffRepository.findAll().stream()
+    public List<TariffDTO> getAllTariffs(Double priceMin, Double priceMax, Integer dataLimitMin, Integer dataLimitMax,
+                                         Integer callMinutesMin, Integer callMinutesMax, Integer smsLimitMin, Integer smsLimitMax,
+                                         Boolean isActive, Boolean isUsed) {
+        Specification<Tariff> specification = tariffSpecification.getTariffSpecification(priceMin, priceMax, dataLimitMin, dataLimitMax,
+                callMinutesMin, callMinutesMax, smsLimitMin, smsLimitMax, isActive, isUsed);
+
+        return tariffRepository.findAll(specification).stream()
                 .map(mapper::mapTariffToTariffDTO)
+                .peek(tariffDTO -> tariffDTO.setIsUsed(userRepository.existsByTariff_Id(tariffDTO.getId())))
                 .toList();
     }
 
     public void deleteTariff(Integer id) {
-        tariffRepository.deleteById(id);
+        if (!userRepository.existsByTariff_Id(id)) {
+            tariffRepository.deleteById(id);
+        } else {
+            throw new CustomRestException("Tariff is used by users", HttpStatus.CONFLICT);
+        }
     }
 }

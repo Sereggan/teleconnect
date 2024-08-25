@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { getTariffById, updateTariff } from "../../services/TariffClient";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  deleteTariff,
+  getTariffById,
+  updateTariff,
+} from "../../services/TariffClient";
 import { Tariff } from "../../models/Tariff";
 
 export default function EditTariff() {
@@ -8,6 +12,7 @@ export default function EditTariff() {
   const [tariff, setTariff] = useState<Tariff | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const fetchTariff = async () => {
     if (id !== undefined) {
@@ -50,6 +55,19 @@ export default function EditTariff() {
       await fetchTariff();
     } catch (error: any) {
       setError("Error updating tariff");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!tariff || !tariff.id) return;
+    setIsLoading(true);
+    try {
+      await deleteTariff(tariff.id);
+      navigate("/tariffs");
+    } catch (error: any) {
+      setError("Error deleting tariff");
     } finally {
       setIsLoading(false);
     }
@@ -155,9 +173,12 @@ export default function EditTariff() {
                 checked={tariff.isActive}
                 onChange={handleChange}
               />
-            </label>{" "}
+            </label>
           </div>
           <button type="submit">Save Tariff</button>
+          <button type="button" onClick={handleDelete}>
+            Delete Tariff
+          </button>
         </form>
       )}
     </>

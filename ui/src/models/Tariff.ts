@@ -3,10 +3,11 @@ export interface Tariff {
   name: string;
   price: number;
   description: string;
-  dataLimit: number;
-  callMinutes: number;
-  smsLimit: number;
-  isActive: boolean;
+  dataLimit?: number;
+  callMinutes?: number;
+  smsLimit?: number;
+  isActive?: boolean;
   validFrom?: string;
   validTo?: string;
+  isUsed?: boolean;
 }

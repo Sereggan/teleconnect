@@ -2,12 +2,14 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Main from "./components/Main";
 import UserManagement from "./components/user/UserManagement ";
 import UserDetails from "./components/user/UserDetails";
-import UserForm from "./components/user/UserForm";
+import UserForm from "./components/user/EditUser";
 import TariffManagement from "./components/tariff/TariffManagement";
 import EditTariff from "./components/tariff/EditTariff";
 import NewTariff from "./components/tariff/NewTariff";
 import Layout from "./components/Layout";
 import TariffDetails from "./components/tariff/TariffDetails";
+import NewUser from "./components/user/NewUser";
+import EditUser from "./components/user/EditUser";
 
 const router = createBrowserRouter([
   {
@@ -28,11 +30,11 @@ const router = createBrowserRouter([
       },
       {
         path: "users/edit/:id",
-        element: <UserForm />,
+        element: <EditUser />,
       },
       {
         path: "users/add",
-        element: <UserForm />,
+        element: <NewUser />,
       },
       {
         path: "tariffs",

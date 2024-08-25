@@ -51,6 +51,59 @@ paths:
       operationId: getAllTariffs
       tags:
         - tariff
+      parameters:
+        - name: priceMin
+          in: query
+          required: false
+          schema:
+            type: number
+            format: double
+        - name: priceMax
+          in: query
+          required: false
+          schema:
+            type: number
+            format: double
+        - name: dataLimitMin
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: dataLimitMax
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: callMinutesMin
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: callMinutesMax
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: smsLimitMin
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: smsLimitMax
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: isActive
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: isUsed
+          in: query
+          required: false
+          schema:
+            type: boolean
       responses:
         '200':
           description: A list of tariffs
@@ -125,6 +178,8 @@ components:
           type: string
           format: date
         isActive:
+          type: boolean
+        isUsed:
           type: boolean
       required:
         - name

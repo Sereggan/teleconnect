@@ -1,19 +1,44 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { users, User } from "../dummyData";
-import { Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+import { getUserById } from "../../services/UserClient";
+import { User, UserRole } from "../../models/User";
 
-function UserDetails() {
+export default function UserDetails() {
   const { id } = useParams<{ id: string }>();
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (id !== undefined) {
-      const userId = parseInt(id);
-      const foundUser = users.find((u) => u.id === userId) || null;
-      setUser(foundUser);
-    }
+    const fetchUser = async () => {
+      if (id) {
+        setIsLoading(true);
+        try {
+          const userId = parseInt(id);
+          const fetchedUser = await getUserById(userId);
+          if (fetchedUser) {
+            setUser(fetchedUser);
+          } else {
+            setError("User not found");
+          }
+        } catch (error: any) {
+          setError(error.message || "Error fetching user");
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchUser();
   }, [id]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   if (!user) {
     return <div>User not found</div>;
@@ -34,35 +59,11 @@ function UserDetails() {
       <p>
         <strong>Role:</strong> {user.role}
       </p>
-      {user.role === "ROLE_CUSTOMER" && user.tariff && (
+      {user.role === UserRole.ROLE_CUSTOMER && user.tariffId && (
         <>
-          <h3>Tariff Details</h3>
-          <p>
-            <strong>Tariff Name:</strong> {user.tariff.name}
-          </p>
-          <p>
-            <strong>Price:</strong> {user.tariff.price} Euro
-          </p>
-          <p>
-            <strong>Description:</strong> {user.tariff.description}
-          </p>
-          <p>
-            <strong>Data Limit:</strong> {user.tariff.dataLimit} MB
-          </p>
-          <p>
-            <strong>Call Minutes:</strong> {user.tariff.callMinutes}
-          </p>
-          <p>
-            <strong>SMS Limit:</strong> {user.tariff.smsLimit}
-          </p>
-          <p>
-            <strong>Active:</strong> {user.tariff.isActive ? "Yes" : "No"}
-          </p>
-          <Link to={`/tariffs/${user.tariff.id}`}>Tariff Info</Link>
+          <Link to={`/tariffs/${user.tariffId}`}>Tariff Info</Link>
         </>
       )}
     </div>
   );
 }
-
-export default UserDetails;
