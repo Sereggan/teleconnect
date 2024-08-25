@@ -10,11 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.13.0",
-    "@emotion/styled": "^11.13.0",
     "@fontsource/roboto": "^5.0.14",
     "@mui/icons-material": "^5.16.6",
-    "@mui/material": "^5.16.6",
     "@popperjs/core": "^2.11.8",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.7.3",
