@@ -192,9 +192,11 @@ components:
         tariffId:
           type: integer
       required:
-        - username
+        - phoneNumber
         - password
         - email
+        - name
+        - surname
         - role
     AuthError:
       type: object

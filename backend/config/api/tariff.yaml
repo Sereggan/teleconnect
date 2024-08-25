@@ -176,8 +176,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TariffDTO'
-        '404':
-          description: Tariff not found
         '401':
           description: Unauthorized, invalid or missing token
           content:
@@ -186,6 +184,12 @@ paths:
                 $ref: '#/components/schemas/AuthError'
         '403':
           description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: Tariff not found
           content:
             application/json:
               schema:
@@ -206,8 +210,6 @@ paths:
       responses:
         '204':
           description: Tariff deleted
-        '404':
-          description: Tariff not found
         '401':
           description: Unauthorized, invalid or missing token
           content:
@@ -216,6 +218,12 @@ paths:
                 $ref: '#/components/schemas/AuthError'
         '403':
           description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: Tariff not found
           content:
             application/json:
               schema:
