@@ -13,6 +13,8 @@ paths:
       operationId: createTariff
       tags:
         - tariff
+      security:
+        - bearerAuth: [ ]
       requestBody:
         description: Tariff to create
         required: true
@@ -27,11 +29,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TariffDTO'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
     put:
       summary: Update a tariff
       operationId: updateTariff
       tags:
         - tariff
+      security:
+        - bearerAuth: [ ]
       requestBody:
         description: Tariff to update
         required: true
@@ -46,11 +62,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TariffDTO'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
     get:
       summary: Get all tariffs
       operationId: getAllTariffs
       tags:
         - tariff
+      security:
+        - bearerAuth: [ ]
       parameters:
         - name: priceMin
           in: query
@@ -113,13 +143,26 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TariffDTO'
-
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
   /tariff/{id}:
     get:
       summary: Get a tariff by ID
       operationId: getTariffById
       tags:
         - tariff
+      security:
+        - bearerAuth: [ ]
       parameters:
         - name: id
           in: path
@@ -135,11 +178,25 @@ paths:
                 $ref: '#/components/schemas/TariffDTO'
         '404':
           description: Tariff not found
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
     delete:
       summary: Delete a tariff
       operationId: deleteTariff
       tags:
         - tariff
+      security:
+        - bearerAuth: [ ]
       parameters:
         - name: id
           in: path
@@ -151,6 +208,18 @@ paths:
           description: Tariff deleted
         '404':
           description: Tariff not found
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
 components:
   schemas:
     TariffDTO:
@@ -185,3 +254,23 @@ components:
         - name
         - price
         - description
+    AuthError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid or missing token"
+    ForbiddenError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Forbidden: insufficient permissions"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: [ ]

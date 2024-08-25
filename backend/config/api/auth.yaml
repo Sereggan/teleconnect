@@ -1,0 +1,107 @@
+openapi: 3.0.1
+info:
+  title: Authentication API
+  description: API for user authentication
+  version: 1.0.0
+tags:
+  - name: auth
+    description: API to handle user authentication
+paths:
+  /auth/signup:
+    post:
+      summary: Register a new user
+      operationId: registerUser
+      tags:
+        - auth
+      requestBody:
+        description: User registration details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Bad request, invalid input data
+  /auth/login:
+    post:
+      summary: Authenticate a user
+      operationId: loginUser
+      tags:
+        - auth
+      requestBody:
+        description: User login credentials, login can be email or phone number
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: User authenticated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Unauthorized, invalid credentials
+components:
+  schemas:
+    RegisterUserRequest:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+          example: "1234567890"
+        password:
+          type: string
+          format: password
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          example: "John"
+        surname:
+          type: string
+          example: "Doe"
+      required:
+        - phoneNumber
+        - password
+        - email
+
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "1234567890 or john.doe@example.com"
+        password:
+          type: string
+          format: password
+      required:
+        - phoneNumber
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        userId:
+          type: integer
+          example: 1
+        role:
+          type: string
+          example: "ROLE_USER"
+      required:
+        - token
+        - userId
+        - role

@@ -2,11 +2,11 @@ package nikolaichuks.teleconnect.backend.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 
 @Getter
 @RequiredArgsConstructor
-public enum UserRole {
-    ROLE_ADMIN("Administrator"),
+public enum UserRole implements GrantedAuthority {
     ROLE_EMPLOYEE("Employee"),
     ROLE_CUSTOMER("Customer");
 
@@ -19,5 +19,10 @@ public enum UserRole {
             }
         }
         throw new IllegalArgumentException("No enum constant for the role: " + role);
+    }
+
+    @Override
+    public String getAuthority() {
+        return name;
     }
 }

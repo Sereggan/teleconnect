@@ -7,6 +7,5 @@ VALUES ('Basic Plan', 19.99, 'Basic plan with limited features', true, 5000, 100
 
 -- Insert roles
 INSERT INTO users (phone_number, password, email, name, surname, role, tariff_id)
-VALUES ('0000000000', 'admin_password', 'admin@example.com', 'Admin', 'User', 'ROLE_ADMIN', NULL),
-       ('1111111111', 'employee_password', 'employee@example.com', 'Employee', 'User', 'ROLE_EMPLOYEE', NULL),
+VALUES ('1111111111', 'employee_password', 'employee@example.com', 'Employee', 'User', 'ROLE_EMPLOYEE', NULL),
        ('1234567890', 'customer_password', 'customer@example.com', 'Customer', 'User', 'ROLE_CUSTOMER', 1);
