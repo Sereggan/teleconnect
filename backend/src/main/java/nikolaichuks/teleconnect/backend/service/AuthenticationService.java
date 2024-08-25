@@ -42,17 +42,11 @@ public class AuthenticationService {
 
     public AuthResponse authenticate(LoginRequest loginRequest) {
         User user = userRepository.findByEmailOrPhoneNumber(loginRequest.getUsername())
-                .orElseThrow(() -> new CustomRestException("User not found", HttpStatus.NOT_FOUND));
-        String username;
-        if (user.getEmail().equals(loginRequest.getUsername())) {
-            username = user.getEmail();
-        } else {
-            username = user.getPhoneNumber();
-        }
+                .orElseThrow(() -> new CustomRestException("Auth error", HttpStatus.UNAUTHORIZED));
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        username,
+                        user.getEmail(),
                         loginRequest.getPassword()
                 )
         );

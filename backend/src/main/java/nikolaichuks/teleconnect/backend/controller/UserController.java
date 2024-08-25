@@ -1,6 +1,7 @@
 package nikolaichuks.teleconnect.backend.controller;
 
 import lombok.RequiredArgsConstructor;
+import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.model.User;
 import nikolaichuks.teleconnect.backend.model.UserRole;
 import nikolaichuks.teleconnect.backend.service.UserService;
@@ -25,7 +26,7 @@ public class UserController implements UserApi {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
         if (!currentUser.getRole().equals(UserRole.ROLE_EMPLOYEE) || !currentUser.getId().equals(id)) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            throw new CustomRestException("Access forbidden", HttpStatus.FORBIDDEN);
         }
 
         return ResponseEntity.ok(userService.getUserById(id));
@@ -34,7 +35,7 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<List<UserDto>> getAllUsers() {
         boolean isAuthenticated = isEmployee();
-        if (!isAuthenticated) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (!isAuthenticated) throw new CustomRestException("Access forbidden", HttpStatus.FORBIDDEN);
 
         return ResponseEntity.ok(userService.getAllUsers());
     }
@@ -63,7 +64,8 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<Void> deleteUser(Integer id) {
         boolean isAuthenticated = isEmployee();
-        if (!isAuthenticated) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (!isAuthenticated) throw new CustomRestException("Access forbidden", HttpStatus.FORBIDDEN);
+
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

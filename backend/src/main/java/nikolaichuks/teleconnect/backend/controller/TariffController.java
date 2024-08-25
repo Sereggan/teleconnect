@@ -1,6 +1,7 @@
 package nikolaichuks.teleconnect.backend.controller;
 
 import lombok.RequiredArgsConstructor;
+import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.model.User;
 import nikolaichuks.teleconnect.backend.model.UserRole;
 import nikolaichuks.teleconnect.backend.service.TariffService;
@@ -48,7 +49,7 @@ public class TariffController implements TariffApi {
     @Override
     public ResponseEntity<TariffDTO> createTariff(TariffDTO tariffDTO) {
         boolean isAuthenticated = isEmployee();
-        if (!isAuthenticated) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (!isAuthenticated) throw new CustomRestException("Access forbidden", HttpStatus.FORBIDDEN);
 
         return new ResponseEntity<>(tariffService.createTariff(tariffDTO), HttpStatus.CREATED);
     }
@@ -56,7 +57,7 @@ public class TariffController implements TariffApi {
     @Override
     public ResponseEntity<TariffDTO> updateTariff(TariffDTO tariffDTO) {
         boolean isAuthenticated = isEmployee();
-        if (!isAuthenticated) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (!isAuthenticated) throw new CustomRestException("Access forbidden", HttpStatus.FORBIDDEN);
 
         return ResponseEntity.ok(tariffService.updateTariff(tariffDTO));
     }
@@ -64,7 +65,7 @@ public class TariffController implements TariffApi {
     @Override
     public ResponseEntity<Void> deleteTariff(Integer id) {
         boolean isAuthenticated = isEmployee();
-        if (!isAuthenticated) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (!isAuthenticated) throw new CustomRestException("Access forbidden", HttpStatus.FORBIDDEN);
 
         tariffService.deleteTariff(id);
         return ResponseEntity.ok().build();
