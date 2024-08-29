@@ -34,7 +34,8 @@ export default function EditUser() {
 
   const fetchTariffs = async () => {
     try {
-      const fetchedTariffs = await getAllTariffs();
+      const controller = new AbortController();
+      const fetchedTariffs = await getAllTariffs({}, controller);
       setTariffs(fetchedTariffs ?? []);
     } catch (error: any) {
       setError("Error fetching tariffs");

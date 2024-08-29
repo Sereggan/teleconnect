@@ -1,56 +1,102 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Main from "./components/Main";
-import UserManagement from "./components/user/UserManagement ";
+import UserManagement from "./components/user/UserManagement";
 import UserDetails from "./components/user/UserDetails";
-import UserForm from "./components/user/EditUser";
+import EditUser from "./components/user/EditUser";
+import NewUser from "./components/user/NewUser";
 import TariffManagement from "./components/tariff/TariffManagement";
 import EditTariff from "./components/tariff/EditTariff";
 import NewTariff from "./components/tariff/NewTariff";
-import Layout from "./components/Layout";
 import TariffDetails from "./components/tariff/TariffDetails";
-import NewUser from "./components/user/NewUser";
-import EditUser from "./components/user/EditUser";
+import Layout from "./components/Layout";
+import LoginPage from "./components/auth/LoginPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { AuthProvider } from "./components/auth/AuthProvider";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <AuthProvider>
+        <Layout />
+      </AuthProvider>
+    ),
     children: [
       {
         index: true,
-        element: <Main />,
+        element: (
+          <ProtectedRoute>
+            <Main />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "users",
-        element: <UserManagement />,
+        element: (
+          <ProtectedRoute>
+            <UserManagement />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "users/:id",
-        element: <UserDetails />,
+        element: (
+          <ProtectedRoute>
+            <UserDetails />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "users/edit/:id",
-        element: <EditUser />,
+        element: (
+          <ProtectedRoute>
+            <EditUser />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "users/add",
-        element: <NewUser />,
+        element: (
+          <ProtectedRoute>
+            <NewUser />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "tariffs",
-        element: <TariffManagement />,
+        element: (
+          <ProtectedRoute>
+            <TariffManagement />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "tariffs/:id",
-        element: <TariffDetails />,
+        element: (
+          <ProtectedRoute>
+            <TariffDetails />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "tariffs/edit/:id",
-        element: <EditTariff />,
+        element: (
+          <ProtectedRoute>
+            <EditTariff />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "tariffs/add",
-        element: <NewTariff />,
+        element: (
+          <ProtectedRoute>
+            <NewTariff />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "login",
+        element: <LoginPage />,
       },
       {
         path: "*",

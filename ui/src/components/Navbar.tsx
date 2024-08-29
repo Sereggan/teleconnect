@@ -1,6 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Header() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    navigate("/login");
+  };
+
   return (
     <nav>
       <ul>
@@ -17,10 +25,8 @@ function Header() {
         <li>
           <Link to="/login">Login</Link>
         </li>
-        <li>
-          <Link to="/logout">Logout</Link>
-        </li>
       </ul>
+      <button onClick={handleLogout}>Logout</button>
     </nav>
   );
 }
