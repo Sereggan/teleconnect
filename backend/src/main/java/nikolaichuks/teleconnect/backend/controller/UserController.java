@@ -25,7 +25,7 @@ public class UserController implements UserApi {
     public ResponseEntity<UserDto> getUserById(Integer id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
-        if (!currentUser.getRole().equals(UserRole.ROLE_EMPLOYEE) || !currentUser.getId().equals(id)) {
+        if (!currentUser.getRole().equals(UserRole.ROLE_EMPLOYEE) && !currentUser.getId().equals(id)) {
             throw new CustomRestException("Access forbidden", HttpStatus.FORBIDDEN);
         }
 

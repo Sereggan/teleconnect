@@ -6,9 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import teleconnect.auth.api.AuthApi;
-import teleconnect.auth.model.AuthResponse;
-import teleconnect.auth.model.LoginRequest;
-import teleconnect.auth.model.RegisterUserRequest;
+import teleconnect.auth.model.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,4 +24,14 @@ public class AuthenticationController implements AuthApi {
         return new ResponseEntity<>(authenticationService.signup(registerUserRequest), HttpStatus.CREATED);
     }
 
+    @Override
+    public ResponseEntity<AuthResponse> refreshToken(TokenRefreshRequest tokenRefreshRequest) {
+        return ResponseEntity.ok(authenticationService.refreshToken(tokenRefreshRequest));
+    }
+
+    @Override
+    public ResponseEntity<Void> logoutUser(TokenRequest tokenRequest) {
+        authenticationService.logout(tokenRequest);
+        return ResponseEntity.noContent().build();
+    }
 }

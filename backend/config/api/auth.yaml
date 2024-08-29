@@ -59,6 +59,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthError'
+  /auth/refresh-token:
+    post:
+      summary: Refresh JWT token
+      operationId: refreshToken
+      tags:
+        - auth
+      requestBody:
+        description: Request to refresh JWT token
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+      responses:
+        '200':
+          description: New JWT token generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '403':
+          description: Forbidden, invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+  /auth/logout:
+    post:
+      summary: Logout a user
+      operationId: logoutUser
+      tags:
+        - auth
+      requestBody:
+        description: Request to logout user by invalidating the token
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+      responses:
+        '204':
+          description: User logged out successfully, token invalidated
+        '400':
+          description: Bad request, invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
 components:
   schemas:
     RegisterUserRequest:
@@ -101,6 +149,9 @@ components:
         token:
           type: string
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        refreshToken:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
         userId:
           type: integer
           example: 1
@@ -109,8 +160,29 @@ components:
           example: "ROLE_USER"
       required:
         - token
+        - refreshToken
         - userId
         - role
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          example: "dGhpc2lzbXlyZWZyZXNodG9rZW4="
+      required:
+        - refreshToken
+    TokenRequest:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        refreshToken:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      required:
+        - token
+        - refreshToken
     AuthError:
       type: object
       properties:

@@ -24,13 +24,23 @@ public class Tariff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String name;
+
     private Double price;
+
     private String description;
+
     private Boolean isActive;
+
     private Integer dataLimit;
+
     private Integer callMinutes;
+
     private Integer smsLimit;
+
     private LocalDate validFrom;
+
     private LocalDate validTo;
+
 }

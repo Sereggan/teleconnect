@@ -1,8 +1,10 @@
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { Tariff } from "../models/Tariff";
+import createAxiosClient from "./AxiosClient";
 
 const basePath: string = "http://localhost:8080";
 const tariffEndpoint: string = "/tariff";
+const tariffClient = createAxiosClient(basePath);
 
 export const getAllTariffs = async (
   queryParams: {
@@ -16,12 +18,14 @@ export const getAllTariffs = async (
     smsLimitMax?: number;
     isActive?: boolean;
     isUsed?: boolean;
-  } = {}
+  } = {},
+  abortController: AbortController
 ): Promise<Tariff[] | undefined> => {
-  const response: AxiosResponse<Tariff[]> = await axios.get(
+  const response: AxiosResponse<Tariff[]> = await tariffClient.get(
     basePath + tariffEndpoint,
     {
       params: queryParams,
+      signal: abortController.signal,
     }
   );
   return response.data;
@@ -30,7 +34,7 @@ export const getAllTariffs = async (
 export const getTariffById = async (
   id: number
 ): Promise<Tariff | undefined> => {
-  const response: AxiosResponse<Tariff> = await axios.get(
+  const response: AxiosResponse<Tariff> = await tariffClient.get(
     `${basePath}${tariffEndpoint}/${id}`
   );
   return response.data;
@@ -39,7 +43,7 @@ export const getTariffById = async (
 export const createTariff = async (
   tariff: Tariff
 ): Promise<Tariff | undefined> => {
-  const response: AxiosResponse<Tariff> = await axios.post(
+  const response: AxiosResponse<Tariff> = await tariffClient.post(
     basePath + tariffEndpoint,
     tariff
   );
@@ -49,7 +53,7 @@ export const createTariff = async (
 export const updateTariff = async (
   tariff: Tariff
 ): Promise<Tariff | undefined> => {
-  const response: AxiosResponse<Tariff> = await axios.put(
+  const response: AxiosResponse<Tariff> = await tariffClient.put(
     basePath + tariffEndpoint,
     tariff
   );
@@ -57,5 +61,5 @@ export const updateTariff = async (
 };
 
 export const deleteTariff = async (id: number): Promise<void> => {
-  await axios.delete(`${basePath}${tariffEndpoint}/${id}`);
+  await tariffClient.delete(`${basePath}${tariffEndpoint}/${id}`);
 };

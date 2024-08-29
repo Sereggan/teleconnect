@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import TariffCard from "./TariffCard";
 import { Link } from "react-router-dom";
 import { getAllTariffs } from "../../services/TariffClient";
@@ -6,7 +6,7 @@ import { Tariff } from "../../models/Tariff";
 import { Button, Container, Row, Col, Spinner, Form } from "react-bootstrap";
 
 export default function TariffManagement() {
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [tariffList, setTariffList] = useState<Tariff[]>([]);
 
@@ -19,27 +19,46 @@ export default function TariffManagement() {
     isUsed: "",
   });
 
-  const fetchTariffs = async () => {
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const fetchTariffs = async (controller: AbortController) => {
     setIsLoading(true);
+
     try {
-      const tariffs = await getAllTariffs({
-        priceMin: filters.priceMin ? parseFloat(filters.priceMin) : undefined,
-        priceMax: filters.priceMax ? parseFloat(filters.priceMax) : undefined,
-        dataLimitMin: filters.dataLimitMin
-          ? parseInt(filters.dataLimitMin)
-          : undefined,
-        dataLimitMax: filters.dataLimitMax
-          ? parseInt(filters.dataLimitMax)
-          : undefined,
-        isActive:
-          filters.isActive !== "" ? filters.isActive === "true" : undefined,
-        isUsed: filters.isUsed !== "" ? filters.isUsed === "true" : undefined,
-      });
-      setTariffList(tariffs ?? []);
+      const tariffs = await getAllTariffs(
+        {
+          priceMin: filters.priceMin ? parseFloat(filters.priceMin) : undefined,
+          priceMax: filters.priceMax ? parseFloat(filters.priceMax) : undefined,
+          dataLimitMin: filters.dataLimitMin
+            ? parseInt(filters.dataLimitMin)
+            : undefined,
+          dataLimitMax: filters.dataLimitMax
+            ? parseInt(filters.dataLimitMax)
+            : undefined,
+          isActive:
+            filters.isActive !== "" ? filters.isActive === "true" : undefined,
+          isUsed: filters.isUsed !== "" ? filters.isUsed === "true" : undefined,
+        },
+        controller
+      );
+      if (isMountedRef.current) {
+        setTariffList(tariffs ?? []);
+      }
     } catch (error: any) {
-      setError("Error fetching tariffs.");
+      if (!controller.signal.aborted) {
+        setError(error.message);
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -55,11 +74,19 @@ export default function TariffManagement() {
 
   const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetchTariffs();
+    const controller = new AbortController();
+    fetchTariffs(controller);
+    return () => {
+      controller.abort();
+    };
   };
 
   useEffect(() => {
-    fetchTariffs();
+    const controller = new AbortController();
+    fetchTariffs(controller);
+    return () => {
+      controller.abort;
+    };
   }, []);
 
   return (

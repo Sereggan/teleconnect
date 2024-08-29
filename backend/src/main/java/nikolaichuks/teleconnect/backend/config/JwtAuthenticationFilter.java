@@ -6,6 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.auth.JwtService;
+import nikolaichuks.teleconnect.backend.exception.CustomRestException;
+import nikolaichuks.teleconnect.backend.repository.TokenBlacklistRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,6 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final TokenBlacklistRepository tokenBlacklistRepository;
 
     @Override
     protected void doFilterInternal(
@@ -43,6 +47,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String jwt = authHeader.substring(7);
             final String username = jwtService.extractUsername(jwt);
+
+            if (tokenBlacklistRepository.existsByToken(jwt)) {
+                throw new CustomRestException("Provided token is invalid.", HttpStatus.UNAUTHORIZED);
+            }
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

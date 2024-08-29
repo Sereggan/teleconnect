@@ -1,8 +1,10 @@
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS tariff CASCADE;
+DROP TABLE IF EXISTS token_blacklist CASCADE;
 
 DROP SEQUENCE IF EXISTS users_id_seq;
 DROP SEQUENCE IF EXISTS tariff_id_seq;
+DROP SEQUENCE IF EXISTS token_blacklist_id_seq;
 
 CREATE SEQUENCE IF NOT EXISTS tariff_id_seq START WITH 1;
 
@@ -35,3 +37,33 @@ CREATE TABLE IF NOT EXISTS users (
     tariff_id INTEGER,
     CONSTRAINT fk_tariff FOREIGN KEY (tariff_id) REFERENCES tariff(id)
     );
+
+CREATE SEQUENCE IF NOT EXISTS token_blacklist_id_seq START WITH 1;
+
+CREATE TABLE IF NOT EXISTS token_blacklist
+(
+    id
+    SERIAL
+    PRIMARY
+    KEY,
+    token
+    VARCHAR
+(
+    512
+) NOT NULL,
+    token_type VARCHAR
+(
+    50
+) NOT NULL,
+    user_id INTEGER NOT NULL,
+    expiry_date TIMESTAMP NOT NULL,
+    CONSTRAINT fk_user FOREIGN KEY
+(
+    user_id
+) REFERENCES users
+(
+    id
+)
+    );
+
+CREATE INDEX IF NOT EXISTS idx_expiry_date ON token_blacklist(expiry_date);
