@@ -24,11 +24,11 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: (
-          <ProtectedRoute>
-            <Main />
-          </ProtectedRoute>
-        ),
+        element: <TariffManagement />,
+      },
+      {
+        path: "tariffs/:id",
+        element: <TariffDetails />,
       },
       {
         path: "users",
@@ -59,22 +59,6 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <NewUser />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "tariffs",
-        element: (
-          <ProtectedRoute>
-            <TariffManagement />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "tariffs/:id",
-        element: (
-          <ProtectedRoute>
-            <TariffDetails />
           </ProtectedRoute>
         ),
       },

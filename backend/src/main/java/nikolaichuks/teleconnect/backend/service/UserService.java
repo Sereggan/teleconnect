@@ -7,6 +7,8 @@ import nikolaichuks.teleconnect.backend.model.User;
 import nikolaichuks.teleconnect.backend.model.UserRole;
 import nikolaichuks.teleconnect.backend.repository.TariffRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
+import nikolaichuks.teleconnect.backend.specification.UserSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import teleconnect.user.model.UserDto;
@@ -20,6 +22,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final MapperUtil mapper;
     private final TariffRepository tariffRepository;
+    private final UserSpecification userSpecification;
 
     public UserDto createUser(UserDto userDTO) {
         User user = mapper.mapUserDtoToUser(userDTO);
@@ -56,8 +59,10 @@ public class UserService {
                 .orElse(null);
     }
 
-    public List<UserDto> getAllUsers() {
-        return userRepository.findAll().stream()
+    public List<UserDto> getAllUsers(String phoneNumber, String email, String name, String surname, String role, Integer tariffId) {
+        Specification<User> specification = userSpecification.getUserSpecification(phoneNumber, email, name, surname, role, tariffId);
+
+        return userRepository.findAll(specification).stream()
                 .map(mapper::mapUserToUserDto)
                 .toList();
     }

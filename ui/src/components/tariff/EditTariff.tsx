@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   deleteTariff,
@@ -14,19 +14,23 @@ export default function EditTariff() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const fetchTariff = async () => {
+  const controllerRef = useRef<AbortController | null>(null);
+
+  const fetchTariff = async (controller: AbortController) => {
     if (id !== undefined) {
       setIsLoading(true);
       try {
         const tariffId = parseInt(id);
-        const fetchedTariff = await getTariffById(tariffId);
+        const fetchedTariff = await getTariffById(tariffId, controller);
         if (fetchedTariff) {
           setTariff(fetchedTariff);
         } else {
           setError("Tariff not found");
         }
       } catch (error: any) {
-        setError(error.message || "Error fetching tariff");
+        if (!controller.signal.aborted) {
+          setError(error.message || "Error fetching tariff");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -34,7 +38,12 @@ export default function EditTariff() {
   };
 
   useEffect(() => {
-    fetchTariff();
+    controllerRef.current = new AbortController();
+    fetchTariff(controllerRef.current);
+
+    return () => {
+      controllerRef.current?.abort();
+    };
   }, [id]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,10 +60,12 @@ export default function EditTariff() {
     if (!tariff) return;
     setIsLoading(true);
     try {
-      await updateTariff(tariff);
-      await fetchTariff();
+      await updateTariff(tariff, controllerRef.current!);
+      await fetchTariff(controllerRef.current!);
     } catch (error: any) {
-      setError("Error updating tariff");
+      if (!controllerRef.current?.signal.aborted) {
+        setError("Error updating tariff");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -64,10 +75,12 @@ export default function EditTariff() {
     if (!tariff || !tariff.id) return;
     setIsLoading(true);
     try {
-      await deleteTariff(tariff.id);
+      await deleteTariff(tariff.id, controllerRef.current!);
       navigate("/tariffs");
     } catch (error: any) {
-      setError("Error deleting tariff");
+      if (!controllerRef.current?.signal.aborted) {
+        setError("Error deleting tariff");
+      }
     } finally {
       setIsLoading(false);
     }

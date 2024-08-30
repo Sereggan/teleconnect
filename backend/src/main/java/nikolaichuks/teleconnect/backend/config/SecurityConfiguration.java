@@ -3,6 +3,7 @@ package nikolaichuks.teleconnect.backend.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +22,10 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+
+    private static final String ROLE_EMPLOYEE = "EMPLOYEE";
+    private static final String ROLE_CUSTOMER = "CUSTOMER";
+
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -30,10 +35,15 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/tariff/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/tariff/**").hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.PUT, "/tariff/**").hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.DELETE, "/tariff/**").hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.GET, "/users").hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.POST, "/users/**").hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole(ROLE_EMPLOYEE)
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

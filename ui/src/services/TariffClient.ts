@@ -32,34 +32,45 @@ export const getAllTariffs = async (
 };
 
 export const getTariffById = async (
-  id: number
+  id: number,
+  abortController: AbortController
 ): Promise<Tariff | undefined> => {
   const response: AxiosResponse<Tariff> = await tariffClient.get(
-    `${basePath}${tariffEndpoint}/${id}`
+    `${basePath}${tariffEndpoint}/${id}`,
+    { signal: abortController.signal }
   );
   return response.data;
 };
 
 export const createTariff = async (
-  tariff: Tariff
+  tariff: Tariff,
+  abortController: AbortController
 ): Promise<Tariff | undefined> => {
   const response: AxiosResponse<Tariff> = await tariffClient.post(
     basePath + tariffEndpoint,
-    tariff
+    tariff,
+    { signal: abortController.signal }
   );
   return response.data;
 };
 
 export const updateTariff = async (
-  tariff: Tariff
+  tariff: Tariff,
+  abortController: AbortController
 ): Promise<Tariff | undefined> => {
   const response: AxiosResponse<Tariff> = await tariffClient.put(
     basePath + tariffEndpoint,
-    tariff
+    tariff,
+    { signal: abortController.signal }
   );
   return response.data;
 };
 
-export const deleteTariff = async (id: number): Promise<void> => {
-  await tariffClient.delete(`${basePath}${tariffEndpoint}/${id}`);
+export const deleteTariff = async (
+  id: number,
+  abortController: AbortController
+): Promise<void> => {
+  await tariffClient.delete(`${basePath}${tariffEndpoint}/${id}`, {
+    signal: abortController.signal,
+  });
 };

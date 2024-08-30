@@ -25,7 +25,7 @@ public class UserController implements UserApi {
     public ResponseEntity<UserDto> getUserById(Integer id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
-        if (!currentUser.getRole().equals(UserRole.ROLE_EMPLOYEE) && !currentUser.getId().equals(id)) {
+        if (!hasEmployeeRole() && !currentUser.getId().equals(id)) {
             throw new CustomRestException("Access forbidden", HttpStatus.FORBIDDEN);
         }
 
@@ -33,18 +33,17 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        boolean isAuthenticated = isEmployee();
-        if (!isAuthenticated) throw new CustomRestException("Access forbidden", HttpStatus.FORBIDDEN);
-
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<UserDto>> getAllUsers(String phoneNumber, String email, String name, String surname, String role, Integer tariffId) {
+        List<UserDto> users = userService.getAllUsers(phoneNumber, email, name, surname, role, tariffId);
+        if (users.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(users);
+        }
     }
 
     @Override
     public ResponseEntity<UserDto> createUser(UserDto userDTO) {
-        boolean isAuthenticated = isEmployee();
-        if (!isAuthenticated) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-
         return new ResponseEntity<>(userService.createUser(userDTO), HttpStatus.CREATED);
     }
 
@@ -53,7 +52,7 @@ public class UserController implements UserApi {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         User currentUser = (User) authentication.getPrincipal();
-        if (!currentUser.getRole().equals(UserRole.ROLE_EMPLOYEE)) {
+        if (!hasEmployeeRole()) {
             if (userDTO.getId() != null && !userDTO.getId().equals(currentUser.getId())) {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
@@ -63,14 +62,11 @@ public class UserController implements UserApi {
 
     @Override
     public ResponseEntity<Void> deleteUser(Integer id) {
-        boolean isAuthenticated = isEmployee();
-        if (!isAuthenticated) throw new CustomRestException("Access forbidden", HttpStatus.FORBIDDEN);
-
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 
-    private boolean isEmployee() {
+    private boolean hasEmployeeRole() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
         return currentUser.getRole().equals(UserRole.ROLE_EMPLOYEE);

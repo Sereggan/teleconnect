@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { deleteUser, getUserById, updateUser } from "../../services/UserClient";
 import { getAllTariffs } from "../../services/TariffClient";
@@ -13,12 +13,25 @@ export default function EditUser() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const fetchUser = async () => {
+  const controllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    controllerRef.current = new AbortController();
+
+    fetchUser(controllerRef.current);
+    fetchTariffs(controllerRef.current);
+
+    return () => {
+      controllerRef.current?.abort();
+    };
+  }, [id]);
+
+  const fetchUser = async (controller: AbortController) => {
     setIsLoading(true);
     try {
       if (id) {
         const userId = parseInt(id);
-        const fetchedUser = await getUserById(userId);
+        const fetchedUser = await getUserById(userId, controller);
         if (fetchedUser) {
           setUser(fetchedUser);
         } else {
@@ -26,26 +39,24 @@ export default function EditUser() {
         }
       }
     } catch (error: any) {
-      setError("Error fetching user");
+      if (!controller.signal.aborted) {
+        setError("Error fetching user");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const fetchTariffs = async () => {
+  const fetchTariffs = async (controller: AbortController) => {
     try {
-      const controller = new AbortController();
       const fetchedTariffs = await getAllTariffs({}, controller);
       setTariffs(fetchedTariffs ?? []);
     } catch (error: any) {
-      setError("Error fetching tariffs");
+      if (!controller.signal.aborted) {
+        setError("Error fetching tariffs");
+      }
     }
   };
-
-  useEffect(() => {
-    fetchUser();
-    fetchTariffs();
-  }, [id]);
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -60,12 +71,17 @@ export default function EditUser() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!user) return;
+
+    controllerRef.current = new AbortController();
+
     setIsLoading(true);
     try {
-      await updateUser(user);
-      await fetchUser();
+      await updateUser(user, controllerRef.current);
+      await fetchUser(controllerRef.current);
     } catch (error: any) {
-      setError("Error updating user");
+      if (!controllerRef.current.signal.aborted) {
+        setError("Error updating user");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -73,12 +89,17 @@ export default function EditUser() {
 
   const handleDelete = async () => {
     if (!user || !user.id) return;
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
     setIsLoading(true);
     try {
-      await deleteUser(user.id);
+      await deleteUser(user.id, controller);
       navigate("/users");
     } catch (error: any) {
-      setError("Error deleting tariff");
+      if (!controller.signal.aborted) {
+        setError("Error deleting user");
+      }
     } finally {
       setIsLoading(false);
     }

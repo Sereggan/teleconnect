@@ -1,6 +1,7 @@
 package nikolaichuks.teleconnect.backend.controller.handler;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -47,6 +48,12 @@ public class RestExceptionHandler {
     @ExceptionHandler({ExpiredJwtException.class})
     protected ResponseEntity<ApiErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
         ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.FORBIDDEN, "The JWT token has expired");
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler({JwtException.class})
+    protected ResponseEntity<ApiErrorResponse> handleJwtException(JwtException ex) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.FORBIDDEN, "The JWT token is malformed");
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
