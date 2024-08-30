@@ -51,6 +51,7 @@ const createAxiosClient = (baseURL: string): AxiosInstance => {
             return client(originalRequest);
           } catch (refreshError) {
             console.error("Failed to refresh token:", refreshError);
+            window.location.href = "/";
           }
         }
       }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createTariff } from "../../services/TariffClient";
 import { Tariff } from "../../models/Tariff";
@@ -18,6 +18,7 @@ export default function NewTariff() {
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const controllerRef = useRef<AbortController | null>(null);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = event.target;
@@ -31,14 +32,24 @@ export default function NewTariff() {
     event.preventDefault();
     setIsLoading(true);
     try {
-      await createTariff(tariff);
+      await createTariff(tariff, controllerRef.current!);
       navigate("/tariffs");
     } catch (error: any) {
-      setError("Error creating tariff");
+      if (!controllerRef.current?.signal.aborted) {
+        setError("Error creating tariff");
+      }
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    controllerRef.current = new AbortController();
+
+    return () => {
+      controllerRef.current?.abort();
+    };
+  }, []);
 
   return (
     <>

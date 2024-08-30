@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { getAllUsers } from "./userClient"; // Пример проверки, что пользователь авторизован
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext<{ isAuthenticated: boolean }>({
   isAuthenticated: false,
@@ -9,6 +9,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -17,6 +18,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsAuthenticated(true);
       } else {
         setIsAuthenticated(false);
+        navigate("/");
       }
     };
 

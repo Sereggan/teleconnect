@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUser } from "../../services/UserClient";
 import { User, UserRole } from "../../models/User";
@@ -16,6 +16,15 @@ export default function NewUser() {
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const controllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+    };
+  }, []);
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -29,12 +38,17 @@ export default function NewUser() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
     setIsLoading(true);
     try {
-      await createUser(user);
+      await createUser(user, controller);
       navigate("/users");
     } catch (error: any) {
-      setError("Error creating user");
+      if (!controller.signal.aborted) {
+        setError("Error creating user");
+      }
     } finally {
       setIsLoading(false);
     }

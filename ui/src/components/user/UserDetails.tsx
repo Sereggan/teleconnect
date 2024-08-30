@@ -10,12 +10,12 @@ export default function UserDetails() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUser = async (abortController: AbortController) => {
       if (id) {
         setIsLoading(true);
         try {
           const userId = parseInt(id);
-          const fetchedUser = await getUserById(userId);
+          const fetchedUser = await getUserById(userId, abortController);
           if (fetchedUser) {
             setUser(fetchedUser);
           } else {
@@ -29,7 +29,11 @@ export default function UserDetails() {
       }
     };
 
-    fetchUser();
+    const abortController = new AbortController();
+    fetchUser(abortController);
+    return () => {
+      abortController.abort();
+    };
   }, [id]);
 
   if (isLoading) {

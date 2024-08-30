@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getTariffById } from "../../services/TariffClient";
 import { Tariff } from "../../models/Tariff";
@@ -9,26 +9,36 @@ export default function TariffDetails() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const controllerRef = useRef<AbortController | null>(null);
+
   useEffect(() => {
-    setIsLoading(true);
-    const fetchTariff = async () => {
+    const fetchTariff = async (controller: AbortController) => {
       if (id !== undefined) {
+        setIsLoading(true);
         try {
           const tariffId = parseInt(id);
-          const tariff = await getTariffById(tariffId);
+          const tariff = await getTariffById(tariffId, controller);
           if (tariff) {
             setTariff(tariff);
           } else {
             setError("Tariff not found");
           }
         } catch (error: any) {
-          setError(error.message || "Error fetching tariff");
+          if (!controller.signal.aborted) {
+            setError(error.message || "Error fetching tariff");
+          }
         } finally {
           setIsLoading(false);
         }
       }
     };
-    fetchTariff();
+
+    controllerRef.current = new AbortController();
+    fetchTariff(controllerRef.current);
+
+    return () => {
+      controllerRef.current?.abort();
+    };
   }, [id]);
 
   return (
