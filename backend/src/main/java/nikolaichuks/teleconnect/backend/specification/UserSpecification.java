@@ -20,25 +20,25 @@ public class UserSpecification {
 
         if (phoneNumber != null) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get(FIELD_PHONE_NUMBER), phoneNumber)
+                    criteriaBuilder.like(root.get(FIELD_PHONE_NUMBER), phoneNumber + "%")
             );
         }
 
         if (email != null) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get(FIELD_EMAIL), email)
+                    criteriaBuilder.like(root.get(FIELD_EMAIL), email + "%")
             );
         }
 
         if (name != null) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get(FIELD_NAME), name)
+                    criteriaBuilder.like(root.get(FIELD_NAME), name + "%")
             );
         }
 
         if (surname != null) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get(FIELD_SURNAME), surname)
+                    criteriaBuilder.like(root.get(FIELD_SURNAME), surname + "%")
             );
         }
 

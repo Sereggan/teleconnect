@@ -8,9 +8,12 @@ import nikolaichuks.teleconnect.backend.model.Tariff;
 import nikolaichuks.teleconnect.backend.repository.TariffRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
 import nikolaichuks.teleconnect.backend.specification.TariffSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import teleconnect.tariff.model.PaginatedTariffResponse;
 import teleconnect.tariff.model.TariffDTO;
 
 import java.util.List;
@@ -59,16 +62,28 @@ public class TariffService {
                 .orElseThrow(() -> new CustomRestException("Tariff not found", HttpStatus.NOT_FOUND));
     }
 
-    public List<TariffDTO> getAllTariffs(Double priceMin, Double priceMax, Integer dataLimitMin, Integer dataLimitMax,
-                                         Integer callMinutesMin, Integer callMinutesMax, Integer smsLimitMin, Integer smsLimitMax,
-                                         Boolean isActive, Boolean isUsed) {
+    public PaginatedTariffResponse getAllTariffs(Double priceMin, Double priceMax, Integer dataLimitMin, Integer dataLimitMax,
+                                                 Integer callMinutesMin, Integer callMinutesMax, Integer smsLimitMin, Integer smsLimitMax,
+                                                 Boolean isActive, Boolean isUsed, Integer limit, Integer offset) {
         Specification<Tariff> specification = tariffSpecification.getTariffSpecification(priceMin, priceMax, dataLimitMin, dataLimitMax,
                 callMinutesMin, callMinutesMax, smsLimitMin, smsLimitMax, isActive, isUsed);
 
-        return tariffRepository.findAll(specification).stream()
+        PageRequest pageRequest = PageRequest.of(offset, limit);
+        Page<Tariff> tariffsPage = tariffRepository.findAll(specification, pageRequest);
+
+        List<TariffDTO> tariffs = tariffsPage.getContent().stream()
                 .map(mapper::mapTariffToTariffDTO)
                 .peek(tariffDTO -> tariffDTO.setIsUsed(userRepository.existsByTariff_Id(tariffDTO.getId())))
                 .toList();
+
+        PaginatedTariffResponse response = new PaginatedTariffResponse();
+        response.setTariffs(tariffs);
+        response.setTotalItems((int) tariffsPage.getTotalElements());
+        response.setTotalPages(tariffsPage.getTotalPages());
+        response.setCurrentPage(offset);
+        response.setItemsOnPage(tariffs.size());
+
+        return response;
     }
 
     public void deleteTariff(Integer id) {

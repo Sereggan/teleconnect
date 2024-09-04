@@ -8,9 +8,14 @@ import nikolaichuks.teleconnect.backend.model.UserRole;
 import nikolaichuks.teleconnect.backend.repository.TariffRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
 import nikolaichuks.teleconnect.backend.specification.UserSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import teleconnect.user.model.PaginatedUserResponse;
+import teleconnect.user.model.PaginatedUserResponsePagination;
 import teleconnect.user.model.UserDto;
 
 import java.util.List;
@@ -23,8 +28,10 @@ public class UserService {
     private final MapperUtil mapper;
     private final TariffRepository tariffRepository;
     private final UserSpecification userSpecification;
+    private final PasswordEncoder passwordEncoder;
 
     public UserDto createUser(UserDto userDTO) {
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         User user = mapper.mapUserDtoToUser(userDTO);
 
         return mapper.mapUserToUserDto(userRepository.save(user));
@@ -59,11 +66,25 @@ public class UserService {
                 .orElse(null);
     }
 
-    public List<UserDto> getAllUsers(String phoneNumber, String email, String name, String surname, String role, Integer tariffId) {
+    public PaginatedUserResponse getAllUsers(String phoneNumber, String email, String name, String surname, String role, Integer tariffId, Integer limit, Integer offset) {
         Specification<User> specification = userSpecification.getUserSpecification(phoneNumber, email, name, surname, role, tariffId);
 
-        return userRepository.findAll(specification).stream()
+        PageRequest pageRequest = PageRequest.of(offset, limit);
+        Page<User> usersPage = userRepository.findAll(specification, pageRequest);
+
+        List<UserDto> users = usersPage.getContent().stream()
                 .map(mapper::mapUserToUserDto)
                 .toList();
+
+        PaginatedUserResponse response = new PaginatedUserResponse();
+        response.setData(users);
+        var pagination = new PaginatedUserResponsePagination();
+        pagination.setTotalItems((int) usersPage.getTotalElements());
+        pagination.setTotalPages(usersPage.getTotalPages());
+        pagination.setCurrentPage(offset);
+        pagination.setItemsOnPage(users.size());
+        response.setPagination(pagination);
+
+        return response;
     }
 }

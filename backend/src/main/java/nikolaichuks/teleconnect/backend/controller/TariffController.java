@@ -6,9 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import teleconnect.tariff.api.TariffApi;
+import teleconnect.tariff.model.PaginatedTariffResponse;
 import teleconnect.tariff.model.TariffDTO;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,22 +21,18 @@ public class TariffController implements TariffApi {
     }
 
     @Override
-    public ResponseEntity<List<TariffDTO>> getAllTariffs(Double priceMin,
-                                                         Double priceMax,
-                                                         Integer dataLimitMin,
-                                                         Integer dataLimitMax,
-                                                         Integer callMinutesMin,
-                                                         Integer callMinutesMax,
-                                                         Integer smsLimitMin,
-                                                         Integer smsLimitMax,
-                                                         Boolean isActive,
-                                                         Boolean isUsed) {
-        List<TariffDTO> tariffs = tariffService.getAllTariffs(priceMin, priceMax, dataLimitMin,
-                dataLimitMax, callMinutesMin, callMinutesMax, smsLimitMin, smsLimitMax, isActive, isUsed);
-        if (tariffs.isEmpty()) {
+    public ResponseEntity<PaginatedTariffResponse> getAllTariffs(Double priceMin, Double priceMax,
+                                                                 Integer dataLimitMin, Integer dataLimitMax,
+                                                                 Integer callMinutesMin, Integer callMinutesMax,
+                                                                 Integer smsLimitMin, Integer smsLimitMax,
+                                                                 Boolean isActive, Boolean isUsed,
+                                                                 Integer limit, Integer offset) {
+        PaginatedTariffResponse response = tariffService.getAllTariffs(priceMin, priceMax, dataLimitMin, dataLimitMax,
+                callMinutesMin, callMinutesMax, smsLimitMin, smsLimitMax, isActive, isUsed, limit, offset);
+        if (response.getTariffs().isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.ok(tariffs);
+            return ResponseEntity.ok(response);
         }
     }
 

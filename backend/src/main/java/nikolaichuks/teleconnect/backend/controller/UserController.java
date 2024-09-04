@@ -11,9 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 import teleconnect.user.api.UserApi;
+import teleconnect.user.model.PaginatedUserResponse;
 import teleconnect.user.model.UserDto;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,12 +32,13 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<List<UserDto>> getAllUsers(String phoneNumber, String email, String name, String surname, String role, Integer tariffId) {
-        List<UserDto> users = userService.getAllUsers(phoneNumber, email, name, surname, role, tariffId);
-        if (users.isEmpty()) {
+    public ResponseEntity<PaginatedUserResponse> getAllUsers(
+            String phoneNumber, String email, String name, String surname, String role, Integer tariffId, Integer limit, Integer offset) {
+        PaginatedUserResponse response = userService.getAllUsers(phoneNumber, email, name, surname, role, tariffId, limit, offset);
+        if (response.getData().isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.ok(users);
+            return ResponseEntity.ok(response);
         }
     }
 

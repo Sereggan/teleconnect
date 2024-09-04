@@ -1,8 +1,12 @@
 import { Link } from "react-router-dom";
 import { Tariff } from "../../models/Tariff";
 import { Card } from "react-bootstrap";
+import { getUserRoleFromToken } from "../auth/AuthUtils";
+import { UserRole } from "../../models/User";
 
 export default function TariffCard({ tariff }: { tariff: Tariff }) {
+  const userRole = getUserRoleFromToken();
+
   return (
     <Card className="mb-3">
       <Card.Body>
@@ -45,9 +49,11 @@ export default function TariffCard({ tariff }: { tariff: Tariff }) {
         <Link to={`/tariffs/${tariff.id}`} className="btn btn-primary me-2">
           Tariff Info
         </Link>
-        <Link to={`/tariffs/edit/${tariff.id}`} className="btn btn-secondary">
-          Edit Tariff
-        </Link>
+        {userRole === UserRole.ROLE_EMPLOYEE && (
+          <Link to={`/tariffs/edit/${tariff.id}`} className="btn btn-secondary">
+            Edit Tariff
+          </Link>
+        )}
       </Card.Body>
     </Card>
   );

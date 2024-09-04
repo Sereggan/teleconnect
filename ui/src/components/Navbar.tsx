@@ -1,7 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
+import { getUserRoleFromToken } from "./auth/AuthUtils";
+import { UserRole } from "../models/User";
 
 function Header() {
   const navigate = useNavigate();
+  const userRole = getUserRoleFromToken();
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -19,9 +22,11 @@ function Header() {
         <li>
           <Link to="/tariffs">Tariffs</Link>
         </li>
-        <li>
-          <Link to="/users">Users</Link>
-        </li>
+        {userRole === UserRole.ROLE_EMPLOYEE && (
+          <li>
+            <Link to="/users">Users</Link>
+          </li>
+        )}
         <li>
           <Link to="/login">Login</Link>
         </li>

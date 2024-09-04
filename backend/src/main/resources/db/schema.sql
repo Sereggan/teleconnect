@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS users (
     surname VARCHAR(30) NOT NULL,
     role VARCHAR(50) NOT NULL,
     tariff_id INTEGER,
+    birth_date DATE,
     CONSTRAINT fk_tariff FOREIGN KEY (tariff_id) REFERENCES tariff(id)
     );
 
