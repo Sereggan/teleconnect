@@ -14,16 +14,31 @@ export const getAllUsers = async (
     surname?: string;
     role?: string;
     tariffId?: number;
+    limit?: number;
+    offset?: number;
   } = {},
   abortController: AbortController
-): Promise<User[] | undefined> => {
-  const response: AxiosResponse<User[]> = await userClient.get(
-    basePath + userEndpoint,
-    {
-      params: queryParams,
-      signal: abortController.signal,
-    }
-  );
+): Promise<{
+  data: User[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsOnPage: number;
+  };
+}> => {
+  const response: AxiosResponse<{
+    data: User[];
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalItems: number;
+      itemsOnPage: number;
+    };
+  }> = await userClient.get(basePath + userEndpoint, {
+    params: queryParams,
+    signal: abortController.signal,
+  });
   return response.data;
 };
 

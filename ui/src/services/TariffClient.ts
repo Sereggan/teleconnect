@@ -12,22 +12,27 @@ export const getAllTariffs = async (
     priceMax?: number;
     dataLimitMin?: number;
     dataLimitMax?: number;
-    callMinutesMin?: number;
-    callMinutesMax?: number;
-    smsLimitMin?: number;
-    smsLimitMax?: number;
     isActive?: boolean;
     isUsed?: boolean;
+    limit?: number;
+    offset?: number;
   } = {},
   abortController: AbortController
-): Promise<Tariff[] | undefined> => {
-  const response: AxiosResponse<Tariff[]> = await tariffClient.get(
-    basePath + tariffEndpoint,
-    {
-      params: queryParams,
-      signal: abortController.signal,
-    }
-  );
+): Promise<{
+  tariffs: Tariff[];
+  totalItems: number;
+  totalPages: number;
+  itemsOnPage: number;
+}> => {
+  const response: AxiosResponse<{
+    tariffs: Tariff[];
+    totalItems: number;
+    totalPages: number;
+    itemsOnPage: number;
+  }> = await tariffClient.get(basePath + tariffEndpoint, {
+    params: queryParams,
+    signal: abortController.signal,
+  });
   return response.data;
 };
 

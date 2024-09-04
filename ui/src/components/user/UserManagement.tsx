@@ -2,13 +2,27 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { getAllUsers } from "../../services/UserClient";
 import { User } from "../../models/User";
-import { Button, Container, Row, Col, Spinner, Form } from "react-bootstrap";
+import {
+  Button,
+  Container,
+  Row,
+  Col,
+  Spinner,
+  Form,
+  Pagination,
+} from "react-bootstrap";
 import UserCard from "./UserCard";
 
 export default function UserManagement() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [userList, setUserList] = useState<User[]>([]);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 0,
+    totalItems: 0,
+    itemsOnPage: 25,
+  });
 
   const [filters, setFilters] = useState({
     phoneNumber: "",
@@ -28,11 +42,11 @@ export default function UserManagement() {
     };
   }, []);
 
-  const fetchUsers = async (controller: AbortController) => {
+  const fetchUsers = async (page = 1, controller: AbortController) => {
     setIsLoading(true);
 
     try {
-      const users = await getAllUsers(
+      const { data: users, pagination: paginationData } = await getAllUsers(
         {
           phoneNumber: filters.phoneNumber || undefined,
           email: filters.email || undefined,
@@ -40,11 +54,19 @@ export default function UserManagement() {
           surname: filters.surname || undefined,
           role: filters.role || undefined,
           tariffId: filters.tariffId ? parseInt(filters.tariffId) : undefined,
+          limit: pagination.itemsOnPage,
+          offset: page - 1,
         },
         controller
       );
       if (isMountedRef.current) {
         setUserList(users ?? []);
+        setPagination({
+          currentPage: page,
+          totalPages: paginationData.totalPages,
+          totalItems: paginationData.totalItems,
+          itemsOnPage: paginationData.itemsOnPage,
+        });
       }
     } catch (error: any) {
       if (!controller.signal.aborted) {
@@ -70,15 +92,20 @@ export default function UserManagement() {
   const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const controller = new AbortController();
-    fetchUsers(controller);
+    fetchUsers(1, controller);
     return () => {
       controller.abort();
     };
   };
 
+  const handlePageChange = (page: number) => {
+    const controller = new AbortController();
+    fetchUsers(page, controller);
+  };
+
   useEffect(() => {
     const controller = new AbortController();
-    fetchUsers(controller);
+    fetchUsers(pagination.currentPage, controller);
     return () => {
       controller.abort();
     };
@@ -186,15 +213,14 @@ export default function UserManagement() {
       {error && <div>Something went wrong, please try again... {error}</div>}
       {isLoading && <Spinner animation="border" />}
       {!isLoading && !error && (
-        <Row>
-          {userList.length === 0 ? (
-            <Col>
-              <p>No users available.</p>
-            </Col>
-          ) : (
-            userList
-              .sort((a, b) => (a.id == null || b.id == null ? 0 : a.id - b.id))
-              .map((user) => (
+        <>
+          <Row>
+            {userList.length === 0 ? (
+              <Col>
+                <p>No users available.</p>
+              </Col>
+            ) : (
+              userList.map((user) => (
                 <Col
                   key={user.id}
                   md={4}
@@ -203,8 +229,21 @@ export default function UserManagement() {
                   <UserCard user={user} />
                 </Col>
               ))
-          )}
-        </Row>
+            )}
+          </Row>
+
+          <Pagination>
+            {Array.from({ length: pagination.totalPages }, (_, idx) => (
+              <Pagination.Item
+                key={idx}
+                active={idx + 1 === pagination.currentPage}
+                onClick={() => handlePageChange(idx + 1)}
+              >
+                {idx + 1}
+              </Pagination.Item>
+            ))}
+          </Pagination>
+        </>
       )}
     </Container>
   );
