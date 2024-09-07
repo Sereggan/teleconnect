@@ -71,6 +71,36 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
   /tariff-adjustment/{id}:
+    get:
+      summary: Get a tariff adjustment by user ID
+      operationId: getTariffAdjustmentByUserId
+      tags:
+        - tariff-adjustment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tariff adjustment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TariffAdjustmentDTO'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
     delete:
       summary: Delete a tariff adjustment by ID
       operationId: deleteTariffAdjustment

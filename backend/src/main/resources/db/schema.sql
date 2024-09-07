@@ -3,16 +3,17 @@ DROP TABLE IF EXISTS tariff CASCADE;
 DROP TABLE IF EXISTS token_blacklist CASCADE;
 DROP TABLE IF EXISTS tariff_adjustment CASCADE;
 
-DROP SEQUENCE IF EXISTS users_id_seq;
-DROP SEQUENCE IF EXISTS tariff_id_seq;
-DROP SEQUENCE IF EXISTS token_blacklist_id_seq;
-DROP SEQUENCE IF EXISTS tariff_adjustment_id_seq;
-
-CREATE SEQUENCE IF NOT EXISTS tariff_id_seq START WITH 1;
-
+-- Таблица tariff
 CREATE TABLE IF NOT EXISTS tariff (
-    id INTEGER DEFAULT nextval('tariff_id_seq') UNIQUE,
-    name VARCHAR(100) NOT NULL PRIMARY KEY,
+                                      id
+                                      SERIAL
+                                      PRIMARY
+                                      KEY,
+                                      name
+                                      VARCHAR
+(
+                                      100
+) NOT NULL UNIQUE,
     price NUMERIC(10, 2) NOT NULL,
     description VARCHAR
 (
@@ -24,10 +25,31 @@ CREATE TABLE IF NOT EXISTS tariff (
     sms_limit INTEGER DEFAULT 0
     );
 
-CREATE SEQUENCE IF NOT EXISTS users_id_seq START WITH 1;
+CREATE TABLE IF NOT EXISTS tariff_adjustment
+(
+    id
+    SERIAL
+    PRIMARY
+    KEY,
+    adjusted_data_limit
+    INTEGER,
+    adjusted_call_minutes
+    INTEGER,
+    adjusted_sms_limit
+    INTEGER,
+    discount_percentage
+    NUMERIC
+(
+    5,
+    2
+)
+    );
 
 CREATE TABLE IF NOT EXISTS users (
-    id INTEGER DEFAULT nextval('users_id_seq') PRIMARY KEY,
+                                     id
+                                     SERIAL
+                                     PRIMARY
+                                     KEY,
     phone_number VARCHAR(15) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -37,7 +59,13 @@ CREATE TABLE IF NOT EXISTS users (
     tariff_id INTEGER,
     tariff_adjustment_id INTEGER,
     birth_date DATE,
-    CONSTRAINT fk_tariff FOREIGN KEY (tariff_id) REFERENCES tariff(id)
+    CONSTRAINT fk_tariff FOREIGN KEY
+(
+    tariff_id
+) REFERENCES tariff
+(
+    id
+),
     CONSTRAINT fk_tariff_adjustment FOREIGN KEY
 (
     tariff_adjustment_id
@@ -46,8 +74,6 @@ CREATE TABLE IF NOT EXISTS users (
     id
 )
     );
-
-CREATE SEQUENCE IF NOT EXISTS token_blacklist_id_seq START WITH 1;
 
 CREATE TABLE IF NOT EXISTS token_blacklist
 (
@@ -73,36 +99,4 @@ CREATE TABLE IF NOT EXISTS token_blacklist
 (
     id
 )
-    );
-
-CREATE INDEX IF NOT EXISTS idx_expiry_date ON token_blacklist(expiry_date);
-
-CREATE SEQUENCE IF NOT EXISTS tariff_adjustment_id_seq START WITH 1;
-
-CREATE TABLE IF NOT EXISTS tariff_adjustment
-(
-    id
-    SERIAL
-    PRIMARY
-    KEY,
-    user_id
-    INTEGER
-    NOT
-    NULL,
-    tariff_id
-    INTEGER
-    NOT
-    NULL,
-    adjusted_data_limit
-    INTEGER,
-    adjusted_call_minutes
-    INTEGER,
-    adjusted_sms_limit
-    INTEGER,
-    discount_percentage
-    NUMERIC
-(
-    5,
-    2
-),
     );

@@ -13,8 +13,8 @@ import teleconnect.tariffadjustment.model.TariffAdjustmentDTO;
 @RequiredArgsConstructor
 public class TariffAdjustmentService {
 
-    private final TariffAdjustmentRepository tariffAdjustmentRepository;
     private final MapperUtil mapper;
+    private final TariffAdjustmentRepository tariffAdjustmentRepository;
 
     public TariffAdjustmentDTO createAdjustment(TariffAdjustmentDTO adjustmentDTO) {
         TariffAdjustment adjustment = mapper.mapTariffAdjustmentDTOToTariffAdjustment(adjustmentDTO);
@@ -31,6 +31,12 @@ public class TariffAdjustmentService {
                 .setDiscountPercentage(adjustmentDTO.getDiscountPercentage());
 
         return mapper.mapTariffAdjustmentToTariffAdjustmentDTO(tariffAdjustmentRepository.save(adjustment));
+    }
+
+    public TariffAdjustmentDTO getTariffAdjustment(Integer userId) {
+        return tariffAdjustmentRepository.findByUserId(userId)
+                .map(mapper::mapTariffAdjustmentToTariffAdjustmentDTO)
+                .orElse(null);
     }
 
     public void deleteAdjustment(Integer id) {

@@ -20,6 +20,11 @@ public class TariffAdjustmentController implements TariffAdjustmentApi {
     }
 
     @Override
+    public ResponseEntity<TariffAdjustmentDTO> getTariffAdjustmentByUserId(Integer id) {
+        return ResponseEntity.ok(tariffAdjustmentService.getTariffAdjustment(id));
+    }
+
+    @Override
     public ResponseEntity<TariffAdjustmentDTO> updateTariffAdjustment(TariffAdjustmentDTO tariffAdjustmentDTO) {
         return ResponseEntity.ok(tariffAdjustmentService.updateAdjustment(tariffAdjustmentDTO));
     }
