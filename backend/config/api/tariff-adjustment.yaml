@@ -1,0 +1,136 @@
+openapi: 3.0.1
+info:
+  title: Tariff Adjustment Management API
+  description: API for managing tariff adjustments in the TeleConnect Manager application
+  version: 1.0.0
+tags:
+  - name: tariff-adjustment
+    description: API to manage tariff adjustments for users
+paths:
+  /tariff-adjustment:
+    post:
+      summary: Create a new tariff adjustment
+      operationId: createTariffAdjustment
+      tags:
+        - tariff-adjustment
+      requestBody:
+        description: Tariff adjustment to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TariffAdjustmentDTO'
+      responses:
+        '201':
+          description: Tariff adjustment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TariffAdjustmentDTO'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+    put:
+      summary: Update a tariff adjustment
+      operationId: updateTariffAdjustment
+      tags:
+        - tariff-adjustment
+      requestBody:
+        description: Tariff adjustment to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TariffAdjustmentDTO'
+      responses:
+        '200':
+          description: Tariff adjustment updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TariffAdjustmentDTO'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+  /tariff-adjustment/{id}:
+    delete:
+      summary: Delete a tariff adjustment by ID
+      operationId: deleteTariffAdjustment
+      tags:
+        - tariff-adjustment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Tariff adjustment deleted
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+components:
+  schemas:
+    TariffAdjustmentDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        adjusted_data_limit:
+          type: integer
+        adjusted_call_minutes:
+          type: integer
+        adjusted_sms_limit:
+          type: integer
+        discount_percentage:
+          type: number
+          format: double
+          description: Percentage discount on tariff price
+    AuthError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid or missing token"
+    ForbiddenError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Forbidden: insufficient permissions"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: [ ]

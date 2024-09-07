@@ -215,7 +215,7 @@ components:
     PaginatedUserResponse:
       type: object
       properties:
-        data:
+        users:
           type: array
           items:
             $ref: '#/components/schemas/UserDto'
@@ -255,6 +255,8 @@ components:
         role:
           type: string
         tariffId:
+          type: integer
+        tariff_adjustment_id:
           type: integer
         birthDate:
           type: string

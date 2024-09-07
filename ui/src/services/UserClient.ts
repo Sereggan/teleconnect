@@ -19,7 +19,7 @@ export const getAllUsers = async (
   } = {},
   abortController: AbortController
 ): Promise<{
-  data: User[];
+  users: User[];
   pagination: {
     currentPage: number;
     totalPages: number;
@@ -28,7 +28,7 @@ export const getAllUsers = async (
   };
 }> => {
   const response: AxiosResponse<{
-    data: User[];
+    users: User[];
     pagination: {
       currentPage: number;
       totalPages: number;

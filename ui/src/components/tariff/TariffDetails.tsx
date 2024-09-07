@@ -66,18 +66,6 @@ export default function TariffDetails() {
           <p>
             <strong>SMS Limit:</strong> {tariff.smsLimit}
           </p>
-          {tariff.validFrom && (
-            <p>
-              <strong>Valid From:</strong>{" "}
-              {new Date(tariff.validFrom).toLocaleDateString()}
-            </p>
-          )}
-          {tariff.validTo && (
-            <p>
-              <strong>Valid To:</strong>{" "}
-              {new Date(tariff.validTo).toLocaleDateString()}
-            </p>
-          )}
           <p>
             <strong>Active:</strong> {tariff.isActive ? "Yes" : "No"}
           </p>

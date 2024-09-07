@@ -51,6 +51,8 @@ public class UserService {
         if (userDetails.getTariffId() != null) {
             tariffRepository.findById(userDetails.getTariffId())
                     .ifPresent(user::setTariff);
+        } else {
+            user.setTariff(null);
         }
 
         return mapper.mapUserToUserDto(userRepository.save(user));
@@ -77,7 +79,7 @@ public class UserService {
                 .toList();
 
         PaginatedUserResponse response = new PaginatedUserResponse();
-        response.setData(users);
+        response.setUsers(users);
         var pagination = new PaginatedUserResponsePagination();
         pagination.setTotalItems((int) usersPage.getTotalElements());
         pagination.setTotalPages(usersPage.getTotalPages());

@@ -260,12 +260,6 @@ components:
           type: integer
         description:
           type: string
-        validFrom:
-          type: string
-          format: date
-        validTo:
-          type: string
-          format: date
         isActive:
           type: boolean
         isUsed:

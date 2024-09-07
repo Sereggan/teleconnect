@@ -159,26 +159,6 @@ export default function EditTariff() {
             </label>
             <br />
             <label>
-              Valid From:
-              <input
-                type="date"
-                name="validFrom"
-                value={tariff.validFrom || ""}
-                onChange={handleChange}
-              />
-            </label>
-            <br />
-            <label>
-              Valid To:
-              <input
-                type="date"
-                name="validTo"
-                value={tariff.validTo || ""}
-                onChange={handleChange}
-              />
-            </label>
-            <br />
-            <label>
               Active:
               <input
                 type="checkbox"

@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,12 +36,18 @@ public class User implements UserDetails {
 
     private String surname;
 
+    private LocalDate birthDate;
+
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
     @OneToOne
     @JoinColumn(name = "tariff_id")
     private Tariff tariff;
+
+    @OneToOne
+    @JoinColumn(name = "tariff_adjustment_id")
+    private TariffAdjustment tariffAdjustment;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

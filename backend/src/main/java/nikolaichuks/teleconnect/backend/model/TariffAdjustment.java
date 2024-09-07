@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * Tariff entity
+ * TariffAdjustment entity
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,25 +16,16 @@ import lombok.experimental.Accessors;
 @Data
 @Entity
 @Builder
-@Table(name = "tariff")
-public class Tariff {
+@Table(name = "tariff_adjustment")
+public class TariffAdjustment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
-
-    private Double price;
-
-    private String description;
-
-    private Boolean isActive;
-
-    private Integer dataLimit;
-
-    private Integer callMinutes;
-
-    private Integer smsLimit;
+    private Integer adjustedDataLimit;
+    private Integer adjustedCallMinutes;
+    private Integer adjustedSmsLimit;
+    private Double discountPercentage;
 
 }

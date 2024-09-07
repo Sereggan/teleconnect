@@ -14,6 +14,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { AuthProvider } from "./components/auth/AuthProvider";
 import RoleProtectedRoute from "./components/auth/RoleProtectedRouteProps";
 import { UserRole } from "./models/User";
+import ChangeTariff from "./components/user/ChangeTariff";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <UserDetails />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "users/:id/change-tariff",
+        element: (
+          <ProtectedRoute>
+            <ChangeTariff />
           </ProtectedRoute>
         ),
       },

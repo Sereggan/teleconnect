@@ -12,4 +12,5 @@ export interface User {
   surname: string;
   role: UserRole;
   tariffId?: number;
+  tariffAdjustmentId?: number;
 }

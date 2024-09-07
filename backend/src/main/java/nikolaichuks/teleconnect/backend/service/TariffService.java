@@ -42,8 +42,6 @@ public class TariffService {
                 .setCallMinutes(tariffDTO.getCallMinutes())
                 .setDataLimit(tariffDTO.getDataLimit())
                 .setSmsLimit(tariffDTO.getSmsLimit())
-                .setValidFrom(tariffDTO.getValidFrom())
-                .setValidTo(tariffDTO.getValidTo())
                 .setIsActive(tariffDTO.getIsActive());
 
         var mappedTariff = mapper.mapTariffToTariffDTO(tariffRepository.save(existingTariff));

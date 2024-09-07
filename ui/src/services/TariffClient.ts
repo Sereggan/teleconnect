@@ -12,6 +12,10 @@ export const getAllTariffs = async (
     priceMax?: number;
     dataLimitMin?: number;
     dataLimitMax?: number;
+    callMinutesMin?: number;
+    callMinutesMax?: number;
+    smsLimitMin?: number;
+    smsLimitMax?: number;
     isActive?: boolean;
     isUsed?: boolean;
     limit?: number;

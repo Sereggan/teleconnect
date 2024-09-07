@@ -104,6 +104,16 @@ export default function TariffManagement() {
     fetchTariffs(page, controller);
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  };
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  };
+
   useEffect(() => {
     const controller = new AbortController();
     fetchTariffs(pagination.currentPage, controller);
@@ -126,7 +136,84 @@ export default function TariffManagement() {
       </Row>
 
       <Form onSubmit={handleFilterSubmit} className="mb-4">
-        <Row></Row>
+        <Row>
+          <Col md={2}>
+            <Form.Group>
+              <Form.Label>Price Min</Form.Label>
+              <Form.Control
+                type="number"
+                name="priceMin"
+                value={filters.priceMin}
+                onChange={handleInputChange}
+                placeholder="Min Price"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={2}>
+            <Form.Group>
+              <Form.Label>Price Max</Form.Label>
+              <Form.Control
+                type="number"
+                name="priceMax"
+                value={filters.priceMax}
+                onChange={handleInputChange}
+                placeholder="Max Price"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={2}>
+            <Form.Group>
+              <Form.Label>Data Limit Min</Form.Label>
+              <Form.Control
+                type="number"
+                name="dataLimitMin"
+                value={filters.dataLimitMin}
+                onChange={handleInputChange}
+                placeholder="Min Data"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={2}>
+            <Form.Group>
+              <Form.Label>Data Limit Max</Form.Label>
+              <Form.Control
+                type="number"
+                name="dataLimitMax"
+                value={filters.dataLimitMax}
+                onChange={handleInputChange}
+                placeholder="Max Data"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={2}>
+            <Form.Group>
+              <Form.Label>Is Active</Form.Label>
+              <Form.Select
+                name="isActive"
+                value={filters.isActive}
+                onChange={handleSelectChange}
+              >
+                <option value="">Any</option>
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          <Col md={2}>
+            <Form.Group>
+              <Form.Label>Is Used</Form.Label>
+              <Form.Select
+                name="isUsed"
+                value={filters.isUsed}
+                onChange={handleSelectChange}
+              >
+                <option value="">Any</option>
+                <option value="true">Used</option>
+                <option value="false">Unused</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+        </Row>
         <Row className="mt-3">
           <Col>
             <Button type="submit" variant="primary">

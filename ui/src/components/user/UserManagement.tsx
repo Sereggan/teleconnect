@@ -46,7 +46,7 @@ export default function UserManagement() {
     setIsLoading(true);
 
     try {
-      const { data: users, pagination: paginationData } = await getAllUsers(
+      const { users: users, pagination: paginationData } = await getAllUsers(
         {
           phoneNumber: filters.phoneNumber || undefined,
           email: filters.email || undefined,

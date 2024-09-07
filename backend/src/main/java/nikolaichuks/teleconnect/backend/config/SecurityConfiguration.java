@@ -25,6 +25,10 @@ public class SecurityConfiguration {
 
     private static final String ROLE_EMPLOYEE = "EMPLOYEE";
     private static final String ROLE_CUSTOMER = "CUSTOMER";
+    private static final String AUTH_URL = "/auth/**";
+    private static final String TARIFF_URL = "/tariff/**";
+    private static final String USERS_URL = "/users/**";
+    private static final String TARIFF_ADJUSTMENT_URL = "/tariff-adjustment/**";
 
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -35,14 +39,20 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/tariff/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/tariff/**").hasRole(ROLE_EMPLOYEE)
-                        .requestMatchers(HttpMethod.PUT, "/tariff/**").hasRole(ROLE_EMPLOYEE)
-                        .requestMatchers(HttpMethod.DELETE, "/tariff/**").hasRole(ROLE_EMPLOYEE)
-                        .requestMatchers(HttpMethod.GET, "/users").hasRole(ROLE_EMPLOYEE)
-                        .requestMatchers(HttpMethod.POST, "/users/**").hasRole(ROLE_EMPLOYEE)
-                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(AUTH_URL).permitAll()
+                        .requestMatchers(HttpMethod.GET, TARIFF_URL).permitAll()
+                        .requestMatchers(HttpMethod.POST, TARIFF_URL).hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.PUT, TARIFF_URL).hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.DELETE, TARIFF_URL).hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.GET, USERS_URL).hasAnyRole(ROLE_EMPLOYEE, ROLE_CUSTOMER)
+                        .requestMatchers(HttpMethod.POST, USERS_URL).hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.PUT, USERS_URL).hasAnyRole(ROLE_EMPLOYEE, ROLE_CUSTOMER)
+                        .requestMatchers(HttpMethod.DELETE, USERS_URL).hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.GET, TARIFF_ADJUSTMENT_URL).hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.POST, TARIFF_ADJUSTMENT_URL).hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.PUT, TARIFF_ADJUSTMENT_URL).hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.DELETE, TARIFF_ADJUSTMENT_URL).hasRole(ROLE_EMPLOYEE)
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

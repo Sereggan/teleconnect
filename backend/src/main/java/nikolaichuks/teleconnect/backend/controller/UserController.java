@@ -24,18 +24,18 @@ public class UserController implements UserApi {
     public ResponseEntity<UserDto> getUserById(Integer id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
-        if (!hasEmployeeRole() && !currentUser.getId().equals(id)) {
+        if (hasEmployeeRole() || currentUser.getId().equals(id)) {
+            return ResponseEntity.ok(userService.getUserById(id));
+        } else {
             throw new CustomRestException("Access forbidden", HttpStatus.FORBIDDEN);
         }
-
-        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @Override
     public ResponseEntity<PaginatedUserResponse> getAllUsers(
             String phoneNumber, String email, String name, String surname, String role, Integer tariffId, Integer limit, Integer offset) {
         PaginatedUserResponse response = userService.getAllUsers(phoneNumber, email, name, surname, role, tariffId, limit, offset);
-        if (response.getData().isEmpty()) {
+        if (response.getUsers().isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.ok(response);
@@ -52,12 +52,11 @@ public class UserController implements UserApi {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         User currentUser = (User) authentication.getPrincipal();
-        if (!hasEmployeeRole()) {
-            if (userDTO.getId() != null && !userDTO.getId().equals(currentUser.getId())) {
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-            }
+        if (hasEmployeeRole() || userDTO.getId().equals(currentUser.getId())) {
+            return ResponseEntity.ok(userService.updateUser(userDTO));
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        return ResponseEntity.ok(userService.updateUser(userDTO));
     }
 
     @Override
