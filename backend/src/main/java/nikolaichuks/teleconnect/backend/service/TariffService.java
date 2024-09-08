@@ -1,7 +1,6 @@
 package nikolaichuks.teleconnect.backend.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
 import nikolaichuks.teleconnect.backend.model.Tariff;
@@ -49,7 +48,6 @@ public class TariffService {
         return mappedTariff;
     }
 
-    @SneakyThrows
     public TariffDTO getTariffById(Integer id) {
         return tariffRepository.findById(id)
                 .map(mapper::mapTariffToTariffDTO)
@@ -58,6 +56,16 @@ public class TariffService {
                     return tariffDTO;
                 })
                 .orElseThrow(() -> new CustomRestException("Tariff not found", HttpStatus.NOT_FOUND));
+    }
+
+    public TariffDTO getTariffByUserId(Integer userId) {
+        return tariffRepository.findByUserId(userId)
+                .map(mapper::mapTariffToTariffDTO)
+                .map(tariffDTO -> {
+                    tariffDTO.setIsUsed(true);
+                    return tariffDTO;
+                })
+                .orElse(null);
     }
 
     public PaginatedTariffResponse getAllTariffs(Double priceMin, Double priceMax, Integer dataLimitMin, Integer dataLimitMax,

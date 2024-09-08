@@ -240,6 +240,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
+  /tariff/user/{userId}:
+    get:
+      summary: Get a tariff by user ID
+      operationId: getTariffByUserId
+      tags:
+        - tariff
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tariff details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TariffDTO'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: Tariff not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
 components:
   schemas:
     TariffDTO:
