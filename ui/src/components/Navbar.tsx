@@ -27,6 +27,11 @@ function Header() {
             <Link to="/users">Users</Link>
           </li>
         )}
+        {userRole === UserRole.ROLE_CUSTOMER && (
+          <li>
+            <Link to="/users/my-tariff">My Tariff</Link>
+          </li>
+        )}
         <li>
           <Link to="/login">Login</Link>
         </li>

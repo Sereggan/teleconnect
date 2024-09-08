@@ -18,6 +18,7 @@ export default function LoginPage() {
       });
       localStorage.setItem("accessToken", response.data.token);
       localStorage.setItem("refreshToken", response.data.refreshToken);
+      localStorage.setItem("userId", response.data.userId);
       navigate("/");
     } catch (error: any) {
       setError("Invalid credentials, please try again.");
