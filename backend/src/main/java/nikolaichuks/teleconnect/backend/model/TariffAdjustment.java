@@ -28,4 +28,11 @@ public class TariffAdjustment {
     private Integer adjustedSmsLimit;
     private Double discountPercentage;
 
+    @ManyToOne
+    @JoinColumn(name = "tariff_id", nullable = false)
+    private Tariff tariff;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

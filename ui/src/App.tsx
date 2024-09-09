@@ -15,7 +15,7 @@ import { AuthProvider } from "./components/auth/AuthProvider";
 import RoleProtectedRoute from "./components/auth/RoleProtectedRouteProps";
 import { UserRole } from "./models/User";
 import ChangeTariff from "./components/user/ChangeTariff";
-import UserTariff from "./components/tariff/UserTariff";
+import UserTariff from "./components/user/UserTariff";
 
 const router = createBrowserRouter([
   {

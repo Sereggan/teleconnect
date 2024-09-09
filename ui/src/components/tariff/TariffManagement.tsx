@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import TariffCard from "./TariffCard";
 import { Link } from "react-router-dom";
 import { getAllTariffs } from "../../services/TariffClient";
 import { Tariff } from "../../models/Tariff";
@@ -12,7 +11,9 @@ import {
   Form,
   Pagination,
 } from "react-bootstrap";
-
+import TariffCard from "./TariffCard";
+import { UserRole } from "../../models/User";
+import { getUserRoleFromToken } from "../auth/AuthUtils";
 export default function TariffManagement() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +33,7 @@ export default function TariffManagement() {
     isActive: "",
     isUsed: "",
   });
+  const userRole = getUserRoleFromToken();
 
   const isMountedRef = useRef(true);
 
@@ -46,6 +48,17 @@ export default function TariffManagement() {
     setIsLoading(true);
 
     try {
+      let isActive: boolean | undefined;
+      let isUsed: boolean | undefined;
+
+      if (userRole === UserRole.ROLE_CUSTOMER) {
+        isActive = true;
+        isUsed = undefined;
+      } else {
+        isActive =
+          filters.isActive !== "" ? filters.isActive === "true" : undefined;
+        isUsed = filters.isUsed !== "" ? filters.isUsed === "true" : undefined;
+      }
       const { tariffs, totalItems, totalPages, itemsOnPage } =
         await getAllTariffs(
           {
@@ -61,11 +74,9 @@ export default function TariffManagement() {
             dataLimitMax: filters.dataLimitMax
               ? parseInt(filters.dataLimitMax)
               : undefined,
-            isActive:
-              filters.isActive !== "" ? filters.isActive === "true" : undefined,
-            isUsed:
-              filters.isUsed !== "" ? filters.isUsed === "true" : undefined,
-            limit: pagination.itemsOnPage,
+            isActive: isActive,
+            isUsed: isUsed,
+            limit: 25,
             offset: page - 1,
           },
           controller
@@ -121,7 +132,6 @@ export default function TariffManagement() {
       controller.abort();
     };
   }, []);
-
   return (
     <Container>
       <Row className="mb-3">
@@ -185,34 +195,38 @@ export default function TariffManagement() {
               />
             </Form.Group>
           </Col>
-          <Col md={2}>
-            <Form.Group>
-              <Form.Label>Is Active</Form.Label>
-              <Form.Select
-                name="isActive"
-                value={filters.isActive}
-                onChange={handleSelectChange}
-              >
-                <option value="">Any</option>
-                <option value="true">Active</option>
-                <option value="false">Inactive</option>
-              </Form.Select>
-            </Form.Group>
-          </Col>
-          <Col md={2}>
-            <Form.Group>
-              <Form.Label>Is Used</Form.Label>
-              <Form.Select
-                name="isUsed"
-                value={filters.isUsed}
-                onChange={handleSelectChange}
-              >
-                <option value="">Any</option>
-                <option value="true">Used</option>
-                <option value="false">Unused</option>
-              </Form.Select>
-            </Form.Group>
-          </Col>
+          {userRole === UserRole.ROLE_EMPLOYEE && (
+            <Col md={2}>
+              <Form.Group>
+                <Form.Label>Is Active</Form.Label>
+                <Form.Select
+                  name="isActive"
+                  value={filters.isActive}
+                  onChange={handleSelectChange}
+                >
+                  <option value="">Any</option>
+                  <option value="true">Active</option>
+                  <option value="false">Inactive</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+          )}
+          {userRole === UserRole.ROLE_EMPLOYEE && (
+            <Col md={2}>
+              <Form.Group>
+                <Form.Label>Is Used</Form.Label>
+                <Form.Select
+                  name="isUsed"
+                  value={filters.isUsed}
+                  onChange={handleSelectChange}
+                >
+                  <option value="">Any</option>
+                  <option value="true">Used</option>
+                  <option value="false">Unused</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+          )}
         </Row>
         <Row className="mt-3">
           <Col>

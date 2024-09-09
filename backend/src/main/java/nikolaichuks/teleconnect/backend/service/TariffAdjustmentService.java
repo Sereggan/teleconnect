@@ -16,21 +16,22 @@ public class TariffAdjustmentService {
     private final MapperUtil mapper;
     private final TariffAdjustmentRepository tariffAdjustmentRepository;
 
-    public TariffAdjustmentDTO createAdjustment(TariffAdjustmentDTO adjustmentDTO) {
-        TariffAdjustment adjustment = mapper.mapTariffAdjustmentDTOToTariffAdjustment(adjustmentDTO);
-        return mapper.mapTariffAdjustmentToTariffAdjustmentDTO(tariffAdjustmentRepository.save(adjustment));
-    }
-
     public TariffAdjustmentDTO updateAdjustment(TariffAdjustmentDTO adjustmentDTO) {
-        TariffAdjustment adjustment = tariffAdjustmentRepository.findById(adjustmentDTO.getId())
-                .orElseThrow(() -> new CustomRestException("Tariff adjustment not found", HttpStatus.NOT_FOUND));
-
-        adjustment.setAdjustedDataLimit(adjustmentDTO.getAdjustedDataLimit())
-                .setAdjustedCallMinutes(adjustmentDTO.getAdjustedCallMinutes())
-                .setAdjustedSmsLimit(adjustmentDTO.getAdjustedSmsLimit())
-                .setDiscountPercentage(adjustmentDTO.getDiscountPercentage());
-
-        return mapper.mapTariffAdjustmentToTariffAdjustmentDTO(tariffAdjustmentRepository.save(adjustment));
+        if (adjustmentDTO.getId() != null) {
+            return tariffAdjustmentRepository.findById(adjustmentDTO.getId())
+                    .map(adjustment -> {
+                        adjustment.setDiscountPercentage(adjustmentDTO.getDiscountPercentage());
+                        adjustment.setAdjustedCallMinutes(adjustmentDTO.getAdjustedCallMinutes());
+                        adjustment.setAdjustedSmsLimit(adjustmentDTO.getAdjustedSmsLimit());
+                        adjustment.setAdjustedDataLimit(adjustmentDTO.getAdjustedDataLimit());
+                        return tariffAdjustmentRepository.save(adjustment);
+                    })
+                    .map(mapper::mapTariffAdjustmentToTariffAdjustmentDTO)
+                    .orElseThrow(() -> new CustomRestException("Adjustment not found", HttpStatus.NOT_FOUND));
+        } else {
+            TariffAdjustment newAdjustment = mapper.mapTariffAdjustmentDTOToTariffAdjustment(adjustmentDTO);
+            return mapper.mapTariffAdjustmentToTariffAdjustmentDTO(tariffAdjustmentRepository.save(newAdjustment));
+        }
     }
 
     public TariffAdjustmentDTO getTariffAdjustment(Integer userId) {

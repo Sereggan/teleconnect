@@ -3,7 +3,6 @@ DROP TABLE IF EXISTS tariff CASCADE;
 DROP TABLE IF EXISTS token_blacklist CASCADE;
 DROP TABLE IF EXISTS tariff_adjustment CASCADE;
 
--- Таблица tariff
 CREATE TABLE IF NOT EXISTS tariff (
                                       id
                                       SERIAL
@@ -25,6 +24,28 @@ CREATE TABLE IF NOT EXISTS tariff (
     sms_limit INTEGER DEFAULT 0
     );
 
+CREATE TABLE IF NOT EXISTS users (
+                                     id
+                                     SERIAL
+                                     PRIMARY
+                                     KEY,
+    phone_number VARCHAR(15) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(30) NOT NULL,
+    surname VARCHAR(30) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    tariff_id INTEGER,
+    birth_date DATE,
+    CONSTRAINT fk_tariff FOREIGN KEY
+(
+    tariff_id
+) REFERENCES tariff
+(
+    id
+)
+    );
+
 CREATE TABLE IF NOT EXISTS tariff_adjustment
 (
     id
@@ -42,23 +63,9 @@ CREATE TABLE IF NOT EXISTS tariff_adjustment
 (
     5,
     2
-)
-    );
-
-CREATE TABLE IF NOT EXISTS users (
-                                     id
-                                     SERIAL
-                                     PRIMARY
-                                     KEY,
-    phone_number VARCHAR(15) NOT NULL UNIQUE,
-    password VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    name VARCHAR(30) NOT NULL,
-    surname VARCHAR(30) NOT NULL,
-    role VARCHAR(50) NOT NULL,
-    tariff_id INTEGER,
-    tariff_adjustment_id INTEGER,
-    birth_date DATE,
+),
+    tariff_id INTEGER NOT NULL UNIQUE,
+    user_id INTEGER NOT NULL UNIQUE,
     CONSTRAINT fk_tariff FOREIGN KEY
 (
     tariff_id
@@ -66,10 +73,10 @@ CREATE TABLE IF NOT EXISTS users (
 (
     id
 ),
-    CONSTRAINT fk_tariff_adjustment FOREIGN KEY
+    CONSTRAINT fk_user FOREIGN KEY
 (
-    tariff_adjustment_id
-) REFERENCES tariff_adjustment
+    user_id
+) REFERENCES users
 (
     id
 )

@@ -58,6 +58,7 @@ export default function ChangeTariff() {
             ? parseInt(filters.smsLimitMax)
             : undefined,
           isActive: true,
+          limit: 50,
         },
         controller
       );
@@ -72,7 +73,8 @@ export default function ChangeTariff() {
   };
 
   const handleConnectTariff = async (tariffId: number | undefined) => {
-    if (!id || tariffId) return;
+    if (!id || !tariffId) return;
+
     setIsLoading(true);
     try {
       const user = await getUserById(parseInt(id), controllerRef.current!);

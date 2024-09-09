@@ -2,18 +2,18 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getTariffById } from "../../services/TariffClient";
 import { Tariff } from "../../models/Tariff";
+import { Container, Spinner, Alert } from "react-bootstrap";
 
 export default function TariffDetails() {
   const { id } = useParams<{ id: string }>();
   const [tariff, setTariff] = useState<Tariff | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const controllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const fetchTariff = async (controller: AbortController) => {
-      if (id !== undefined) {
+      if (id) {
         setIsLoading(true);
         try {
           const tariffId = parseInt(id);
@@ -42,9 +42,9 @@ export default function TariffDetails() {
   }, [id]);
 
   return (
-    <>
-      {error && <div>Something went wrong, please try again...</div>}
-      {isLoading && <div>Loading...</div>}
+    <Container>
+      {error && <Alert variant="danger">{error}</Alert>}
+      {isLoading && <Spinner animation="border" />}
       {!isLoading && tariff && (
         <div>
           <h2>Tariff Details</h2>
@@ -74,6 +74,6 @@ export default function TariffDetails() {
           </p>
         </div>
       )}
-    </>
+    </Container>
   );
 }

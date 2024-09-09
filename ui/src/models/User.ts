@@ -11,6 +11,7 @@ export interface User {
   name: string;
   surname: string;
   role: UserRole;
+  birthDate?: string;
   tariffId?: number;
   tariffAdjustmentId?: number;
 }

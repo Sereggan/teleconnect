@@ -45,8 +45,7 @@ public class User implements UserDetails {
     @JoinColumn(name = "tariff_id")
     private Tariff tariff;
 
-    @OneToOne
-    @JoinColumn(name = "tariff_adjustment_id")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private TariffAdjustment tariffAdjustment;
 
     @Override

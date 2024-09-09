@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { User, UserRole } from "../../models/User";
-import { Card } from "react-bootstrap";
+import { Card, Button } from "react-bootstrap";
 
 export default function UserCard({ user }: { user: User }) {
   return (
@@ -25,11 +25,13 @@ export default function UserCard({ user }: { user: User }) {
             )}
           </ul>
         </Card.Text>
-        <Link to={`/users/${user.id}`} className="btn btn-primary me-2">
-          User Info
+        <Link to={`/users/${user.id}`}>
+          <Button variant="primary" className="me-2">
+            User Info
+          </Button>
         </Link>
-        <Link to={`/users/edit/${user.id}`} className="btn btn-secondary">
-          Edit User
+        <Link to={`/users/edit/${user.id}`}>
+          <Button variant="secondary">Edit User</Button>
         </Link>
       </Card.Body>
     </Card>

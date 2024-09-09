@@ -4,9 +4,7 @@ import { deleteUser, getUserById, updateUser } from "../../services/UserClient";
 import { getTariffById } from "../../services/TariffClient";
 import {
   getTariffAdjustment,
-  createTariffAdjustment,
   updateTariffAdjustment,
-  deleteTariffAdjustment,
 } from "../../services/TariffAdjustmentClient";
 import { User, UserRole } from "../../models/User";
 import { Tariff } from "../../models/Tariff";
@@ -14,79 +12,67 @@ import { TariffAdjustment } from "../../models/TariffAdjustment";
 
 export default function EditUser() {
   const { id } = useParams<{ id: string }>();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentTariff, setCurrentTariff] = useState<Tariff | undefined>(
     undefined
   );
-  const [adjustment, setAdjustment] = useState<TariffAdjustment | null>(null);
-  const [isEditingAdjustment, setIsEditingAdjustment] = useState(false);
+  const [adjustment, setAdjustment] = useState<TariffAdjustment | undefined>(
+    undefined
+  );
   const navigate = useNavigate();
-
   const controllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    controllerRef.current = new AbortController();
-    fetchUser(controllerRef.current);
-    fetchTariff(controllerRef.current);
-    fetchAdjustment(controllerRef.current);
-    return () => {
-      controllerRef.current?.abort();
-    };
-  }, [id]);
-
-  const fetchUser = async (controller: AbortController) => {
-    setIsLoading(true);
-    try {
-      if (id) {
-        const userId = parseInt(id);
-        const fetchedUser = await getUserById(userId, controller);
-        if (fetchedUser) {
-          setUser(fetchedUser);
-        } else {
-          setError("User not found");
-        }
-      }
-    } catch (error: any) {
-      if (!controller.signal.aborted) {
-        setError("Error fetching user");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchAdjustment = async (controller: AbortController) => {
-    if (user?.tariffAdjustmentId) {
+    const controller = new AbortController();
+    const loadUserData = async () => {
+      setIsLoading(true);
       try {
-        const fetchedAdjustment = await getTariffAdjustment(
-          user.tariffAdjustmentId,
-          controller
-        );
-        if (fetchedAdjustment) {
-          setAdjustment(fetchedAdjustment);
+        if (id) {
+          const userId = parseInt(id);
+          const fetchedUser = await getUserById(userId, controller);
+          if (fetchedUser) {
+            setUser(fetchedUser);
+
+            if (fetchedUser.tariffId) {
+              const fetchedTariff = await getTariffById(
+                fetchedUser.tariffId,
+                controller
+              );
+              if (fetchedTariff) {
+                setCurrentTariff(fetchedTariff);
+              }
+            }
+
+            if (fetchedUser.tariffAdjustmentId) {
+              const fetchedAdjustment = await getTariffAdjustment(
+                fetchedUser.tariffAdjustmentId,
+                controller
+              );
+              if (fetchedAdjustment) {
+                setAdjustment(fetchedAdjustment);
+              }
+            }
+          } else {
+            setError("User not found");
+          }
         }
       } catch (error: any) {
-        setError("Error fetching adjustment");
-      }
-    }
-  };
-
-  const fetchTariff = async (controller: AbortController) => {
-    try {
-      if (user && user.tariffId) {
-        const currentTariff = await getTariffById(user.tariffId, controller);
-        if (currentTariff) {
-          setCurrentTariff(currentTariff);
+        if (!controller.signal.aborted) {
+          setError("Error fetching data");
         }
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error: any) {
-      if (!controller.signal.aborted) {
-        setError("Error fetching tariff");
-      }
-    }
-  };
+    };
+
+    loadUserData();
+
+    return () => {
+      controller.abort();
+    };
+  }, [id]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -107,82 +93,62 @@ export default function EditUser() {
       [name]: parseInt(value),
     }));
   };
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!user || !user.id) return;
 
-  const handleSaveAdjustment = async () => {
-    if (!adjustment) return;
+    controllerRef.current = new AbortController();
     setIsLoading(true);
     try {
-      if (!adjustment.id) {
-        const newAdjustment = await createTariffAdjustment(
+      let updatedUser = { ...user };
+
+      if (adjustment) {
+        adjustment.userId = user.id;
+        if (!user.tariffId) return;
+        adjustment.tariffId = user.tariffId;
+        adjustment.id = user.tariffAdjustmentId;
+        const updatedAdjustment = await updateTariffAdjustment(
           adjustment,
-          controllerRef.current!
+          controllerRef.current
         );
-        await updateUser(
-          { ...user!, tariffAdjustmentId: newAdjustment?.id },
-          controllerRef.current!
-        );
-      } else {
-        await updateTariffAdjustment(adjustment, controllerRef.current!);
+        updatedUser = {
+          ...updatedUser,
+          tariffAdjustmentId: updatedAdjustment?.id,
+        };
       }
-      setIsEditingAdjustment(false);
-    } catch (error: any) {
-      setError("Error saving adjustment");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
-  const handleDeleteAdjustment = async () => {
-    if (!adjustment || !adjustment.id) return;
-    setIsLoading(true);
-    try {
-      await deleteTariffAdjustment(adjustment.id, controllerRef.current!);
-      await updateUser(
-        { ...user!, tariffAdjustmentId: undefined },
-        controllerRef.current!
-      );
-      setAdjustment(null);
-      setIsEditingAdjustment(false);
+      const fetchedUser = await updateUser(updatedUser, controllerRef.current);
+
+      if (fetchedUser) {
+        setUser(fetchedUser);
+      }
     } catch (error: any) {
-      setError("Error deleting adjustment");
+      if (!controllerRef.current.signal.aborted) {
+        setError("Error updating user");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDisableTariff = async () => {
-    if (user) {
-      const updatedUser = { ...user, tariffId: undefined };
-      setUser(updatedUser);
+    if (!user || !user.id) return;
 
-      controllerRef.current = new AbortController();
-      setIsLoading(true);
-      try {
-        await updateUser(updatedUser, controllerRef.current);
-        await fetchUser(controllerRef.current);
-      } catch (error: any) {
-        if (!controllerRef.current.signal.aborted) {
-          setError("Error disabling tariff");
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!user) return;
+    const updatedUser = { ...user, tariffId: undefined };
+    setUser(updatedUser);
 
     controllerRef.current = new AbortController();
-
     setIsLoading(true);
     try {
-      await updateUser(user, controllerRef.current);
-      await fetchUser(controllerRef.current);
+      await updateUser(updatedUser, controllerRef.current);
+      const fetchedUser = await getUserById(user.id, controllerRef.current);
+      if (fetchedUser) {
+        setUser(fetchedUser);
+        setCurrentTariff(undefined);
+      }
     } catch (error: any) {
       if (!controllerRef.current.signal.aborted) {
-        setError("Error updating user");
+        setError("Error disabling tariff");
       }
     } finally {
       setIsLoading(false);
@@ -265,7 +231,6 @@ export default function EditUser() {
                 name="password"
                 value={user.password}
                 onChange={handleInputChange}
-                required
               />
             </label>
             <br />
@@ -282,76 +247,60 @@ export default function EditUser() {
               </select>
             </label>
             <br />
-            {user.role === UserRole.ROLE_CUSTOMER && (
+
+            {user.role === UserRole.ROLE_CUSTOMER && currentTariff && (
               <>
-                {currentTariff && (
-                  <div>
-                    <label>Current Tariff: {currentTariff.name}</label>
-                    <br />
-                    <button type="button" onClick={handleDisableTariff}>
-                      Disable Tariff
-                    </button>
-                  </div>
-                )}
-                <Link to={`/users/${user.id}/change-tariff`}>
-                  <button type="button">Change Tariff</button>
-                </Link>
-                {adjustment && (
-                  <div>
-                    <h3>Tariff Adjustment</h3>
-                    <button
-                      onClick={() =>
-                        setIsEditingAdjustment(!isEditingAdjustment)
-                      }
-                    >
-                      {isEditingAdjustment ? "Cancel" : "Adjust Tariff"}
-                    </button>
-                    {isEditingAdjustment && (
-                      <>
-                        <label>Adjusted Data Limit</label>
-                        <input
-                          type="number"
-                          name="adjustedDataLimit"
-                          value={adjustment.adjustedDataLimit || ""}
-                          onChange={handleAdjustmentInputChange}
-                        />
-                        <br />
-                        <label>Adjusted Call Minutes</label>
-                        <input
-                          type="number"
-                          name="adjustedCallMinutes"
-                          value={adjustment.adjustedCallMinutes || ""}
-                          onChange={handleAdjustmentInputChange}
-                        />
-                        <br />
-                        <label>Adjusted SMS Limit</label>
-                        <input
-                          type="number"
-                          name="adjustedSmsLimit"
-                          value={adjustment.adjustedSmsLimit || ""}
-                          onChange={handleAdjustmentInputChange}
-                        />
-                        <br />
-                        <label>Discount Percentage</label>
-                        <input
-                          type="number"
-                          name="discountPercentage"
-                          value={adjustment.discountPercentage || ""}
-                          onChange={handleAdjustmentInputChange}
-                        />
-                        <br />
-                        <button onClick={handleSaveAdjustment}>
-                          Save Adjustment
-                        </button>
-                        <button onClick={handleDeleteAdjustment}>
-                          Delete Adjustment
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
+                <div>
+                  <label>
+                    Current Tariff:
+                    <Link to={`/tariffs/${user.tariffId}`}>
+                      {currentTariff.name}
+                    </Link>
+                  </label>
+
+                  <button type="button" onClick={handleDisableTariff}>
+                    Disable Tariff
+                  </button>
+                  <br />
+                  <h3>Tariff Adjustment</h3>
+                  <label>Adjusted Data Limit</label>
+                  <input
+                    type="number"
+                    name="adjustedDataLimit"
+                    value={adjustment?.adjustedDataLimit || ""}
+                    onChange={handleAdjustmentInputChange}
+                  />
+                  <br />
+                  <label>Adjusted Call Minutes</label>
+                  <input
+                    type="number"
+                    name="adjustedCallMinutes"
+                    value={adjustment?.adjustedCallMinutes || ""}
+                    onChange={handleAdjustmentInputChange}
+                  />
+                  <br />
+                  <label>Adjusted SMS Limit</label>
+                  <input
+                    type="number"
+                    name="adjustedSmsLimit"
+                    value={adjustment?.adjustedSmsLimit || ""}
+                    onChange={handleAdjustmentInputChange}
+                  />
+                  <br />
+                  <label>Discount Percentage</label>
+                  <input
+                    type="number"
+                    name="discountPercentage"
+                    value={adjustment?.discountPercentage || ""}
+                    onChange={handleAdjustmentInputChange}
+                  />
+                  <br />
+                </div>
               </>
             )}
+            <Link to={`/users/${user.id}/change-tariff`}>
+              <button type="button">Change Basic Tariff</button>
+            </Link>
             <button type="submit">Update User</button>
             <button type="button" onClick={handleDelete}>
               Delete User

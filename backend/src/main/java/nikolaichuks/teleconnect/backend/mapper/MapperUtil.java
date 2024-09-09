@@ -27,6 +27,7 @@ public class MapperUtil {
                 map(source.getTariff().getId(), destination.getTariffId());
                 map(source.getTariffAdjustment().getId(), destination.getTariffAdjustmentId());
                 using(userRoleToStringConverter).map(source.getRole()).setRole(null);
+                skip(destination.getPassword());
             }
         });
         mapper.addMappings(new PropertyMap<UserDto, User>() {
@@ -43,14 +44,6 @@ public class MapperUtil {
                 skip(destination.getId());
             }
         });
-
-        mapper.addMappings(new PropertyMap<TariffAdjustmentDTO, TariffAdjustment>() {
-            @Override
-            protected void configure() {
-                skip(destination.getId());
-            }
-        });
-
     }
 
     public UserDto mapUserToUserDto(User user) {

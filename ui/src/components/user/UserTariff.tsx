@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { getTariffByUserId } from "../../services/TariffClient";
 import { getTariffAdjustment } from "../../services/TariffAdjustmentClient";
 import { Tariff } from "../../models/Tariff";
-import { Spinner, Container, Row, Col } from "react-bootstrap";
+import { Spinner, Container, Row, Col, Alert } from "react-bootstrap";
 import { TariffAdjustment } from "../../models/TariffAdjustment";
 
 export default function UserTariff() {
@@ -11,46 +11,43 @@ export default function UserTariff() {
   const [adjustment, setAdjustment] = useState<TariffAdjustment | undefined>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const controllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    controllerRef.current = new AbortController();
+    const fetchTariffAndAdjustment = async (
+      userId: number,
+      controller: AbortController
+    ) => {
+      setIsLoading(true);
+      try {
+        const tariff = await getTariffByUserId(userId, controller);
+        setUserTariff(tariff);
+        const adjustment = await getTariffAdjustment(userId, controller);
+        setAdjustment(adjustment);
+      } catch (error: any) {
+        if (!controller.signal.aborted) {
+          setError("Error fetching tariff or adjustment");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
+    controllerRef.current = new AbortController();
     if (userId) {
       fetchTariffAndAdjustment(parseInt(userId), controllerRef.current);
     }
 
-    return () => {
-      controllerRef.current?.abort();
-    };
+    return () => controllerRef.current?.abort();
   }, [userId]);
-
-  const fetchTariffAndAdjustment = async (
-    userId: number,
-    controller: AbortController
-  ) => {
-    setIsLoading(true);
-    try {
-      const tariff = await getTariffByUserId(userId, controller);
-      setUserTariff(tariff);
-
-      const adjustment = await getTariffAdjustment(userId, controller);
-      setAdjustment(adjustment);
-    } catch (error: any) {
-      if (!controller.signal.aborted) {
-        setError("Error fetching tariff or adjustment");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const getAdjustedValue = (
     defaultValue: number | undefined,
     adjustedValue: number | undefined
   ) => {
-    return adjustedValue !== undefined ? adjustedValue : defaultValue;
+    return adjustedValue === undefined || adjustedValue === null
+      ? defaultValue
+      : adjustedValue;
   };
 
   const calculateDiscountedPrice = (price: number, discount?: number) => {
@@ -60,16 +57,18 @@ export default function UserTariff() {
     return price;
   };
 
+  if (!userTariff) {
+    return <Alert variant="info">You have no active tariffs.</Alert>;
+  }
+
   return (
     <Container>
-      {error && (
-        <div>Something went wrong, please try again later: {error}</div>
-      )}
+      {error && <Alert variant="danger">{error}</Alert>}
       {isLoading && <Spinner animation="border" />}
       {!isLoading && !error && userTariff && (
         <Row>
           <Col>
-            <h2>Your Tariff</h2>
+            <h2>My current tariff:</h2>
             <p>
               <strong>Name: </strong> {userTariff.name}
             </p>
@@ -78,7 +77,7 @@ export default function UserTariff() {
               {calculateDiscountedPrice(
                 userTariff.price,
                 adjustment?.discountPercentage
-              )}
+              )}{" "}
               Euro
             </p>
             <p>
@@ -86,7 +85,7 @@ export default function UserTariff() {
               {getAdjustedValue(
                 userTariff.dataLimit,
                 adjustment?.adjustedDataLimit
-              ) ?? "Unlimited"}
+              ) ?? "Unlimited"}{" "}
               GB
             </p>
             <p>

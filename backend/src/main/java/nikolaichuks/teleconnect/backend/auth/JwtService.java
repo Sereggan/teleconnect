@@ -22,7 +22,6 @@ import java.util.HashMap;
 public class JwtService {
 
     private static final String ISSUER = "tele-connect-service";
-    private static final String TOKEN_ID = "tokenId";
 
     @Value("${security.jwt.secret-key}")
     private String accessTokenSecretKey;
@@ -33,11 +32,11 @@ public class JwtService {
     @Value("${security.jwt.refresh-expiration-time}")
     private long refreshJwtExpiration;
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, HashMap<String, String> claims) {
         return Jwts
                 .builder()
                 .setIssuer(ISSUER)
-                .setClaims(new HashMap<>())
+                .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))

@@ -6,6 +6,7 @@ import {
   updateTariff,
 } from "../../services/TariffClient";
 import { Tariff } from "../../models/Tariff";
+import { Button, Form, Spinner, Alert, Container } from "react-bootstrap";
 
 export default function EditTariff() {
   const { id } = useParams<{ id: string }>();
@@ -13,37 +14,34 @@ export default function EditTariff() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-
   const controllerRef = useRef<AbortController | null>(null);
 
-  const fetchTariff = async (controller: AbortController) => {
-    if (id !== undefined) {
-      setIsLoading(true);
-      try {
-        const tariffId = parseInt(id);
-        const fetchedTariff = await getTariffById(tariffId, controller);
-        if (fetchedTariff) {
-          setTariff(fetchedTariff);
-        } else {
-          setError("Tariff not found");
-        }
-      } catch (error: any) {
-        if (!controller.signal.aborted) {
-          setError(error.message || "Error fetching tariff");
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
   useEffect(() => {
-    controllerRef.current = new AbortController();
-    fetchTariff(controllerRef.current);
-
-    return () => {
-      controllerRef.current?.abort();
+    const controller = new AbortController();
+    const fetchTariff = async () => {
+      if (id) {
+        setIsLoading(true);
+        try {
+          const tariffId = parseInt(id);
+          const fetchedTariff = await getTariffById(tariffId, controller);
+          if (fetchedTariff) {
+            setTariff(fetchedTariff);
+          } else {
+            setError("Tariff not found");
+          }
+        } catch (error: any) {
+          if (!controller.signal.aborted) {
+            setError(error.message || "Error fetching tariff");
+          }
+        } finally {
+          setIsLoading(false);
+        }
+      }
     };
+
+    fetchTariff();
+
+    return () => controller.abort();
   }, [id]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,11 +59,9 @@ export default function EditTariff() {
     setIsLoading(true);
     try {
       await updateTariff(tariff, controllerRef.current!);
-      await fetchTariff(controllerRef.current!);
+      navigate("/tariffs");
     } catch (error: any) {
-      if (!controllerRef.current?.signal.aborted) {
-        setError("Error updating tariff");
-      }
+      setError("Error updating tariff");
     } finally {
       setIsLoading(false);
     }
@@ -78,102 +74,97 @@ export default function EditTariff() {
       await deleteTariff(tariff.id, controllerRef.current!);
       navigate("/tariffs");
     } catch (error: any) {
-      if (!controllerRef.current?.signal.aborted) {
-        setError("Error deleting tariff");
-      }
+      setError("Error deleting tariff");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <>
-      {error && <div>Something went wrong, please try again...</div>}
-      {isLoading && <div>Loading...</div>}
+    <Container>
+      {error && <Alert variant="danger">{error}</Alert>}
+      {isLoading && <Spinner animation="border" />}
       {!isLoading && !error && tariff && (
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>
-              Name:
-              <input
-                type="text"
-                name="name"
-                value={tariff.name}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <br />
-            <label>
-              Price:
-              <input
-                type="number"
-                name="price"
-                value={tariff.price}
-                onChange={handleChange}
-                required
-              />{" "}
-              Euro
-            </label>
-            <br />
-            <label>
-              Description:
-              <input
-                type="text"
-                name="description"
-                value={tariff.description}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <br />
-            <label>
-              Data Limit:
-              <input
-                type="number"
-                name="dataLimit"
-                value={tariff.dataLimit || ""}
-                onChange={handleChange}
-              />
-              MB
-            </label>
-            <br />
-            <label>
-              Call Minutes:
-              <input
-                type="number"
-                name="callMinutes"
-                value={tariff.callMinutes || ""}
-                onChange={handleChange}
-              />
-            </label>
-            <br />
-            <label>
-              SMS Limit:
-              <input
-                type="number"
-                name="smsLimit"
-                value={tariff.smsLimit || ""}
-                onChange={handleChange}
-              />
-            </label>
-            <br />
-            <label>
-              Active:
-              <input
-                type="checkbox"
-                name="isActive"
-                checked={tariff.isActive}
-                onChange={handleChange}
-              />
-            </label>
-          </div>
-          <button type="submit">Save Tariff</button>
-          <button type="button" onClick={handleDelete}>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group controlId="name">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="name"
+              value={tariff.name}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="price" className="mt-3">
+            <Form.Label>Price (Euro)</Form.Label>
+            <Form.Control
+              type="number"
+              name="price"
+              value={tariff.price}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="description" className="mt-3">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              type="text"
+              name="description"
+              value={tariff.description}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="dataLimit" className="mt-3">
+            <Form.Label>Data Limit (MB)</Form.Label>
+            <Form.Control
+              type="number"
+              name="dataLimit"
+              value={tariff.dataLimit || ""}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group controlId="callMinutes" className="mt-3">
+            <Form.Label>Call Minutes</Form.Label>
+            <Form.Control
+              type="number"
+              name="callMinutes"
+              value={tariff.callMinutes || ""}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group controlId="smsLimit" className="mt-3">
+            <Form.Label>SMS Limit</Form.Label>
+            <Form.Control
+              type="number"
+              name="smsLimit"
+              value={tariff.smsLimit || ""}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group controlId="isActive" className="mt-3">
+            <Form.Check
+              type="checkbox"
+              label="Active"
+              name="isActive"
+              checked={tariff.isActive}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Button type="submit" variant="primary" className="mt-3">
+            Save Tariff
+          </Button>
+          <Button
+            type="button"
+            variant="danger"
+            className="mt-3 ms-2"
+            onClick={handleDelete}
+          >
             Delete Tariff
-          </button>
-        </form>
+          </Button>
+        </Form>
       )}
-    </>
+    </Container>
   );
 }

@@ -23,7 +23,6 @@ export default function UserManagement() {
     totalItems: 0,
     itemsOnPage: 25,
   });
-
   const [filters, setFilters] = useState({
     phoneNumber: "",
     email: "",
@@ -54,7 +53,7 @@ export default function UserManagement() {
           surname: filters.surname || undefined,
           role: filters.role || undefined,
           tariffId: filters.tariffId ? parseInt(filters.tariffId) : undefined,
-          limit: pagination.itemsOnPage,
+          limit: 25,
           offset: page - 1,
         },
         controller
@@ -79,23 +78,11 @@ export default function UserManagement() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
-  };
-
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
-  };
-
   const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const controller = new AbortController();
     fetchUsers(1, controller);
-    return () => {
-      controller.abort();
-    };
+    return () => controller.abort();
   };
 
   const handlePageChange = (page: number) => {
@@ -106,9 +93,7 @@ export default function UserManagement() {
   useEffect(() => {
     const controller = new AbortController();
     fetchUsers(pagination.currentPage, controller);
-    return () => {
-      controller.abort();
-    };
+    return () => controller.abort();
   }, []);
 
   return (
@@ -133,7 +118,9 @@ export default function UserManagement() {
                 type="text"
                 name="phoneNumber"
                 value={filters.phoneNumber}
-                onChange={handleInputChange}
+                onChange={(e) =>
+                  setFilters({ ...filters, phoneNumber: e.target.value })
+                }
                 placeholder="Phone Number"
               />
             </Form.Group>
@@ -145,7 +132,9 @@ export default function UserManagement() {
                 type="email"
                 name="email"
                 value={filters.email}
-                onChange={handleInputChange}
+                onChange={(e) =>
+                  setFilters({ ...filters, email: e.target.value })
+                }
                 placeholder="Email"
               />
             </Form.Group>
@@ -157,7 +146,9 @@ export default function UserManagement() {
                 type="text"
                 name="name"
                 value={filters.name}
-                onChange={handleInputChange}
+                onChange={(e) =>
+                  setFilters({ ...filters, name: e.target.value })
+                }
                 placeholder="Name"
               />
             </Form.Group>
@@ -169,7 +160,9 @@ export default function UserManagement() {
                 type="text"
                 name="surname"
                 value={filters.surname}
-                onChange={handleInputChange}
+                onChange={(e) =>
+                  setFilters({ ...filters, surname: e.target.value })
+                }
                 placeholder="Surname"
               />
             </Form.Group>
@@ -180,7 +173,9 @@ export default function UserManagement() {
               <Form.Select
                 name="role"
                 value={filters.role}
-                onChange={handleSelectChange}
+                onChange={(e) =>
+                  setFilters({ ...filters, role: e.target.value })
+                }
               >
                 <option value="">Any</option>
                 <option value="ROLE_EMPLOYEE">Employee</option>
@@ -195,7 +190,9 @@ export default function UserManagement() {
                 type="number"
                 name="tariffId"
                 value={filters.tariffId}
-                onChange={handleInputChange}
+                onChange={(e) =>
+                  setFilters({ ...filters, tariffId: e.target.value })
+                }
                 placeholder="Tariff ID"
               />
             </Form.Group>
@@ -210,7 +207,7 @@ export default function UserManagement() {
         </Row>
       </Form>
 
-      {error && <div>Something went wrong, please try again... {error}</div>}
+      {error && <p>Something went wrong, please try again... {error}</p>}
       {isLoading && <Spinner animation="border" />}
       {!isLoading && !error && (
         <>

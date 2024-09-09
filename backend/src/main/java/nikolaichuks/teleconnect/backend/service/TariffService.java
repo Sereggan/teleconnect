@@ -82,7 +82,7 @@ public class TariffService {
                 .peek(tariffDTO -> tariffDTO.setIsUsed(userRepository.existsByTariff_Id(tariffDTO.getId())))
                 .toList();
 
-        PaginatedTariffResponse response = new PaginatedTariffResponse();
+        var response = new PaginatedTariffResponse();
         response.setTariffs(tariffs);
         response.setTotalItems((int) tariffsPage.getTotalElements());
         response.setTotalPages(tariffsPage.getTotalPages());

@@ -18,10 +18,11 @@ import teleconnect.auth.model.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class AuthenticationService {
 
     private final UserRepository userRepository;
@@ -31,7 +32,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
 
     public AuthResponse signup(RegisterUserRequest newUser) {
-        User user = User.builder()
+        var user = User.builder()
                 .name(newUser.getName())
                 .surname(newUser.getSurname())
                 .email(newUser.getEmail())
@@ -92,7 +93,7 @@ public class AuthenticationService {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new CustomRestException("User not found", HttpStatus.NOT_FOUND));
 
-        TokenBlacklist invalidAccessToken = new TokenBlacklist();
+        var invalidAccessToken = new TokenBlacklist();
         invalidAccessToken.setUser(user);
         invalidAccessToken.setToken(accessToken);
         invalidAccessToken.setExpiryDate(expirationDate);
@@ -111,10 +112,14 @@ public class AuthenticationService {
     }
 
     private AuthResponse getAuthResponse(User user) {
+        HashMap<String, String> claims = new HashMap<>();
+        claims.put("userId", user.getId().toString());
+        claims.put("email", user.getEmail());
+        claims.put("role", user.getRole().getName());
+        String accessToken = jwtService.generateToken(user, claims);
         String generateRefreshToken = jwtService.generateRefreshToken(user);
-        String accessToken = jwtService.generateToken(user);
 
-        AuthResponse authResponse = new AuthResponse();
+        var authResponse = new AuthResponse();
         authResponse.setToken(accessToken);
         authResponse.setRefreshToken(generateRefreshToken);
         authResponse.setUserId(user.getId());

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
@@ -16,4 +17,8 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
     @Query("SELECT u FROM User u WHERE u.email = :userName OR u.phoneNumber = :userName")
     Optional<User> findByEmailOrPhoneNumber(@Param("userName") String userName);
 
+    @Query("SELECT u.tariff.name, COUNT(u) FROM User u WHERE u.tariff IS NOT NULL GROUP BY u.tariff.name")
+    List<Object[]> countUsersByTariff();
+
+    Long countByTariffIsNull();
 }

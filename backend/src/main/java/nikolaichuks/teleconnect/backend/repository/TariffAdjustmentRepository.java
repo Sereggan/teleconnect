@@ -5,9 +5,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TariffAdjustmentRepository extends JpaRepository<TariffAdjustment, Integer> {
-    @Query("SELECT tariff_adjustment FROM TariffAdjustment tariff_adjustment JOIN User u ON u.tariffAdjustment.id = tariff_adjustment.id WHERE u.id = :userId")
+
     Optional<TariffAdjustment> findByUserId(@Param("userId") Integer userId);
+
+    @Query("SELECT t.name, COUNT(ta) FROM TariffAdjustment ta JOIN ta.tariff t GROUP BY t.name")
+    List<Object[]> countAdjustmentsByTariff();
+
+    @Query("SELECT t.name, MAX(ta.discountPercentage) FROM TariffAdjustment ta JOIN ta.tariff t ORDER BY ta.discountPercentage DESC")
+    List<Object[]> findMostDiscountedTariff();
 }

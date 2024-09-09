@@ -5,6 +5,7 @@ import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
 import nikolaichuks.teleconnect.backend.model.User;
 import nikolaichuks.teleconnect.backend.model.UserRole;
+import nikolaichuks.teleconnect.backend.repository.TariffAdjustmentRepository;
 import nikolaichuks.teleconnect.backend.repository.TariffRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
 import nikolaichuks.teleconnect.backend.specification.UserSpecification;
@@ -27,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final MapperUtil mapper;
     private final TariffRepository tariffRepository;
+    private final TariffAdjustmentRepository tariffAdjustmentRepository;
     private final UserSpecification userSpecification;
     private final PasswordEncoder passwordEncoder;
 
@@ -44,7 +46,7 @@ public class UserService {
         user.setSurname(userDetails.getSurname());
         user.setPhoneNumber(userDetails.getPhoneNumber());
         user.setEmail(userDetails.getEmail());
-        if (!userDetails.getPassword().isEmpty()) {
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
             user.setPassword(userDetails.getPassword());
         }
         user.setRole(UserRole.fromString(userDetails.getRole()));
@@ -53,6 +55,13 @@ public class UserService {
                     .ifPresent(user::setTariff);
         } else {
             user.setTariff(null);
+        }
+
+        if (userDetails.getTariffAdjustmentId() != null) {
+            tariffAdjustmentRepository.findById(userDetails.getTariffAdjustmentId())
+                    .ifPresent(user::setTariffAdjustment);
+        } else {
+            user.setTariffAdjustment(null);
         }
 
         return mapper.mapUserToUserDto(userRepository.save(user));
@@ -78,7 +87,7 @@ public class UserService {
                 .map(mapper::mapUserToUserDto)
                 .toList();
 
-        PaginatedUserResponse response = new PaginatedUserResponse();
+        var response = new PaginatedUserResponse();
         response.setUsers(users);
         var pagination = new PaginatedUserResponsePagination();
         pagination.setTotalItems((int) usersPage.getTotalElements());

@@ -2,6 +2,7 @@ package nikolaichuks.teleconnect.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.model.User;
+import nikolaichuks.teleconnect.backend.model.UserRole;
 import nikolaichuks.teleconnect.backend.service.TariffService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,11 +33,8 @@ public class TariffController implements TariffApi {
                                                                  Integer limit, Integer offset) {
         PaginatedTariffResponse response = tariffService.getAllTariffs(priceMin, priceMax, dataLimitMin, dataLimitMax,
                 callMinutesMin, callMinutesMax, smsLimitMin, smsLimitMax, isActive, isUsed, limit, offset);
-        if (response.getTariffs().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(response);
-        }
+
+        return ResponseEntity.ok(response);
     }
 
     @Override
@@ -60,10 +58,16 @@ public class TariffController implements TariffApi {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         User currentUser = (User) authentication.getPrincipal();
-        if (id.equals(currentUser.getId())) {
+        if (hasEmployeeRole() || id.equals(currentUser.getId())) {
             return ResponseEntity.ok(tariffService.getTariffByUserId(id));
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+    }
+
+    private boolean hasEmployeeRole() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        return currentUser.getRole().equals(UserRole.ROLE_EMPLOYEE);
     }
 }

@@ -8,39 +8,8 @@ tags:
     description: API to manage tariff adjustments for users
 paths:
   /tariff-adjustment:
-    post:
-      summary: Create a new tariff adjustment
-      operationId: createTariffAdjustment
-      tags:
-        - tariff-adjustment
-      requestBody:
-        description: Tariff adjustment to create
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TariffAdjustmentDTO'
-      responses:
-        '201':
-          description: Tariff adjustment created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TariffAdjustmentDTO'
-        '401':
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthError'
-        '403':
-          description: Forbidden, insufficient permissions
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenError'
     put:
-      summary: Update a tariff adjustment
+      summary: Creates or update a tariff adjustment
       operationId: updateTariffAdjustment
       tags:
         - tariff-adjustment
@@ -134,13 +103,17 @@ components:
       properties:
         id:
           type: integer
-        adjusted_data_limit:
+        userId:
           type: integer
-        adjusted_call_minutes:
+        tariffId:
           type: integer
-        adjusted_sms_limit:
+        adjustedDataLimit:
           type: integer
-        discount_percentage:
+        adjustedCallMinutes:
+          type: integer
+        adjustedSmsLimit:
+          type: integer
+        discountPercentage:
           type: number
           format: double
           description: Percentage discount on tariff price

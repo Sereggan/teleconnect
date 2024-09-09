@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getUserById } from "../../services/UserClient";
 import { User, UserRole } from "../../models/User";
+import { Container, Spinner, Alert } from "react-bootstrap";
 
 export default function UserDetails() {
   const { id } = useParams<{ id: string }>();
@@ -22,7 +23,9 @@ export default function UserDetails() {
             setError("User not found");
           }
         } catch (error: any) {
-          setError(error.message || "Error fetching user");
+          if (!abortController.signal.aborted) {
+            setError(error.message || "Error fetching user");
+          }
         } finally {
           setIsLoading(false);
         }
@@ -31,25 +34,23 @@ export default function UserDetails() {
 
     const abortController = new AbortController();
     fetchUser(abortController);
-    return () => {
-      abortController.abort();
-    };
+    return () => abortController.abort();
   }, [id]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Spinner animation="border" />;
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <Alert variant="danger">{error}</Alert>;
   }
 
   if (!user) {
-    return <div>User not found</div>;
+    return <Alert variant="warning">User not found</Alert>;
   }
 
   return (
-    <div>
+    <Container>
       <h2>User Details</h2>
       <p>
         <strong>Name:</strong> {user.name} {user.surname}
@@ -64,10 +65,8 @@ export default function UserDetails() {
         <strong>Role:</strong> {user.role}
       </p>
       {user.role === UserRole.ROLE_CUSTOMER && user.tariffId && (
-        <>
-          <Link to={`/tariffs/${user.tariffId}`}>Tariff Info</Link>
-        </>
+        <Link to={`/tariffs/${user.tariffId}`}>Tariff Info</Link>
       )}
-    </div>
+    </Container>
   );
 }

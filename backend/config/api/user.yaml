@@ -244,7 +244,7 @@ components:
           nullable: false
         password:
           type: string
-          nullable: false
+          default: ""
         email:
           type: string
           nullable: false
@@ -256,14 +256,13 @@ components:
           type: string
         tariffId:
           type: integer
-        tariff_adjustment_id:
+        tariffAdjustmentId:
           type: integer
         birthDate:
           type: string
           format: date
       required:
         - phoneNumber
-        - password
         - email
         - name
         - surname

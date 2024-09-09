@@ -1,0 +1,168 @@
+openapi: 3.0.1
+info:
+  title: Tariff and User Statistics API
+  description: API for fetching various statistics related to tariffs, users, and adjustments.
+  version: 1.0.0
+tags:
+  - name: statistics
+    description: API to retrieve statistical data
+paths:
+  /statistics/users-by-tariff:
+    get:
+      summary: Get number of users by each tariff
+      operationId: getUsersByTariff
+      tags:
+        - statistics
+      responses:
+        '200':
+          description: Number of users by each tariff
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserByTariffResponse'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+  /statistics/adjustments-by-tariff:
+    get:
+      summary: Get number of tariff adjustments by each tariff
+      operationId: getAdjustmentsByTariff
+      tags:
+        - statistics
+      responses:
+        '200':
+          description: Number of adjustments by each tariff
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdjustmentByTariffResponse'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+  /statistics/most-discounted-tariff:
+    get:
+      summary: Get the tariff with the highest average discount
+      operationId: getMostDiscountedTariff
+      tags:
+        - statistics
+      responses:
+        '200':
+          description: Tariff with the highest average discount
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MostDiscountedTariffResponse'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+  /statistics/users-without-tariff:
+    get:
+      summary: Get users who do not have any assigned tariff
+      operationId: getUsersWithoutTariff
+      tags:
+        - statistics
+      responses:
+        '200':
+          description: List of users without any tariff assigned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersWithoutTariffResponse'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+components:
+  schemas:
+    UserByTariffResponse:
+      type: object
+      properties:
+        tariffName:
+          type: string
+        userCount:
+          type: integer
+          format: int64
+          example: 100
+
+    AdjustmentByTariffResponse:
+      type: object
+      properties:
+        tariffName:
+          type: string
+        adjustmentCount:
+          type: integer
+          format: int64
+          example: 10
+
+    MostDiscountedTariffResponse:
+      type: object
+      properties:
+        tariffName:
+          type: string
+        averageDiscount:
+          type: number
+          format: float
+          example: 15.5
+
+    UsersWithoutTariffResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int64
+
+    AuthError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid or missing token"
+    ForbiddenError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Forbidden: insufficient permissions"

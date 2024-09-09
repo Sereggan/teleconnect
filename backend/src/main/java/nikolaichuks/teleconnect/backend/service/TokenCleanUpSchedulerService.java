@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class TokenCleanUpSchedulerService {
 
     private final TokenBlacklistRepository tokenBlacklistRepository;

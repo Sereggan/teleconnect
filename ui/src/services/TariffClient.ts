@@ -89,7 +89,7 @@ export const getTariffByUserId = async (
   abortController: AbortController
 ): Promise<Tariff | undefined> => {
   const response: AxiosResponse<Tariff> = await tariffClient.get(
-    `${basePath}/user/${userId}/tariff`,
+    `${basePath}${tariffEndpoint}/user/${userId}`,
     { signal: abortController.signal }
   );
   return response.data;
