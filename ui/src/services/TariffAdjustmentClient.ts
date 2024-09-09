@@ -17,18 +17,6 @@ export const getTariffAdjustment = async (
   return response.data;
 };
 
-export const createTariffAdjustment = async (
-  adjustment: TariffAdjustment,
-  abortController: AbortController
-): Promise<TariffAdjustment | undefined> => {
-  const response: AxiosResponse<TariffAdjustment> = await adjustmentClient.post(
-    basePath + adjustmentEndpoint,
-    adjustment,
-    { signal: abortController.signal }
-  );
-  return response.data;
-};
-
 export const updateTariffAdjustment = async (
   adjustment: TariffAdjustment,
   abortController: AbortController
