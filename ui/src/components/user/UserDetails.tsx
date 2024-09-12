@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getUserById } from "../../services/UserClient";
 import { User, UserRole } from "../../models/User";
-import { Container, Spinner, Alert } from "react-bootstrap";
+import { Container, Spinner, Alert, Nav } from "react-bootstrap";
 
 export default function UserDetails() {
   const { id } = useParams<{ id: string }>();
@@ -65,7 +65,9 @@ export default function UserDetails() {
         <strong>Role:</strong> {user.role}
       </p>
       {user.role === UserRole.ROLE_CUSTOMER && user.tariffId && (
-        <Link to={`/tariffs/${user.tariffId}`}>Tariff Info</Link>
+        <Nav.Link as={Link} to={`/tariffs/${user.tariffId}`}>
+          Tariff Info
+        </Nav.Link>
       )}
     </Container>
   );

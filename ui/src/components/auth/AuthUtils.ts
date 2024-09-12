@@ -11,7 +11,7 @@ export const getUserRoleFromToken = (): UserRole | null => {
   return null;
 };
 
-export const getUserIdFromToken = (): UserRole | null => {
+export const getUserIdFromToken = (): string | null => {
   const token = localStorage.getItem("accessToken");
   if (token) {
     const payloadBase64 = token.split(".")[1];

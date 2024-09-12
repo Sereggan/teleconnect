@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getAllUsers } from "../../services/UserClient";
 import { User } from "../../models/User";
 import {
@@ -31,7 +31,7 @@ export default function UserManagement() {
     role: "",
     tariffId: "",
   });
-
+  const nagivate = useNavigate();
   const isMountedRef = useRef(true);
 
   useEffect(() => {
@@ -98,119 +98,101 @@ export default function UserManagement() {
 
   return (
     <Container>
-      <Row className="mb-3">
+      <Row>
         <Col>
           <h1>User Management</h1>
         </Col>
         <Col className="text-end">
-          <Link to="/users/add">
-            <Button variant="success">Add New User</Button>
-          </Link>
+          <Button variant="success" onClick={() => nagivate("/users/add")}>
+            Add New User
+          </Button>
         </Col>
       </Row>
 
       <Form onSubmit={handleFilterSubmit} className="mb-4">
-        <Row>
-          <Col md={2}>
-            <Form.Group>
-              <Form.Label>Phone Number</Form.Label>
-              <Form.Control
-                type="text"
-                name="phoneNumber"
-                value={filters.phoneNumber}
-                onChange={(e) =>
-                  setFilters({ ...filters, phoneNumber: e.target.value })
-                }
-                placeholder="Phone Number"
-              />
-            </Form.Group>
-          </Col>
-          <Col md={2}>
-            <Form.Group>
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={filters.email}
-                onChange={(e) =>
-                  setFilters({ ...filters, email: e.target.value })
-                }
-                placeholder="Email"
-              />
-            </Form.Group>
-          </Col>
-          <Col md={2}>
-            <Form.Group>
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="name"
-                value={filters.name}
-                onChange={(e) =>
-                  setFilters({ ...filters, name: e.target.value })
-                }
-                placeholder="Name"
-              />
-            </Form.Group>
-          </Col>
-          <Col md={2}>
-            <Form.Group>
-              <Form.Label>Surname</Form.Label>
-              <Form.Control
-                type="text"
-                name="surname"
-                value={filters.surname}
-                onChange={(e) =>
-                  setFilters({ ...filters, surname: e.target.value })
-                }
-                placeholder="Surname"
-              />
-            </Form.Group>
-          </Col>
-          <Col md={2}>
-            <Form.Group>
-              <Form.Label>Role</Form.Label>
-              <Form.Select
-                name="role"
-                value={filters.role}
-                onChange={(e) =>
-                  setFilters({ ...filters, role: e.target.value })
-                }
-              >
-                <option value="">Any</option>
-                <option value="ROLE_EMPLOYEE">Employee</option>
-                <option value="ROLE_CUSTOMER">Customer</option>
-              </Form.Select>
-            </Form.Group>
-          </Col>
-          <Col md={2}>
-            <Form.Group>
-              <Form.Label>Tariff ID</Form.Label>
-              <Form.Control
-                type="number"
-                name="tariffId"
-                value={filters.tariffId}
-                onChange={(e) =>
-                  setFilters({ ...filters, tariffId: e.target.value })
-                }
-                placeholder="Tariff ID"
-              />
-            </Form.Group>
-          </Col>
-        </Row>
-        <Row className="mt-3">
-          <Col>
-            <Button type="submit" variant="primary">
-              Apply Filters
-            </Button>
-          </Col>
-        </Row>
+        <Form.Group>
+          <Form.Label>Phone Number</Form.Label>
+          <Form.Control
+            type="text"
+            name="phoneNumber"
+            value={filters.phoneNumber}
+            onChange={(e) =>
+              setFilters({ ...filters, phoneNumber: e.target.value })
+            }
+            placeholder="Phone Number"
+          />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            type="email"
+            name="email"
+            value={filters.email}
+            onChange={(e) => setFilters({ ...filters, email: e.target.value })}
+            placeholder="Email"
+          />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Name</Form.Label>
+          <Form.Control
+            type="text"
+            name="name"
+            value={filters.name}
+            onChange={(e) => setFilters({ ...filters, name: e.target.value })}
+            placeholder="Name"
+          />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Surname</Form.Label>
+          <Form.Control
+            type="text"
+            name="surname"
+            value={filters.surname}
+            onChange={(e) =>
+              setFilters({ ...filters, surname: e.target.value })
+            }
+            placeholder="Surname"
+          />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Role</Form.Label>
+          <Form.Select
+            name="role"
+            value={filters.role}
+            onChange={(e) => setFilters({ ...filters, role: e.target.value })}
+          >
+            <option value="">Any</option>
+            <option value="ROLE_EMPLOYEE">Employee</option>
+            <option value="ROLE_CUSTOMER">Customer</option>
+          </Form.Select>
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Tariff ID</Form.Label>
+          <Form.Control
+            type="number"
+            name="tariffId"
+            value={filters.tariffId}
+            onChange={(e) =>
+              setFilters({ ...filters, tariffId: e.target.value })
+            }
+            placeholder="Tariff ID"
+          />
+        </Form.Group>
+
+        <Button type="submit" variant="primary">
+          Search
+        </Button>
       </Form>
 
       {error && <p>Something went wrong, please try again... {error}</p>}
       {isLoading && <Spinner animation="border" />}
       {!isLoading && !error && (
-        <>
+        <Container>
           <Row>
             {userList.length === 0 ? (
               <Col>
@@ -236,11 +218,11 @@ export default function UserManagement() {
                 active={idx + 1 === pagination.currentPage}
                 onClick={() => handlePageChange(idx + 1)}
               >
-                {idx + 1}
+                {pagination.currentPage}
               </Pagination.Item>
             ))}
           </Pagination>
-        </>
+        </Container>
       )}
     </Container>
   );

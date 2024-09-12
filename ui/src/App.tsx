@@ -12,7 +12,6 @@ import Layout from "./components/Layout";
 import LoginPage from "./components/auth/LoginPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { AuthProvider } from "./components/auth/AuthProvider";
-import RoleProtectedRoute from "./components/auth/RoleProtectedRouteProps";
 import { UserRole } from "./models/User";
 import ChangeTariff from "./components/user/ChangeTariff";
 import UserTariff from "./components/user/UserTariff";
@@ -37,17 +36,17 @@ const router = createBrowserRouter([
       {
         path: "users",
         element: (
-          <ProtectedRoute>
-            <RoleProtectedRoute requiredRole={UserRole.ROLE_EMPLOYEE}>
-              <UserManagement />
-            </RoleProtectedRoute>
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
+            <UserManagement />
           </ProtectedRoute>
         ),
       },
       {
         path: "users/:id",
         element: (
-          <ProtectedRoute>
+          <ProtectedRoute
+            requiredRoles={[UserRole.ROLE_EMPLOYEE, UserRole.ROLE_CUSTOMER]}
+          >
             <UserDetails />
           </ProtectedRoute>
         ),
@@ -55,27 +54,23 @@ const router = createBrowserRouter([
       {
         path: "users/:id/change-tariff",
         element: (
-          <ProtectedRoute>
-            <RoleProtectedRoute requiredRole={UserRole.ROLE_EMPLOYEE}>
-              <ChangeTariff />
-            </RoleProtectedRoute>
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
+            <ChangeTariff />
           </ProtectedRoute>
         ),
       },
       {
         path: "users/my-tariff",
         element: (
-          <ProtectedRoute>
-            <RoleProtectedRoute requiredRole={UserRole.ROLE_CUSTOMER}>
-              <UserTariff />
-            </RoleProtectedRoute>
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_CUSTOMER]}>
+            <UserTariff />
           </ProtectedRoute>
         ),
       },
       {
         path: "users/edit/:id",
         element: (
-          <ProtectedRoute>
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
             <EditUser />
           </ProtectedRoute>
         ),
@@ -83,30 +78,24 @@ const router = createBrowserRouter([
       {
         path: "users/add",
         element: (
-          <ProtectedRoute>
-            <RoleProtectedRoute requiredRole={UserRole.ROLE_EMPLOYEE}>
-              <NewUser />
-            </RoleProtectedRoute>
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
+            <NewUser />
           </ProtectedRoute>
         ),
       },
       {
         path: "tariffs/edit/:id",
         element: (
-          <ProtectedRoute>
-            <RoleProtectedRoute requiredRole={UserRole.ROLE_EMPLOYEE}>
-              <EditTariff />
-            </RoleProtectedRoute>
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
+            <EditTariff />
           </ProtectedRoute>
         ),
       },
       {
         path: "tariffs/add",
         element: (
-          <ProtectedRoute>
-            <RoleProtectedRoute requiredRole={UserRole.ROLE_EMPLOYEE}>
-              <NewTariff />
-            </RoleProtectedRoute>
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
+            <NewTariff />
           </ProtectedRoute>
         ),
       },

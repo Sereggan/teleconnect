@@ -18,9 +18,15 @@ export default function NewUser() {
   const navigate = useNavigate();
   const controllerRef = useRef<AbortController | null>(null);
 
-  const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setUser((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
+  };
+
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = event.target;
     setUser((prevUser) => ({
       ...prevUser,
@@ -102,12 +108,11 @@ export default function NewUser() {
             <Form.Select
               name="role"
               value={user.role}
-              onChange={handleChange}
+              onChange={handleSelectChange}
               required
             >
               <option value={UserRole.ROLE_CUSTOMER}>Customer</option>
               <option value={UserRole.ROLE_EMPLOYEE}>Employee</option>
-              <option value={UserRole.ROLE_ADMIN}>Admin</option>
             </Form.Select>
           </Form.Group>
           <Button type="submit" variant="success" className="mt-3">

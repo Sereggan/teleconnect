@@ -3,7 +3,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getAllTariffs } from "../../services/TariffClient";
 import { getUserById, updateUser } from "../../services/UserClient";
 import { Tariff } from "../../models/Tariff";
-import { Button, Container, Row, Col, Spinner, Form } from "react-bootstrap";
+import {
+  Button,
+  Container,
+  Row,
+  Col,
+  Spinner,
+  Form,
+  Card,
+  ListGroup,
+} from "react-bootstrap";
 
 export default function ChangeTariff() {
   const { id } = useParams<{ id: string }>();
@@ -213,29 +222,35 @@ export default function ChangeTariff() {
           <div>
             {tariffs &&
               tariffs.map((tariff) => (
-                <div
+                <Card
                   key={tariff.id}
+                  className="mb-3"
                   style={{
                     backgroundColor: tariff.isActive
                       ? "lightgreen"
                       : "lightcoral",
-                    padding: "10px",
-                    marginBottom: "10px",
                   }}
                 >
-                  <p>
-                    {tariff.name} - {tariff.price} Euro
-                  </p>
-                  <p>{tariff.description}</p>
-                  <p>
-                    Data Limit: {tariff.dataLimit ?? "Unlimited"} GB, Call
-                    Minutes: {tariff.callMinutes ?? "Unlimited"}, SMS Limit:
-                    {tariff.smsLimit ?? "Unlimited"}
-                  </p>
+                  <Card.Title>{tariff.name}</Card.Title>
+                  <Card.Text>
+                    <ListGroup>
+                      <ListGroup.Item>{tariff.price} Euro</ListGroup.Item>
+                      <ListGroup.Item>{tariff.description}</ListGroup.Item>
+                      <ListGroup.Item>
+                        Data Limit: {tariff.dataLimit ?? "Unlimited"} GB
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        Minutes: {tariff.callMinutes ?? "Unlimited"}
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        SMS Limit: {tariff.smsLimit ?? "Unlimited"}
+                      </ListGroup.Item>
+                    </ListGroup>
+                  </Card.Text>
                   <Button onClick={() => handleConnectTariff(tariff.id)}>
                     Connect
                   </Button>
-                </div>
+                </Card>
               ))}
           </div>
         </>

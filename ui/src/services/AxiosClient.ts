@@ -18,17 +18,6 @@ const createAxiosClient = (baseURL: string): AxiosInstance => {
     },
   });
 
-  client.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        config.headers["Authorization"] = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
-
   client.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {

@@ -66,44 +66,46 @@ export default function UserTariff() {
       {error && <Alert variant="danger">{error}</Alert>}
       {isLoading && <Spinner animation="border" />}
       {!isLoading && !error && userTariff && (
-        <Row>
-          <Col>
-            <h2>My current tariff:</h2>
-            <p>
-              <strong>Name: </strong> {userTariff.name}
-            </p>
-            <p>
-              <strong>Price: </strong>{" "}
-              {calculateDiscountedPrice(
-                userTariff.price,
-                adjustment?.discountPercentage
-              )}{" "}
-              Euro
-            </p>
-            <p>
-              <strong>Data Limit: </strong>
-              {getAdjustedValue(
-                userTariff.dataLimit,
-                adjustment?.adjustedDataLimit
-              ) ?? "Unlimited"}{" "}
-              GB
-            </p>
-            <p>
-              <strong>Call Minutes: </strong>
-              {getAdjustedValue(
-                userTariff.callMinutes,
-                adjustment?.adjustedCallMinutes
-              ) ?? "Unlimited"}
-            </p>
-            <p>
-              <strong>SMS Limit: </strong>
-              {getAdjustedValue(
-                userTariff.smsLimit,
-                adjustment?.adjustedSmsLimit
-              ) ?? "Unlimited"}
-            </p>
-          </Col>
-        </Row>
+        <Container>
+          <Row>
+            <Col>
+              <h2>My current tariff:</h2>
+              <p>
+                <strong>Name: </strong> {userTariff.name}
+              </p>
+              <p>
+                <strong>Price: </strong>{" "}
+                {calculateDiscountedPrice(
+                  userTariff.price,
+                  adjustment?.discountPercentage
+                )}{" "}
+                Euro
+              </p>
+              <p>
+                <strong>Data Limit: </strong>
+                {getAdjustedValue(
+                  userTariff.dataLimit,
+                  adjustment?.adjustedDataLimit
+                ) ?? "Unlimited"}{" "}
+                GB
+              </p>
+              <p>
+                <strong>Call Minutes: </strong>
+                {getAdjustedValue(
+                  userTariff.callMinutes,
+                  adjustment?.adjustedCallMinutes
+                ) ?? "Unlimited"}
+              </p>
+              <p>
+                <strong>SMS Limit: </strong>
+                {getAdjustedValue(
+                  userTariff.smsLimit,
+                  adjustment?.adjustedSmsLimit
+                ) ?? "Unlimited"}
+              </p>
+            </Col>
+          </Row>
+        </Container>
       )}
     </Container>
   );

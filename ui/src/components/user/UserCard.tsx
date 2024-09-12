@@ -1,8 +1,10 @@
-import { Link } from "react-router-dom";
-import { User, UserRole } from "../../models/User";
-import { Card, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { User } from "../../models/User";
+import { Card, Button, ListGroup, Row } from "react-bootstrap";
 
 export default function UserCard({ user }: { user: User }) {
+  const navigate = useNavigate();
+
   return (
     <Card className="mb-3">
       <Card.Body>
@@ -10,29 +12,27 @@ export default function UserCard({ user }: { user: User }) {
           {user.name} {user.surname}
         </Card.Title>
         <Card.Text>
-          <ul className="list-unstyled">
-            <li>
-              <strong>Phone Number:</strong> {user.phoneNumber}
-            </li>
-            <li>
-              <strong>Email:</strong> {user.email}
-            </li>
-            <li>
-              <strong>Role:</strong> {user.role}
-            </li>
-            {user.role === UserRole.ROLE_CUSTOMER && user.tariffId && (
-              <Link to={`/tariffs/${user.tariffId}`}>Tariff Info</Link>
+          <ListGroup>
+            <ListGroup.Item>Phone Number: {user.phoneNumber}</ListGroup.Item>
+            <ListGroup.Item>Email: {user.email}</ListGroup.Item>
+            <ListGroup.Item>Role: {user.role}</ListGroup.Item>
+            {user.tariffId && (
+              <ListGroup.Item>
+                <Button onClick={() => navigate(`/tariffs/${user.tariffId}`)}>
+                  Tariff Info
+                </Button>
+              </ListGroup.Item>
             )}
-          </ul>
+          </ListGroup>
         </Card.Text>
-        <Link to={`/users/${user.id}`}>
-          <Button variant="primary" className="me-2">
+        <Row>
+          <Button onClick={() => navigate(`/users/${user.id}`)}>
             User Info
           </Button>
-        </Link>
-        <Link to={`/users/edit/${user.id}`}>
-          <Button variant="secondary">Edit User</Button>
-        </Link>
+          <Button onClick={() => navigate(`/users/edit/${user.id}`)}>
+            Edit User
+          </Button>
+        </Row>
       </Card.Body>
     </Card>
   );

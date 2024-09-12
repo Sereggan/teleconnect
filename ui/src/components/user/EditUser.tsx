@@ -9,6 +9,7 @@ import {
 import { User, UserRole } from "../../models/User";
 import { Tariff } from "../../models/Tariff";
 import { TariffAdjustment } from "../../models/TariffAdjustment";
+import { Button, Container, Form, Nav } from "react-bootstrap";
 
 export default function EditUser() {
   const { id } = useParams<{ id: string }>();
@@ -22,6 +23,7 @@ export default function EditUser() {
     undefined
   );
   const navigate = useNavigate();
+
   const controllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -74,10 +76,16 @@ export default function EditUser() {
     };
   }, [id]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setUser((prevUser) => ({
+      ...prevUser!,
+      [name]: value,
+    }));
+  };
+
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = event.target;
     setUser((prevUser) => ({
       ...prevUser!,
       [name]: value,
@@ -178,135 +186,135 @@ export default function EditUser() {
       {error && <div>{error}</div>}
       {isLoading && <div>Loading...</div>}
       {!isLoading && user && (
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>
-              Name:
-              <input
+        <Container>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="name">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
                 type="text"
                 name="name"
                 value={user.name}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 required
               />
-            </label>
-            <br />
-            <label>
-              Surname:
-              <input
+            </Form.Group>
+            <Form.Group controlId="surname" className="mt-3">
+              <Form.Label>Surname</Form.Label>
+              <Form.Control
                 type="text"
                 name="surname"
                 value={user.surname}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 required
               />
-            </label>
-            <br />
-            <label>
-              Phone Number:
-              <input
+            </Form.Group>
+            <Form.Group controlId="phoneNumber" className="mt-3">
+              <Form.Label>Phone Number</Form.Label>
+              <Form.Control
                 type="tel"
                 name="phoneNumber"
                 value={user.phoneNumber}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 required
               />
-            </label>
-            <br />
-            <label>
-              Email:
-              <input
+            </Form.Group>
+            <Form.Group controlId="email" className="mt-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
                 type="email"
                 name="email"
                 value={user.email}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 required
               />
-            </label>
-            <br />
-            <label>
-              Password:
-              <input
+            </Form.Group>
+            <Form.Group controlId="password" className="mt-3">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
                 type="password"
                 name="password"
                 value={user.password}
-                onChange={handleInputChange}
+                onChange={handleChange}
+                required
               />
-            </label>
-            <br />
-            <label>
-              Role:
-              <select
+            </Form.Group>
+            <Form.Group controlId="role" className="mt-3">
+              <Form.Label>Role</Form.Label>
+              <Form.Select
                 name="role"
                 value={user.role}
-                onChange={handleInputChange}
+                onChange={handleSelectChange}
                 required
               >
                 <option value={UserRole.ROLE_CUSTOMER}>Customer</option>
                 <option value={UserRole.ROLE_EMPLOYEE}>Employee</option>
-              </select>
-            </label>
-            <br />
+              </Form.Select>
+            </Form.Group>
 
             {user.role === UserRole.ROLE_CUSTOMER && currentTariff && (
               <>
-                <div>
-                  <label>
-                    Current Tariff:
-                    <Link to={`/tariffs/${user.tariffId}`}>
-                      {currentTariff.name}
-                    </Link>
-                  </label>
+                <Container>
+                  <Form.Group controlId="role" className="mt-3">
+                    <Form.Label>
+                      <Nav.Link as={Link} to={`/tariffs/${user.tariffId}`}>
+                        Current tariff Info
+                      </Nav.Link>
+                    </Form.Label>
+                  </Form.Group>
 
-                  <button type="button" onClick={handleDisableTariff}>
+                  <Button onClick={() => handleDisableTariff}>
                     Disable Tariff
-                  </button>
-                  <br />
-                  <h3>Tariff Adjustment</h3>
-                  <label>Adjusted Data Limit</label>
-                  <input
-                    type="number"
-                    name="adjustedDataLimit"
-                    value={adjustment?.adjustedDataLimit || ""}
-                    onChange={handleAdjustmentInputChange}
-                  />
-                  <br />
-                  <label>Adjusted Call Minutes</label>
-                  <input
-                    type="number"
-                    name="adjustedCallMinutes"
-                    value={adjustment?.adjustedCallMinutes || ""}
-                    onChange={handleAdjustmentInputChange}
-                  />
-                  <br />
-                  <label>Adjusted SMS Limit</label>
-                  <input
-                    type="number"
-                    name="adjustedSmsLimit"
-                    value={adjustment?.adjustedSmsLimit || ""}
-                    onChange={handleAdjustmentInputChange}
-                  />
-                  <br />
-                  <label>Discount Percentage</label>
-                  <input
-                    type="number"
-                    name="discountPercentage"
-                    value={adjustment?.discountPercentage || ""}
-                    onChange={handleAdjustmentInputChange}
-                  />
-                  <br />
-                </div>
+                  </Button>
+
+                  <h3>Tariff Adjustments</h3>
+                  <Form.Group controlId="adjustedDataLimit">
+                    <Form.Label>Adjusted Data Limit</Form.Label>
+                    <Form.Control
+                      type="number"
+                      name="adjustedDataLimit"
+                      value={adjustment?.adjustedDataLimit || ""}
+                      onChange={handleAdjustmentInputChange}
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="adjustedCallMinutes">
+                    <Form.Label>Adjusted Call Minutes</Form.Label>
+                    <Form.Control
+                      type="number"
+                      name="adjustedCallMinutes"
+                      value={adjustment?.adjustedCallMinutes || ""}
+                      onChange={handleAdjustmentInputChange}
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="adjustedCallMinutes">
+                    <Form.Label>Adjusted SMS Limit</Form.Label>
+                    <Form.Control
+                      type="number"
+                      name="adjustedSmsLimit"
+                      value={adjustment?.adjustedSmsLimit || ""}
+                      onChange={handleAdjustmentInputChange}
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="discountPercentage">
+                    <Form.Label>Discount Percentage</Form.Label>
+                    <Form.Control
+                      type="number"
+                      name="discountPercentage"
+                      value={adjustment?.discountPercentage || ""}
+                      onChange={handleAdjustmentInputChange}
+                    />
+                  </Form.Group>
+                </Container>
               </>
             )}
-            <Link to={`/users/${user.id}/change-tariff`}>
-              <button type="button">Change Basic Tariff</button>
-            </Link>
-            <button type="submit">Update User</button>
-            <button type="button" onClick={handleDelete}>
+            <Button onClick={() => navigate(`/users/${user.id}/change-tariff`)}>
+              Change Basic Tariff
+            </Button>
+            <Button type="submit">Update User</Button>
+            <Button variant="danger" onClick={handleDelete}>
               Delete User
-            </button>
-          </div>
-        </form>
+            </Button>
+          </Form>
+        </Container>
       )}
     </>
   );
