@@ -12,6 +12,9 @@ import teleconnect.statistics.model.UsersWithoutTariffResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Statistics service
+ */
 @Service
 @RequiredArgsConstructor
 public class StatisticsService {

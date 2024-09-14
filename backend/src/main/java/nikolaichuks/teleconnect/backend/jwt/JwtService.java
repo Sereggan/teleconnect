@@ -1,4 +1,4 @@
-package nikolaichuks.teleconnect.backend.auth;
+package nikolaichuks.teleconnect.backend.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -17,6 +17,9 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 
+/*
+ * Service for generating and validating JWT tokens
+ */
 @Getter
 @Service
 public class JwtService {

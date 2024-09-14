@@ -9,7 +9,7 @@ tags:
 paths:
   /auth/signup:
     post:
-      summary: Register a new user
+      summary: Register a new user. Implemented for testing purposes only
       operationId: registerUser
       tags:
         - auth
@@ -33,14 +33,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthError'
-  /auth/login:
+  /auth/signin:
     post:
       summary: Authenticate a user
-      operationId: loginUser
+      operationId: signInUser
       tags:
         - auth
       requestBody:
-        description: User login credentials, login can be email or phone number
+        description: User login credentials
         required: true
         content:
           application/json:
@@ -87,17 +87,17 @@ paths:
                 $ref: '#/components/schemas/AuthError'
   /auth/logout:
     post:
-      summary: Logout a user
+      summary: Logout user
       operationId: logoutUser
       tags:
         - auth
       requestBody:
-        description: Request to logout user by invalidating the token
+        description: Request to logout user
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TokenRequest'
+              $ref: '#/components/schemas/LogoutRequest'
       responses:
         '204':
           description: User logged out successfully, token invalidated
@@ -114,7 +114,6 @@ components:
       properties:
         phoneNumber:
           type: string
-          example: "1234567890"
         password:
           type: string
           format: password
@@ -123,10 +122,8 @@ components:
           format: email
         name:
           type: string
-          example: "John"
         surname:
           type: string
-          example: "Doe"
       required:
         - phoneNumber
         - password
@@ -148,16 +145,12 @@ components:
       properties:
         token:
           type: string
-          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
         refreshToken:
           type: string
-          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
         userId:
           type: integer
-          example: 1
         role:
           type: string
-          example: "ROLE_USER"
       required:
         - token
         - refreshToken
@@ -168,18 +161,15 @@ components:
       properties:
         refreshToken:
           type: string
-          example: "dGhpc2lzbXlyZWZyZXNodG9rZW4="
       required:
         - refreshToken
-    TokenRequest:
+    LogoutRequest:
       type: object
       properties:
         token:
           type: string
-          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
         refreshToken:
           type: string
-          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
       required:
         - token
         - refreshToken
@@ -188,4 +178,3 @@ components:
       properties:
         error:
           type: string
-          example: "Invalid or missing token"

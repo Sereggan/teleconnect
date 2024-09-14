@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import teleconnect.tariffadjustment.model.TariffAdjustmentDTO;
 
+/**
+ * Tariff adjustment service
+ */
 @Service
 @RequiredArgsConstructor
 public class TariffAdjustmentService {

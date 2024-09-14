@@ -6,6 +6,9 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+/**
+ * TokenBlacklist entity
+ */
 @Getter
 @Setter
 @Entity

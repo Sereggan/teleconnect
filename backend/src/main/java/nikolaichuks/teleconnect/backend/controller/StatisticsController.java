@@ -18,21 +18,33 @@ public class StatisticsController implements StatisticsApi {
 
     private final StatisticsService statisticsService;
 
+    /*
+     * {@inheritDoc}
+     */
     @Override
     public ResponseEntity<List<AdjustmentByTariffResponse>> getAdjustmentsByTariff() {
         return ResponseEntity.ok(statisticsService.getAdjustmentsByTariff());
     }
 
+    /*
+     * {@inheritDoc}
+     */
     @Override
     public ResponseEntity<MostDiscountedTariffResponse> getMostDiscountedTariff() {
         return ResponseEntity.ok(statisticsService.getMostDiscountedTariff());
     }
 
+    /*
+     * {@inheritDoc}
+     */
     @Override
     public ResponseEntity<List<UserByTariffResponse>> getUsersByTariff() {
         return ResponseEntity.ok(statisticsService.getUsersByTariff());
     }
 
+    /*
+     // {@inheritDoc}
+     */
     @Override
     public ResponseEntity<UsersWithoutTariffResponse> getUsersWithoutTariff() {
         return ResponseEntity.ok(statisticsService.getUsersWithoutTariff());

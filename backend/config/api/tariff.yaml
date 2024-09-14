@@ -149,7 +149,6 @@ paths:
             type: integer
             default: 0
           description: The page number to start with (default is 0)
-          example: 0
       responses:
         '200':
           description: A paginated list of tariffs
@@ -157,18 +156,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedTariffResponse'
-        '401':
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthError'
-        '403':
-          description: Forbidden, insufficient permissions
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenError'
   /tariff/{id}:
     get:
       summary: Get a tariff by ID
@@ -190,18 +177,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TariffDTO'
-        '401':
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthError'
-        '403':
-          description: Forbidden, insufficient permissions
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenError'
         '404':
           description: Tariff not found
           content:
@@ -341,6 +316,3 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-
-security:
-  - bearerAuth: [ ]

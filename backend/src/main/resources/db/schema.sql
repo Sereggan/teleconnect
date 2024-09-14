@@ -29,7 +29,11 @@ CREATE TABLE IF NOT EXISTS users (
                                      SERIAL
                                      PRIMARY
                                      KEY,
-    phone_number VARCHAR(15) NOT NULL UNIQUE,
+                                     phone_number
+                                     VARCHAR
+(
+                                     15
+) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     name VARCHAR(30) NOT NULL,

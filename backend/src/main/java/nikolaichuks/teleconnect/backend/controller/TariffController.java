@@ -19,11 +19,17 @@ public class TariffController implements TariffApi {
 
     private final TariffService tariffService;
 
+    /*
+     * {@inheritDoc}
+     */
     @Override
     public ResponseEntity<TariffDTO> getTariffById(Integer id) {
         return ResponseEntity.ok(tariffService.getTariffById(id));
     }
 
+    /*
+     * {@inheritDoc}
+     */
     @Override
     public ResponseEntity<PaginatedTariffResponse> getAllTariffs(Double priceMin, Double priceMax,
                                                                  Integer dataLimitMin, Integer dataLimitMax,
@@ -37,22 +43,34 @@ public class TariffController implements TariffApi {
         return ResponseEntity.ok(response);
     }
 
+    /*
+     * {@inheritDoc}
+     */
     @Override
     public ResponseEntity<TariffDTO> createTariff(TariffDTO tariffDTO) {
         return new ResponseEntity<>(tariffService.createTariff(tariffDTO), HttpStatus.CREATED);
     }
 
+    /*
+     * {@inheritDoc}
+     */
     @Override
     public ResponseEntity<TariffDTO> updateTariff(TariffDTO tariffDTO) {
         return ResponseEntity.ok(tariffService.updateTariff(tariffDTO));
     }
 
+    /*
+     * {@inheritDoc}
+     */
     @Override
     public ResponseEntity<Void> deleteTariff(Integer id) {
         tariffService.deleteTariff(id);
         return ResponseEntity.ok().build();
     }
 
+    /*
+     * {@inheritDoc}
+     */
     @Override
     public ResponseEntity<TariffDTO> getTariffByUserId(Integer id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

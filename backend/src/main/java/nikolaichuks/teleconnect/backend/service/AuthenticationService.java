@@ -1,8 +1,8 @@
 package nikolaichuks.teleconnect.backend.service;
 
 import lombok.RequiredArgsConstructor;
-import nikolaichuks.teleconnect.backend.auth.JwtService;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
+import nikolaichuks.teleconnect.backend.jwt.JwtService;
 import nikolaichuks.teleconnect.backend.model.TokenBlacklist;
 import nikolaichuks.teleconnect.backend.model.TokenType;
 import nikolaichuks.teleconnect.backend.model.User;
@@ -21,6 +21,9 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Authentication service
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {

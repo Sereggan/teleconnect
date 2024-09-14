@@ -10,12 +10,12 @@ import lombok.experimental.Accessors;
 /**
  * TariffAdjustment entity
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@Accessors(chain = true)
 @Data
 @Entity
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 @Table(name = "tariff_adjustment")
 public class TariffAdjustment {
 

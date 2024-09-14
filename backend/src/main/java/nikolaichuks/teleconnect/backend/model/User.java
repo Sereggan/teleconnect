@@ -13,13 +13,16 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Accessors(chain = true)
+/**
+ * User entity
+ */
 @Data
 @Entity
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
+@Accessors(chain = true)
 public class User implements UserDetails {
 
     @Id

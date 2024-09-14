@@ -18,9 +18,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+/*
+ * Security configuration
+ */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfiguration {
 
     private static final String ROLE_EMPLOYEE = "EMPLOYEE";
@@ -47,7 +50,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.DELETE, TARIFF_URL).hasRole(ROLE_EMPLOYEE)
                         .requestMatchers(HttpMethod.GET, USERS_URL).hasAnyRole(ROLE_EMPLOYEE, ROLE_CUSTOMER)
                         .requestMatchers(HttpMethod.POST, USERS_URL).hasRole(ROLE_EMPLOYEE)
-                        .requestMatchers(HttpMethod.PUT, USERS_URL).hasAnyRole(ROLE_EMPLOYEE, ROLE_CUSTOMER)
+                        .requestMatchers(HttpMethod.PUT, USERS_URL).hasRole(ROLE_EMPLOYEE)
                         .requestMatchers(HttpMethod.DELETE, USERS_URL).hasRole(ROLE_EMPLOYEE)
                         .requestMatchers(HttpMethod.GET, TARIFF_ADJUSTMENT_URL).hasAnyRole(ROLE_EMPLOYEE, ROLE_CUSTOMER)
                         .requestMatchers(HttpMethod.POST, TARIFF_ADJUSTMENT_URL).hasRole(ROLE_EMPLOYEE)

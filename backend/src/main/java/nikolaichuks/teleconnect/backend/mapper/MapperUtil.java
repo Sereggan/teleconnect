@@ -12,6 +12,9 @@ import teleconnect.tariff.model.TariffDTO;
 import teleconnect.tariffadjustment.model.TariffAdjustmentDTO;
 import teleconnect.user.model.UserDto;
 
+/**
+ * Mapper utility
+ */
 @Component
 public class MapperUtil {
 
@@ -56,6 +59,16 @@ public class MapperUtil {
 
     public TariffDTO mapTariffToTariffDTO(Tariff tariff) {
         return mapper.map(tariff, TariffDTO.class);
+    }
+
+    public Tariff mapTariffToTariffDTO(TariffDTO sourceTariff, Tariff targetTariff) {
+        return targetTariff.setName(sourceTariff.getName())
+                .setDescription(sourceTariff.getDescription())
+                .setPrice(sourceTariff.getPrice())
+                .setCallMinutes(sourceTariff.getCallMinutes())
+                .setDataLimit(sourceTariff.getDataLimit())
+                .setSmsLimit(sourceTariff.getSmsLimit())
+                .setIsActive(sourceTariff.getIsActive());
     }
 
     public Tariff mapTariffDTOToTariff(TariffDTO tariffDTO) {

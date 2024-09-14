@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * Service for cleanup of expired tokens
+ */
 @Service
 @RequiredArgsConstructor
 public class TokenCleanUpSchedulerService {

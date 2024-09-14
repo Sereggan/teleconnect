@@ -21,6 +21,9 @@ import teleconnect.user.model.UserDto;
 
 import java.util.List;
 
+/**
+ * User service
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {
