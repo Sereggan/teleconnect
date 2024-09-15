@@ -31,8 +31,19 @@ public class TariffService {
     private final TariffSpecification tariffSpecification;
 
     public TariffDTO createTariff(TariffDTO tariffDTO) {
-        Tariff tariff = mapper.mapTariffDTOToTariff(tariffDTO);
-        return mapper.mapTariffToTariffDTO(tariffRepository.save(tariff));
+        Tariff tariff = mapper.mapTariffDtoToTariff(tariffDTO);
+        return mapper.mapTariffToTariffDto(tariffRepository.save(tariff));
+    }
+
+    public TariffDTO updateTariff(TariffDTO tariffDTO) {
+        Tariff existingTariff = tariffRepository.findById(tariffDTO.getId())
+                .orElseThrow(() -> new CustomRestException("Tariff not found", HttpStatus.NOT_FOUND));
+
+        Tariff updatedTariff = mapper.mapTariffToTariffDto(tariffDTO, existingTariff);
+
+        var mappedTariff = mapper.mapTariffToTariffDto(tariffRepository.save(updatedTariff));
+        mappedTariff.setIsUsed(userRepository.existsByTariff_Id(mappedTariff.getId()));
+        return mappedTariff;
     }
 
     public PaginatedTariffResponse getAllTariffs(Double priceMin, Double priceMax, Integer dataLimitMin, Integer dataLimitMax,
@@ -45,28 +56,16 @@ public class TariffService {
         Page<Tariff> tariffsPage = tariffRepository.findAll(specification, page);
 
         List<TariffDTO> tariffs = tariffsPage.getContent().stream()
-                .map(mapper::mapTariffToTariffDTO)
+                .map(mapper::mapTariffToTariffDto)
                 .peek(tariffDTO -> tariffDTO.setIsUsed(userRepository.existsByTariff_Id(tariffDTO.getId())))
                 .toList();
 
         return getPaginatedTariffResponse(offset, tariffs, tariffsPage);
     }
 
-    public TariffDTO updateTariff(TariffDTO tariffDTO) {
-        Tariff existingTariff = tariffRepository.findById(tariffDTO.getId())
-                .orElseThrow(() -> new CustomRestException("Tariff not found", HttpStatus.NOT_FOUND));
-
-        Tariff updatedTariff = mapper.mapTariffToTariffDTO(tariffDTO, existingTariff);
-
-        var mappedTariff = mapper.mapTariffToTariffDTO(tariffRepository.save(updatedTariff));
-        mappedTariff.setIsUsed(userRepository.existsByTariff_Id(mappedTariff.getId()));
-        return mappedTariff;
-    }
-
-
-    public TariffDTO getTariffById(Integer id) {
-        return tariffRepository.findById(id)
-                .map(mapper::mapTariffToTariffDTO)
+    public TariffDTO getTariffById(Integer tariffId) {
+        return tariffRepository.findById(tariffId)
+                .map(mapper::mapTariffToTariffDto)
                 .map(tariffDTO -> {
                     tariffDTO.setIsUsed(userRepository.existsByTariff_Id(tariffDTO.getId()));
                     return tariffDTO;
@@ -76,7 +75,7 @@ public class TariffService {
 
     public TariffDTO getTariffByUserId(Integer userId) {
         return tariffRepository.findByUserId(userId)
-                .map(mapper::mapTariffToTariffDTO)
+                .map(mapper::mapTariffToTariffDto)
                 .map(tariffDTO -> {
                     tariffDTO.setIsUsed(true);
                     return tariffDTO;

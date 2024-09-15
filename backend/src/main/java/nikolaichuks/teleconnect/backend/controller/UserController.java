@@ -38,12 +38,12 @@ public class UserController implements UserApi {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<PaginatedUserResponse> getAllUsers(String phoneNumber, String email, String name, String surname,
+    public ResponseEntity<PaginatedUserResponse> getAllUsers(String phoneNumber, String email, String name, String familyName,
                                                              String role, Integer tariffId, Integer limit, Integer offset) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
         if (hasEmployeeRole(currentUser)) {
-            PaginatedUserResponse response = userService.getAllUsers(phoneNumber, email, name, surname, role, tariffId,
+            PaginatedUserResponse response = userService.getAllUsers(phoneNumber, email, name, familyName, role, tariffId,
                     limit, offset);
             return ResponseEntity.ok(response);
         } else {

@@ -21,6 +21,7 @@ paths:
           required: false
           schema:
             type: string
+            minLength: 3
         - name: email
           in: query
           required: false
@@ -31,11 +32,13 @@ paths:
           required: false
           schema:
             type: string
-        - name: surname
+            minLength: 3
+        - name: familyName
           in: query
           required: false
           schema:
             type: string
+            minLength: 3
         - name: role
           in: query
           required: false
@@ -46,12 +49,14 @@ paths:
           required: false
           schema:
             type: integer
+            minimum: 0
         - name: limit
           in: query
           required: false
           schema:
             type: integer
             default: 25
+            minimum: 0
           description: Number of users to return per page (default is 25)
         - name: offset
           in: query
@@ -59,6 +64,7 @@ paths:
           schema:
             type: integer
             default: 0
+            minimum: 0
           description: Number of pages to skip (default is 0)
       responses:
         '200':
@@ -238,15 +244,20 @@ components:
         phoneNumber:
           type: string
           nullable: false
+          minLength: 10
+          maxLength: 15
+          pattern: '^(\\+\\d{1,3}[- ]?)?\\d{10,15}$'
         password:
           type: string
           default: ""
+          minLength: 6
         email:
           type: string
+          format: email
           nullable: false
         name:
           type: string
-        surname:
+        familyName:
           type: string
         role:
           type: string
@@ -261,7 +272,7 @@ components:
         - phoneNumber
         - email
         - name
-        - surname
+        - familyName
         - role
     AuthError:
       type: object

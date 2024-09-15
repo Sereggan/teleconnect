@@ -45,6 +45,11 @@ function Header() {
               My information
             </Nav.Link>
           )}
+          {userRole === UserRole.ROLE_EMPLOYEE && (
+            <Nav.Link as={Link} to="/statistics">
+              Statistics
+            </Nav.Link>
+          )}
           {!userRole && (
             <Nav.Link as={Link} to="/login">
               Login

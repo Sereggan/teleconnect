@@ -1,6 +1,9 @@
 package nikolaichuks.teleconnect.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,15 +32,18 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Size(min = 10, max = 15)
+    @Pattern(regexp = "^(\\+\\d{1,3}[- ]?)?\\d{10,15}$")
     private String phoneNumber;
 
     private String password;
 
+    @Email
     private String email;
 
     private String name;
 
-    private String surname;
+    private String familyName;
 
     private LocalDate birthDate;
 

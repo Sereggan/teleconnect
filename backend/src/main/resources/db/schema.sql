@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     name VARCHAR(30) NOT NULL,
-    surname VARCHAR(30) NOT NULL,
+    familyName VARCHAR(30) NOT NULL,
     role VARCHAR(50) NOT NULL,
     tariff_id INTEGER,
     birth_date DATE,

@@ -109,13 +109,18 @@ components:
           type: integer
         adjustedDataLimit:
           type: integer
+          minimum: 0
         adjustedCallMinutes:
           type: integer
+          minimum: 0
         adjustedSmsLimit:
           type: integer
+          minimum: 0
         discountPercentage:
           type: number
           format: double
+          minimum: 0
+          maximum: 100
           description: Percentage discount on tariff price
     AuthError:
       type: object

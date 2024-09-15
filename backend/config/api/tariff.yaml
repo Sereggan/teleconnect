@@ -88,42 +88,50 @@ paths:
           schema:
             type: number
             format: double
+            minimum: 0
         - name: priceMax
           in: query
           required: false
           schema:
             type: number
             format: double
+            minimum: 0
         - name: dataLimitMin
           in: query
           required: false
           schema:
             type: integer
+            minimum: 0
         - name: dataLimitMax
           in: query
           required: false
           schema:
             type: integer
+            minimum: 0
         - name: callMinutesMin
           in: query
           required: false
           schema:
             type: integer
+            minimum: 0
         - name: callMinutesMax
           in: query
           required: false
           schema:
             type: integer
+            minimum: 0
         - name: smsLimitMin
           in: query
           required: false
           schema:
             type: integer
+            minimum: 0
         - name: smsLimitMax
           in: query
           required: false
           schema:
             type: integer
+            minimum: 0
         - name: isActive
           in: query
           required: false
@@ -140,6 +148,7 @@ paths:
           schema:
             type: integer
             default: 25
+            minimum: 0
           description: Number of items to return per page (default is 25)
           example: 25
         - name: offset
@@ -148,6 +157,7 @@ paths:
           schema:
             type: integer
             default: 0
+            minimum: 0
           description: The page number to start with (default is 0)
       responses:
         '200':
@@ -268,18 +278,24 @@ components:
         price:
           type: number
           format: double
+          minimum: 0
         dataLimit:
           type: integer
+          minimum: 0
         callMinutes:
           type: integer
+          minimum: 0
         smsLimit:
           type: integer
+          minimum: 0
         description:
           type: string
         isActive:
           type: boolean
+          default: false
         isUsed:
           type: boolean
+          default: false
       required:
         - name
         - price

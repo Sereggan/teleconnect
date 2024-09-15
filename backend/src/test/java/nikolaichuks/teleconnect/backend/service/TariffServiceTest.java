@@ -23,7 +23,7 @@ import teleconnect.tariff.model.TariffDTO;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -56,16 +56,16 @@ class TariffServiceTest {
         Tariff savedTariff = mock(Tariff.class);
         TariffDTO savedTariffDTO = mock(TariffDTO.class);
 
-        when(mapperUtil.mapTariffDTOToTariff(any())).thenReturn(mappedTariff);
+        when(mapperUtil.mapTariffDtoToTariff(any())).thenReturn(mappedTariff);
         when(tariffRepository.save(any())).thenReturn(savedTariff);
-        when(mapperUtil.mapTariffToTariffDTO(any())).thenReturn(savedTariffDTO);
+        when(mapperUtil.mapTariffToTariffDto(any())).thenReturn(savedTariffDTO);
 
         var result = tariffService.createTariff(newTariff);
 
-        verify(mapperUtil).mapTariffDTOToTariff(newTariff);
-        verify(mapperUtil).mapTariffDTOToTariff(newTariff);
+        verify(mapperUtil).mapTariffDtoToTariff(newTariff);
+        verify(mapperUtil).mapTariffDtoToTariff(newTariff);
         verify(tariffRepository).save(mappedTariff);
-        verify(mapperUtil).mapTariffToTariffDTO(savedTariff);
+        verify(mapperUtil).mapTariffToTariffDto(savedTariff);
         assertThat(result).isEqualTo(savedTariffDTO);
     }
 
@@ -88,7 +88,7 @@ class TariffServiceTest {
         Boolean existsByTariffId = false;
 
         Specification<Tariff> specification = mock(Specification.class);
-        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.Direction.ASC, "id");
+        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.Direction.ASC, "tariff_id");
         Tariff tariff = mock(Tariff.class);
         TariffDTO tariffDTO = mock(TariffDTO.class);
         List<Tariff> tariffList = List.of(tariff);
@@ -97,7 +97,7 @@ class TariffServiceTest {
         when(tariffSpecification.getTariffSpecification(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(specification);
         when(tariffRepository.findAll(specification, pageRequest)).thenReturn(tariffsPage);
-        when(mapperUtil.mapTariffToTariffDTO(any())).thenReturn(tariffDTO);
+        when(mapperUtil.mapTariffToTariffDto(any())).thenReturn(tariffDTO);
         when(userRepository.existsByTariff_Id(any())).thenReturn(existsByTariffId);
 
         PaginatedTariffResponse result = tariffService.getAllTariffs(priceMin, priceMax, dataLimitMin, dataLimitMax,
@@ -106,7 +106,7 @@ class TariffServiceTest {
         verify(tariffSpecification).getTariffSpecification(priceMin, priceMax, dataLimitMin, dataLimitMax,
                 callMinutesMin, callMinutesMax, smsLimitMin, smsLimitMax, isActive, isUsed);
         verify(tariffRepository).findAll(specification, pageRequest);
-        verify(mapperUtil).mapTariffToTariffDTO(tariff);
+        verify(mapperUtil).mapTariffToTariffDto(tariff);
         verify(userRepository).existsByTariff_Id(tariffDTO.getId());
 
         assertThat(result).isNotNull();
@@ -127,18 +127,18 @@ class TariffServiceTest {
 
         when(tariffToUpdate.getId()).thenReturn(TARIFF_ID);
         when(tariffRepository.findById(any())).thenReturn(Optional.of(existingTariff));
-        when(mapperUtil.mapTariffToTariffDTO(tariffToUpdate, existingTariff)).thenReturn(mappedTariff);
+        when(mapperUtil.mapTariffToTariffDto(tariffToUpdate, existingTariff)).thenReturn(mappedTariff);
         when(tariffRepository.save(any())).thenReturn(savedTariff);
-        when(mapperUtil.mapTariffToTariffDTO(any())).thenReturn(updatedTariff);
+        when(mapperUtil.mapTariffToTariffDto(any())).thenReturn(updatedTariff);
         when(updatedTariff.getId()).thenReturn(TARIFF_ID);
         when(userRepository.existsByTariff_Id(any())).thenReturn(true);
 
         var result = tariffService.updateTariff(tariffToUpdate);
 
         verify(tariffRepository).findById(TARIFF_ID);
-        verify(mapperUtil).mapTariffToTariffDTO(tariffToUpdate, existingTariff);
+        verify(mapperUtil).mapTariffToTariffDto(tariffToUpdate, existingTariff);
         verify(tariffRepository).save(mappedTariff);
-        verify(mapperUtil).mapTariffToTariffDTO(savedTariff);
+        verify(mapperUtil).mapTariffToTariffDto(savedTariff);
         verify(userRepository).existsByTariff_Id(TARIFF_ID);
         assertThat(result).isEqualTo(updatedTariff);
     }
@@ -149,14 +149,14 @@ class TariffServiceTest {
         var tariffDTO = mock(TariffDTO.class);
         var isUsed = true;
         when(tariffRepository.findById(any())).thenReturn(Optional.of(existingTariff));
-        when(mapperUtil.mapTariffToTariffDTO(existingTariff)).thenReturn(tariffDTO);
+        when(mapperUtil.mapTariffToTariffDto(existingTariff)).thenReturn(tariffDTO);
         when(tariffDTO.getId()).thenReturn(TARIFF_ID);
         when(userRepository.existsByTariff_Id(any())).thenReturn(isUsed);
 
         var result = tariffService.getTariffById(TARIFF_ID);
 
         verify(tariffRepository).findById(TARIFF_ID);
-        verify(mapperUtil).mapTariffToTariffDTO(existingTariff);
+        verify(mapperUtil).mapTariffToTariffDto(existingTariff);
         verify(userRepository).existsByTariff_Id(TARIFF_ID);
         verify(tariffDTO).setIsUsed(isUsed);
         assertThat(result).isEqualTo(tariffDTO);
@@ -180,12 +180,12 @@ class TariffServiceTest {
         var isUsed = true;
 
         when(tariffRepository.findByUserId(any())).thenReturn(Optional.of(existingTariff));
-        when(mapperUtil.mapTariffToTariffDTO(any())).thenReturn(tariffDTO);
+        when(mapperUtil.mapTariffToTariffDto(any())).thenReturn(tariffDTO);
 
         var result = tariffService.getTariffByUserId(USER_ID);
 
         verify(tariffRepository).findByUserId(USER_ID);
-        verify(mapperUtil).mapTariffToTariffDTO(existingTariff);
+        verify(mapperUtil).mapTariffToTariffDto(existingTariff);
         verify(tariffDTO).setIsUsed(isUsed);
         assertThat(result).isEqualTo(tariffDTO);
     }

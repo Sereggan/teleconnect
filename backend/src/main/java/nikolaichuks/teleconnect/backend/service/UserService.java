@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
 import nikolaichuks.teleconnect.backend.model.User;
-import nikolaichuks.teleconnect.backend.model.UserRole;
 import nikolaichuks.teleconnect.backend.repository.TariffAdjustmentRepository;
 import nikolaichuks.teleconnect.backend.repository.TariffRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
 import nikolaichuks.teleconnect.backend.specification.UserSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,55 +35,49 @@ public class UserService {
     private final UserSpecification userSpecification;
     private final PasswordEncoder passwordEncoder;
 
-    public UserDto createUser(UserDto userDTO) {
-        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        User user = mapper.mapUserDtoToUser(userDTO);
+    public UserDto createUser(UserDto newUser) {
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        User user = mapper.mapUserDtoToUser(newUser);
 
         return mapper.mapUserToUserDto(userRepository.save(user));
     }
 
-    public UserDto updateUser(UserDto userDetails) {
-        User user = userRepository.findById(userDetails.getId())
-                .orElseThrow(() -> new CustomRestException("User not found", HttpStatus.NOT_FOUND));
-        user.setName(userDetails.getName());
-        user.setSurname(userDetails.getSurname());
-        user.setPhoneNumber(userDetails.getPhoneNumber());
-        user.setEmail(userDetails.getEmail());
-        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
-            user.setPassword(userDetails.getPassword());
-        }
-        user.setRole(UserRole.fromString(userDetails.getRole()));
-        if (userDetails.getTariffId() != null) {
-            tariffRepository.findById(userDetails.getTariffId())
-                    .ifPresent(user::setTariff);
-        } else {
-            user.setTariff(null);
+    public UserDto updateUser(UserDto user) {
+        User currentUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new CustomRestException("User not found.", HttpStatus.NOT_FOUND));
+        User updatedUser = mapper.mapUserDtoToUser(user, currentUser);
+
+        if (user.getPassword() != null) {
+            updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
-        if (userDetails.getTariffAdjustmentId() != null) {
-            tariffAdjustmentRepository.findById(userDetails.getTariffAdjustmentId())
-                    .ifPresent(user::setTariffAdjustment);
+        if (user.getTariffId() != null) {
+            tariffRepository.findById(user.getTariffId())
+                    .ifPresent(updatedUser::setTariff);
         } else {
-            user.setTariffAdjustment(null);
+            updatedUser.setTariff(null);
         }
 
-        return mapper.mapUserToUserDto(userRepository.save(user));
+        if (user.getTariffAdjustmentId() != null) {
+            tariffAdjustmentRepository.findById(user.getTariffAdjustmentId())
+                    .ifPresent(updatedUser::setTariffAdjustment);
+        } else {
+            updatedUser.setTariffAdjustment(null);
+        }
+
+        return mapper.mapUserToUserDto(userRepository.save(updatedUser));
     }
 
-    public void deleteUser(Integer id) {
-        userRepository.deleteById(id);
-    }
-
-    public UserDto getUserById(Integer id) {
-        return userRepository.findById(id)
+    public UserDto getUserById(Integer userId) {
+        return userRepository.findById(userId)
                 .map(mapper::mapUserToUserDto)
-                .orElse(null);
+                .orElseThrow(() -> new CustomRestException("User not found.", HttpStatus.NOT_FOUND));
     }
 
-    public PaginatedUserResponse getAllUsers(String phoneNumber, String email, String name, String surname, String role, Integer tariffId, Integer limit, Integer offset) {
-        Specification<User> specification = userSpecification.getUserSpecification(phoneNumber, email, name, surname, role, tariffId);
+    public PaginatedUserResponse getAllUsers(String phoneNumber, String email, String name, String familyName, String role, Integer tariffId, Integer limit, Integer offset) {
+        Specification<User> specification = userSpecification.getUserSpecification(phoneNumber, email, name, familyName, role, tariffId);
 
-        PageRequest pageRequest = PageRequest.of(offset, limit);
+        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.Direction.ASC, "user_id");
         Page<User> usersPage = userRepository.findAll(specification, pageRequest);
 
         List<UserDto> users = usersPage.getContent().stream()
@@ -92,13 +86,25 @@ public class UserService {
 
         var response = new PaginatedUserResponse();
         response.setUsers(users);
-        var pagination = new PaginatedUserResponsePagination();
-        pagination.setTotalItems((int) usersPage.getTotalElements());
-        pagination.setTotalPages(usersPage.getTotalPages());
-        pagination.setCurrentPage(offset);
-        pagination.setItemsOnPage(users.size());
+
+        var pagination = getPaginationResponse(offset, usersPage, users.size());
         response.setPagination(pagination);
 
         return response;
+    }
+
+    public void deleteUser(Integer id) {
+        userRepository.deleteById(id);
+    }
+
+    private PaginatedUserResponsePagination getPaginationResponse(Integer offset, Page<User> usersPage, Integer numberOfItems) {
+        var pagination = new PaginatedUserResponsePagination();
+
+        pagination.setTotalItems((int) usersPage.getTotalElements());
+        pagination.setTotalPages(usersPage.getTotalPages());
+        pagination.setCurrentPage(offset);
+        pagination.setItemsOnPage(numberOfItems);
+
+        return pagination;
     }
 }

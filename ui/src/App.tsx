@@ -15,6 +15,7 @@ import { AuthProvider } from "./components/auth/AuthProvider";
 import { UserRole } from "./models/User";
 import ChangeTariff from "./components/user/ChangeTariff";
 import UserTariff from "./components/user/UserTariff";
+import StatisticsDashboard from "./components/statistics/StatisticsDashboard";
 
 const router = createBrowserRouter([
   {
@@ -96,6 +97,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
             <NewTariff />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "statistics",
+        element: (
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
+            <StatisticsDashboard />
           </ProtectedRoute>
         ),
       },

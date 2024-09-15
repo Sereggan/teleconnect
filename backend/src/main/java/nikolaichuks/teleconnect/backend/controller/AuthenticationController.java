@@ -18,7 +18,7 @@ public class AuthenticationController implements AuthApi {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<AuthResponse> loginUser(LoginRequest loginRequest) {
+    public ResponseEntity<AuthResponse> signInUser(LoginRequest loginRequest) {
         return ResponseEntity.ok(authenticationService.authenticate(loginRequest));
     }
 
@@ -42,8 +42,8 @@ public class AuthenticationController implements AuthApi {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<Void> logoutUser(TokenRequest tokenRequest) {
-        authenticationService.logout(tokenRequest);
+    public ResponseEntity<Void> logoutUser(LogoutRequest logoutRequest) {
+        authenticationService.logout(logoutRequest);
         return ResponseEntity.noContent().build();
     }
 }

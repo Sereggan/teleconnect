@@ -57,11 +57,20 @@ public class MapperUtil {
         return mapper.map(user, User.class);
     }
 
-    public TariffDTO mapTariffToTariffDTO(Tariff tariff) {
+    public User mapUserDtoToUser(UserDto source, User target) {
+
+        return target.setName(source.getName())
+                .setFamilyName(source.getFamilyName())
+                .setPhoneNumber(source.getPhoneNumber())
+                .setEmail(source.getEmail())
+                .setRole(UserRole.fromString(source.getRole()));
+    }
+
+    public TariffDTO mapTariffToTariffDto(Tariff tariff) {
         return mapper.map(tariff, TariffDTO.class);
     }
 
-    public Tariff mapTariffToTariffDTO(TariffDTO sourceTariff, Tariff targetTariff) {
+    public Tariff mapTariffToTariffDto(TariffDTO sourceTariff, Tariff targetTariff) {
         return targetTariff.setName(sourceTariff.getName())
                 .setDescription(sourceTariff.getDescription())
                 .setPrice(sourceTariff.getPrice())
@@ -71,16 +80,24 @@ public class MapperUtil {
                 .setIsActive(sourceTariff.getIsActive());
     }
 
-    public Tariff mapTariffDTOToTariff(TariffDTO tariffDTO) {
+    public Tariff mapTariffDtoToTariff(TariffDTO tariffDTO) {
         return mapper.map(tariffDTO, Tariff.class);
     }
 
-    public TariffAdjustmentDTO mapTariffAdjustmentToTariffAdjustmentDTO(TariffAdjustment tariffAdjustment) {
+    public TariffAdjustmentDTO mapTariffAdjustmentToTariffAdjustmentDto(TariffAdjustment tariffAdjustment) {
         return mapper.map(tariffAdjustment, TariffAdjustmentDTO.class);
     }
 
 
-    public TariffAdjustment mapTariffAdjustmentDTOToTariffAdjustment(TariffAdjustmentDTO adjustmentDTO) {
+    public TariffAdjustment mapTariffAdjustmentDtoToTariffAdjustment(TariffAdjustmentDTO adjustmentDTO) {
         return mapper.map(adjustmentDTO, TariffAdjustment.class);
+    }
+
+    public TariffAdjustment mapTariffAdjustmentDtoToTariffAdjustment(TariffAdjustmentDTO source, TariffAdjustment target) {
+        target.setDiscountPercentage(source.getDiscountPercentage());
+        target.setAdjustedCallMinutes(source.getAdjustedCallMinutes());
+        target.setAdjustedSmsLimit(source.getAdjustedSmsLimit());
+        target.setAdjustedDataLimit(source.getAdjustedDataLimit());
+        return target;
     }
 }

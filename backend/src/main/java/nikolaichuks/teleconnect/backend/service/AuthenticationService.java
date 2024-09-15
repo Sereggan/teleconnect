@@ -37,7 +37,7 @@ public class AuthenticationService {
     public AuthResponse signup(RegisterUserRequest newUser) {
         var user = User.builder()
                 .name(newUser.getName())
-                .surname(newUser.getSurname())
+                .familyName(newUser.getFamilyName())
                 .email(newUser.getEmail())
                 .phoneNumber(newUser.getPhoneNumber())
                 .password(passwordEncoder.encode(newUser.getPassword()))
@@ -79,7 +79,7 @@ public class AuthenticationService {
         }
     }
 
-    public void logout(TokenRequest tokenRequest) {
+    public void logout(LogoutRequest tokenRequest) {
         String accessToken = tokenRequest.getToken();
         String refreshToken = tokenRequest.getRefreshToken();
 

@@ -10,12 +10,12 @@ public class UserSpecification {
     private static final String FIELD_PHONE_NUMBER = "phoneNumber";
     private static final String FIELD_EMAIL = "email";
     private static final String FIELD_NAME = "name";
-    private static final String FIELD_SURNAME = "surname";
+    private static final String FIELD_familyName = "familyName";
     private static final String FIELD_ROLE = "role";
     private static final String FIELD_TARIFF = "tariff";
     private static final String FIELD_ID = "id";
 
-    public Specification<User> getUserSpecification(String phoneNumber, String email, String name, String surname, String role, Integer tariffId) {
+    public Specification<User> getUserSpecification(String phoneNumber, String email, String name, String familyName, String role, Integer tariffId) {
         Specification<User> spec = Specification.where(null);
 
         if (phoneNumber != null) {
@@ -36,9 +36,9 @@ public class UserSpecification {
             );
         }
 
-        if (surname != null) {
+        if (familyName != null) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get(FIELD_SURNAME), surname + "%")
+                    criteriaBuilder.like(root.get(FIELD_familyName), familyName + "%")
             );
         }
 

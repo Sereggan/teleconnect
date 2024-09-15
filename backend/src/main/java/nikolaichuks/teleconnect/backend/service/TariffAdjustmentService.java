@@ -27,19 +27,19 @@ public class TariffAdjustmentService {
                         adjustment.setAdjustedCallMinutes(adjustmentDTO.getAdjustedCallMinutes());
                         adjustment.setAdjustedSmsLimit(adjustmentDTO.getAdjustedSmsLimit());
                         adjustment.setAdjustedDataLimit(adjustmentDTO.getAdjustedDataLimit());
-                        return tariffAdjustmentRepository.save(adjustment);
+                        return tariffAdjustmentRepository.save(mapper.mapTariffAdjustmentDtoToTariffAdjustment(adjustmentDTO, adjustment));
                     })
-                    .map(mapper::mapTariffAdjustmentToTariffAdjustmentDTO)
+                    .map(mapper::mapTariffAdjustmentToTariffAdjustmentDto)
                     .orElseThrow(() -> new CustomRestException("Adjustment not found", HttpStatus.NOT_FOUND));
         } else {
-            TariffAdjustment newAdjustment = mapper.mapTariffAdjustmentDTOToTariffAdjustment(adjustmentDTO);
-            return mapper.mapTariffAdjustmentToTariffAdjustmentDTO(tariffAdjustmentRepository.save(newAdjustment));
+            TariffAdjustment newAdjustment = mapper.mapTariffAdjustmentDtoToTariffAdjustment(adjustmentDTO);
+            return mapper.mapTariffAdjustmentToTariffAdjustmentDto(tariffAdjustmentRepository.save(newAdjustment));
         }
     }
 
     public TariffAdjustmentDTO getTariffAdjustment(Integer userId) {
         return tariffAdjustmentRepository.findByUserId(userId)
-                .map(mapper::mapTariffAdjustmentToTariffAdjustmentDTO)
+                .map(mapper::mapTariffAdjustmentToTariffAdjustmentDto)
                 .orElse(null);
     }
 
