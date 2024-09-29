@@ -12,6 +12,25 @@ import {
   Pagination,
 } from "react-bootstrap";
 import UserCard from "./UserCard";
+import { FormProvider, useForm } from "react-hook-form";
+import { FormInput } from "../common/FormInput";
+import {
+  phoneNumberValidation,
+  emailValidation,
+  nameValidation,
+  familyNameValidation,
+  roleValidation,
+  tariffIdValidation,
+} from "../../utils/userFilterValidations";
+
+interface Filters {
+  phoneNumber: string;
+  email: string;
+  name: string;
+  familyName: string;
+  role: string;
+  tariffId: string;
+}
 
 export default function UserManagement() {
   const [error, setError] = useState<string | null>(null);
@@ -23,16 +42,17 @@ export default function UserManagement() {
     totalItems: 0,
     itemsOnPage: 25,
   });
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     phoneNumber: "",
     email: "",
     name: "",
-    surname: "",
+    familyName: "",
     role: "",
     tariffId: "",
   });
   const nagivate = useNavigate();
   const isMountedRef = useRef(true);
+  const methods = useForm<Filters>();
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -50,7 +70,7 @@ export default function UserManagement() {
           phoneNumber: filters.phoneNumber || undefined,
           email: filters.email || undefined,
           name: filters.name || undefined,
-          surname: filters.surname || undefined,
+          familyName: filters.familyName || undefined,
           role: filters.role || undefined,
           tariffId: filters.tariffId ? parseInt(filters.tariffId) : undefined,
           limit: 25,
@@ -78,12 +98,12 @@ export default function UserManagement() {
     }
   };
 
-  const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = methods.handleSubmit((data: Filters) => {
     const controller = new AbortController();
+    setFilters(data);
     fetchUsers(1, controller);
     return () => controller.abort();
-  };
+  });
 
   const handlePageChange = (page: number) => {
     const controller = new AbortController();
@@ -109,85 +129,43 @@ export default function UserManagement() {
         </Col>
       </Row>
 
-      <Form onSubmit={handleFilterSubmit} className="mb-4">
-        <Form.Group>
-          <Form.Label>Phone Number</Form.Label>
-          <Form.Control
-            type="text"
-            name="phoneNumber"
-            value={filters.phoneNumber}
-            onChange={(e) =>
-              setFilters({ ...filters, phoneNumber: e.target.value })
-            }
-            placeholder="Phone Number"
-          />
-        </Form.Group>
+      <FormProvider {...methods}>
+        <Form
+          onSubmit={(e) => e.preventDefault()}
+          noValidate
+          autoComplete="off"
+          className="mb-4"
+        >
+          <Row>
+            <Col md={6}>
+              <FormInput {...phoneNumberValidation} />
+            </Col>
+            <Col md={6}>
+              <FormInput {...emailValidation} />
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+              <FormInput {...nameValidation} />
+            </Col>
+            <Col md={6}>
+              <FormInput {...familyNameValidation} />
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+              <FormInput {...roleValidation} />
+            </Col>
+            <Col md={6}>
+              <FormInput {...tariffIdValidation} />
+            </Col>
+          </Row>
 
-        <Form.Group>
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            type="email"
-            name="email"
-            value={filters.email}
-            onChange={(e) => setFilters({ ...filters, email: e.target.value })}
-            placeholder="Email"
-          />
-        </Form.Group>
-
-        <Form.Group>
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            type="text"
-            name="name"
-            value={filters.name}
-            onChange={(e) => setFilters({ ...filters, name: e.target.value })}
-            placeholder="Name"
-          />
-        </Form.Group>
-
-        <Form.Group>
-          <Form.Label>Surname</Form.Label>
-          <Form.Control
-            type="text"
-            name="surname"
-            value={filters.surname}
-            onChange={(e) =>
-              setFilters({ ...filters, surname: e.target.value })
-            }
-            placeholder="Surname"
-          />
-        </Form.Group>
-
-        <Form.Group>
-          <Form.Label>Role</Form.Label>
-          <Form.Select
-            name="role"
-            value={filters.role}
-            onChange={(e) => setFilters({ ...filters, role: e.target.value })}
-          >
-            <option value="">Any</option>
-            <option value="ROLE_EMPLOYEE">Employee</option>
-            <option value="ROLE_CUSTOMER">Customer</option>
-          </Form.Select>
-        </Form.Group>
-
-        <Form.Group>
-          <Form.Label>Tariff ID</Form.Label>
-          <Form.Control
-            type="number"
-            name="tariffId"
-            value={filters.tariffId}
-            onChange={(e) =>
-              setFilters({ ...filters, tariffId: e.target.value })
-            }
-            placeholder="Tariff ID"
-          />
-        </Form.Group>
-
-        <Button type="submit" variant="primary">
-          Search
-        </Button>
-      </Form>
+          <Button onClick={onSubmit} variant="primary" className="mt-3">
+            Search
+          </Button>
+        </Form>
+      </FormProvider>
 
       {error && <p>Something went wrong, please try again... {error}</p>}
       {isLoading && <Spinner animation="border" />}

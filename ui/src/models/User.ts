@@ -9,7 +9,7 @@ export interface User {
   password: string;
   email: string;
   name: string;
-  surname: string;
+  familyName: string;
   role: UserRole;
   birthDate?: string;
   tariffId?: number;

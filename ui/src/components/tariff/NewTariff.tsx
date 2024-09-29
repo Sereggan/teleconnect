@@ -2,122 +2,86 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { createTariff } from "../../services/TariffClient";
 import { Tariff } from "../../models/Tariff";
-import { Button, Form, Container, Spinner, Alert } from "react-bootstrap";
+import { FormInput } from "../common/FormInput";
+import { FormProvider, useForm } from "react-hook-form";
+import { Button, Container, Row, Col, Form, Alert } from "react-bootstrap";
+import {
+  callMinutesValidation,
+  dataLimitValidation,
+  descriptionValidation,
+  isActiveValidation,
+  nameValidation,
+  priceValidation,
+  smsLimitValidation,
+} from "../../utils/newTariffValidations";
 
 export default function NewTariff() {
-  const [tariff, setTariff] = useState<Tariff>({
-    name: "",
-    price: 0,
-    description: "",
-    dataLimit: 0,
-    callMinutes: 0,
-    smsLimit: 0,
-    isActive: true,
-    isUsed: undefined,
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  const methods = useForm<Tariff>();
+
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const controllerRef = useRef<AbortController | null>(null);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = event.target;
-    setTariff((prevTariff) => ({
-      ...prevTariff,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLoading(true);
+  const onSubmit = methods.handleSubmit(async (tariff: Tariff) => {
     try {
-      await createTariff(tariff, controllerRef.current!);
+      const controller = new AbortController();
+      controllerRef.current = controller;
+      await createTariff(tariff, controller);
       navigate("/tariffs");
     } catch (error: any) {
       setError("Error creating tariff");
-    } finally {
-      setIsLoading(false);
     }
-  };
+  });
 
   return (
     <Container>
       {error && <Alert variant="danger">{error}</Alert>}
-      {isLoading && <Spinner animation="border" />}
-      {!isLoading && !error && (
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="name">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="name"
-              value={tariff.name}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="price" className="mt-3">
-            <Form.Label>Price (Euro)</Form.Label>
-            <Form.Control
-              type="number"
-              name="price"
-              value={tariff.price}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="description" className="mt-3">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              type="text"
-              name="description"
-              value={tariff.description}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="dataLimit" className="mt-3">
-            <Form.Label>Data Limit (MB)</Form.Label>
-            <Form.Control
-              type="number"
-              name="dataLimit"
-              value={tariff.dataLimit || ""}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="callMinutes" className="mt-3">
-            <Form.Label>Call Minutes</Form.Label>
-            <Form.Control
-              type="number"
-              name="callMinutes"
-              value={tariff.callMinutes || ""}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="smsLimit" className="mt-3">
-            <Form.Label>SMS Limit</Form.Label>
-            <Form.Control
-              type="number"
-              name="smsLimit"
-              value={tariff.smsLimit || ""}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="isActive" className="mt-3">
-            <Form.Check
-              type="checkbox"
-              label="Active"
-              name="isActive"
-              checked={tariff.isActive}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          <Button type="submit" variant="success" className="mt-3">
+
+      <FormProvider {...methods}>
+        <Form
+          onSubmit={(e) => e.preventDefault()}
+          noValidate
+          autoComplete="off"
+          className="mb-4"
+        >
+          <Row>
+            <Col md={12}>
+              <FormInput {...nameValidation} />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col md={6}>
+              <FormInput {...priceValidation} />
+            </Col>
+            <Col md={6}>
+              <FormInput {...descriptionValidation} />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col md={6}>
+              <FormInput {...dataLimitValidation} />
+            </Col>
+            <Col md={6}>
+              <FormInput {...callMinutesValidation} />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col md={6}>
+              <FormInput {...smsLimitValidation} />
+            </Col>
+            <Col md={6}>
+              <FormInput {...isActiveValidation} />
+            </Col>
+          </Row>
+
+          <Button onClick={onSubmit} variant="primary" className="mt-3">
             Create Tariff
           </Button>
         </Form>
-      )}
+      </FormProvider>
     </Container>
   );
 }

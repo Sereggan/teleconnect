@@ -9,7 +9,7 @@ export default function UserCard({ user }: { user: User }) {
     <Card className="mb-3">
       <Card.Body>
         <Card.Title>
-          {user.name} {user.surname}
+          {user.name} {user.familyName}
         </Card.Title>
         <Card.Text>
           <ListGroup>

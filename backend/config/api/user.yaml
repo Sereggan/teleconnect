@@ -274,6 +274,7 @@ components:
         - name
         - familyName
         - role
+        - birthDate
     AuthError:
       type: object
       properties:

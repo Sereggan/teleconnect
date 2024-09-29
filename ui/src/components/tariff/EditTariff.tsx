@@ -6,15 +6,35 @@ import {
   updateTariff,
 } from "../../services/TariffClient";
 import { Tariff } from "../../models/Tariff";
-import { Button, Form, Spinner, Alert, Container } from "react-bootstrap";
+import {
+  Button,
+  Form,
+  Spinner,
+  Alert,
+  Container,
+  Row,
+  Col,
+} from "react-bootstrap";
+import { FormProvider, useForm } from "react-hook-form";
+import { FormInput } from "../common/FormInput";
+import {
+  callMinutesValidation,
+  dataLimitValidation,
+  descriptionValidation,
+  isActiveValidation,
+  nameValidation,
+  priceValidation,
+  smsLimitValidation,
+} from "../../utils/newTariffValidations";
 
 export default function EditTariff() {
   const { id } = useParams<{ id: string }>();
-  const [tariff, setTariff] = useState<Tariff | null>(null);
+  const [tariff, setTariff] = useState<Tariff>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const controllerRef = useRef<AbortController | null>(null);
+  const methods = useForm<Tariff>();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -44,19 +64,10 @@ export default function EditTariff() {
     return () => controller.abort();
   }, [id]);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!tariff) return;
-    const { name, value, type, checked } = event.target;
-    setTariff((prevTariff) => ({
-      ...prevTariff!,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const onSubmit = methods.handleSubmit(async (tariff: Tariff) => {
     if (!tariff) return;
     setIsLoading(true);
+    setTariff(tariff);
     try {
       await updateTariff(tariff, controllerRef.current!);
       navigate("/tariffs");
@@ -65,7 +76,7 @@ export default function EditTariff() {
     } finally {
       setIsLoading(false);
     }
-  };
+  });
 
   const handleDelete = async () => {
     if (!tariff || !tariff.id) return;
@@ -84,86 +95,60 @@ export default function EditTariff() {
     <Container>
       {error && <Alert variant="danger">{error}</Alert>}
       {isLoading && <Spinner animation="border" />}
-      {!isLoading && !error && tariff && (
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="name">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="name"
-              value={tariff.name}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="price" className="mt-3">
-            <Form.Label>Price (Euro)</Form.Label>
-            <Form.Control
-              type="number"
-              name="price"
-              value={tariff.price}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="description" className="mt-3">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              type="text"
-              name="description"
-              value={tariff.description}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="dataLimit" className="mt-3">
-            <Form.Label>Data Limit (MB)</Form.Label>
-            <Form.Control
-              type="number"
-              name="dataLimit"
-              value={tariff.dataLimit || ""}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="callMinutes" className="mt-3">
-            <Form.Label>Call Minutes</Form.Label>
-            <Form.Control
-              type="number"
-              name="callMinutes"
-              value={tariff.callMinutes || ""}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="smsLimit" className="mt-3">
-            <Form.Label>SMS Limit</Form.Label>
-            <Form.Control
-              type="number"
-              name="smsLimit"
-              value={tariff.smsLimit || ""}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="isActive" className="mt-3">
-            <Form.Check
-              type="checkbox"
-              label="Active"
-              name="isActive"
-              checked={tariff.isActive}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          <Button type="submit" variant="primary" className="mt-3">
-            Save Tariff
-          </Button>
-          <Button
-            type="button"
-            variant="danger"
-            className="mt-3 ms-2"
-            onClick={handleDelete}
+      {!isLoading && !error && (
+        <FormProvider {...methods}>
+          <Form
+            noValidate
+            autoComplete="off"
+            onSubmit={(e) => e.preventDefault()}
+            className="mb-4"
           >
-            Delete Tariff
-          </Button>
-        </Form>
+            <Row>
+              <Col md={12}>
+                <FormInput {...nameValidation} />
+              </Col>
+            </Row>
+
+            <Row>
+              <Col md={6}>
+                <FormInput {...priceValidation} />
+              </Col>
+              <Col md={6}>
+                <FormInput {...descriptionValidation} />
+              </Col>
+            </Row>
+
+            <Row>
+              <Col md={6}>
+                <FormInput {...dataLimitValidation} />
+              </Col>
+              <Col md={6}>
+                <FormInput {...callMinutesValidation} />
+              </Col>
+            </Row>
+
+            <Row>
+              <Col md={6}>
+                <FormInput {...smsLimitValidation} />
+              </Col>
+              <Col md={6}>
+                <FormInput {...isActiveValidation} />
+              </Col>
+            </Row>
+
+            <Button onClick={onSubmit} variant="primary" className="mt-3">
+              Save Tariff
+            </Button>
+            <Button
+              type="button"
+              variant="danger"
+              className="mt-3 ms-2"
+              onClick={handleDelete}
+            >
+              Delete Tariff
+            </Button>
+          </Form>
+        </FormProvider>
       )}
     </Container>
   );

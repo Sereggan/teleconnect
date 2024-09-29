@@ -2,123 +2,92 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUser } from "../../services/UserClient";
 import { User, UserRole } from "../../models/User";
-import { Button, Form, Container, Spinner, Alert } from "react-bootstrap";
+import { Button, Form, Container, Alert, Row, Col } from "react-bootstrap";
+import { FormProvider, useForm } from "react-hook-form";
+import { FormInput } from "../common/FormInput";
+import {
+  phoneNumberValidation,
+  passwordValidation,
+  emailValidation,
+  nameValidation,
+  familyNameValidation,
+  roleValidation,
+  birthDateValidation,
+} from "../../utils/newUserValidations";
+import { FormSelect } from "../common/FormSelect";
 
 export default function NewUser() {
-  const [user, setUser] = useState<User>({
-    phoneNumber: "",
-    password: "",
-    email: "",
-    name: "",
-    surname: "",
-    role: UserRole.ROLE_CUSTOMER,
-  });
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const controllerRef = useRef<AbortController | null>(null);
+  const methods = useForm<User>();
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setUser((prevUser) => ({
-      ...prevUser,
-      [name]: value,
-    }));
-  };
-
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = event.target;
-    setUser((prevUser) => ({
-      ...prevUser,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLoading(true);
+  const onSubmit = methods.handleSubmit(async (user: User) => {
     try {
-      await createUser(user, controllerRef.current!);
+      const controller = new AbortController();
+      controllerRef.current = controller;
+      await createUser(user, controller);
       navigate("/users");
     } catch (error: any) {
       setError("Error creating user");
-    } finally {
-      setIsLoading(false);
     }
-  };
+  });
 
   return (
     <Container>
       {error && <Alert variant="danger">{error}</Alert>}
-      {isLoading && <Spinner animation="border" />}
-      {!isLoading && !error && (
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="name">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="name"
-              value={user.name}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="surname" className="mt-3">
-            <Form.Label>Surname</Form.Label>
-            <Form.Control
-              type="text"
-              name="surname"
-              value={user.surname}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="phoneNumber" className="mt-3">
-            <Form.Label>Phone Number</Form.Label>
-            <Form.Control
-              type="tel"
-              name="phoneNumber"
-              value={user.phoneNumber}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="email" className="mt-3">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              name="email"
-              value={user.email}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="password" className="mt-3">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              name="password"
-              value={user.password}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="role" className="mt-3">
-            <Form.Label>Role</Form.Label>
-            <Form.Select
-              name="role"
-              value={user.role}
-              onChange={handleSelectChange}
-              required
-            >
-              <option value={UserRole.ROLE_CUSTOMER}>Customer</option>
-              <option value={UserRole.ROLE_EMPLOYEE}>Employee</option>
-            </Form.Select>
-          </Form.Group>
-          <Button type="submit" variant="success" className="mt-3">
-            Create User
-          </Button>
-        </Form>
+      {!error && (
+        <FormProvider {...methods}>
+          <Form
+            onSubmit={(e) => e.preventDefault()}
+            noValidate
+            autoComplete="off"
+            className="mb-4"
+          >
+            <Row>
+              <Col md={6}>
+                <FormInput {...nameValidation} />
+              </Col>
+              <Col md={6}>
+                <FormInput {...familyNameValidation} />
+              </Col>
+            </Row>
+
+            <Row>
+              <Col md={6}>
+                <FormInput {...phoneNumberValidation} />
+              </Col>
+              <Col md={6}>
+                <FormInput {...emailValidation} />
+              </Col>
+            </Row>
+
+            <Row>
+              <Col md={6}>
+                <FormInput {...passwordValidation} />
+              </Col>
+              <Col md={6}>
+                <FormSelect
+                  {...roleValidation}
+                  options={[
+                    { value: UserRole.ROLE_CUSTOMER, label: "Customer" },
+                    { value: UserRole.ROLE_EMPLOYEE, label: "Employee" },
+                  ]}
+                />
+              </Col>
+            </Row>
+
+            <Row>
+              <Col md={6}>
+                <FormInput {...birthDateValidation} />
+              </Col>
+            </Row>
+
+            <Button onClick={onSubmit} variant="primary" className="mt-3">
+              Create User
+            </Button>
+          </Form>
+        </FormProvider>
       )}
     </Container>
   );

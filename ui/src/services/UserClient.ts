@@ -11,7 +11,7 @@ export const getAllUsers = async (
     phoneNumber?: string;
     email?: string;
     name?: string;
-    surname?: string;
+    familyName?: string;
     role?: string;
     tariffId?: number;
     limit?: number;

@@ -14,6 +14,26 @@ import {
 import TariffCard from "./TariffCard";
 import { UserRole } from "../../models/User";
 import { getUserRoleFromToken } from "../auth/AuthUtils";
+import { FormInput } from "../common/FormInput";
+import {
+  dataLimitMaxValidation,
+  dataLimitMinValidation,
+  isActiveValidation,
+  isUsedValidation,
+  priceMaxValidation,
+  priceMinValidation,
+} from "../../utils/tariffFilterValidations";
+import { FormProvider, useForm } from "react-hook-form";
+
+interface Filters {
+  priceMin: string;
+  priceMax: string;
+  dataLimitMin: string;
+  dataLimitMax: string;
+  isActive: string;
+  isUsed: string;
+}
+
 export default function TariffManagement() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +45,7 @@ export default function TariffManagement() {
     itemsOnPage: 25,
   });
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     priceMin: "",
     priceMax: "",
     dataLimitMin: "",
@@ -33,10 +53,13 @@ export default function TariffManagement() {
     isActive: "",
     isUsed: "",
   });
+
   const userRole = getUserRoleFromToken();
 
   const isMountedRef = useRef(true);
   const navigate = useNavigate();
+
+  const methods = useForm<Filters>();
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -102,28 +125,18 @@ export default function TariffManagement() {
     }
   };
 
-  const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = methods.handleSubmit((data: Filters) => {
     const controller = new AbortController();
+    setFilters(data);
     fetchTariffs(1, controller);
     return () => {
       controller.abort();
     };
-  };
+  });
 
   const handlePageChange = (page: number) => {
     const controller = new AbortController();
     fetchTariffs(page, controller);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
-  };
-
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
   useEffect(() => {
@@ -133,98 +146,60 @@ export default function TariffManagement() {
       controller.abort();
     };
   }, []);
+
   return (
     <Container>
       <Row className="mb-3">
         <Col>
           <h1>Tariff Management</h1>
         </Col>
-        <Col className="text-end">
-          <Button onClick={() => navigate("/tariffs/add")}>
-            Add New Tariff
-          </Button>
-        </Col>
+        {userRole === UserRole.ROLE_EMPLOYEE && (
+          <Col className="text-end mt-5">
+            <Button onClick={() => navigate("/tariffs/add")}>
+              Add New Tariff
+            </Button>
+          </Col>
+        )}
       </Row>
+      <FormProvider {...methods}>
+        <Form
+          onSubmit={(e) => e.preventDefault()}
+          noValidate
+          autoComplete="off"
+          className="mb-4"
+        >
+          <Row>
+            <Col md={6}>
+              <FormInput {...priceMinValidation} />
+            </Col>
+            <Col md={6}>
+              <FormInput {...priceMaxValidation} />
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+              <FormInput {...dataLimitMinValidation} />
+            </Col>
+            <Col>
+              <FormInput {...dataLimitMaxValidation} />
+            </Col>
+          </Row>
+          {userRole === UserRole.ROLE_EMPLOYEE && (
+            <Row>
+              <Col md={6}>
+                <FormInput {...isActiveValidation} />
+              </Col>
+              <Col md={6}>
+                <FormInput {...isUsedValidation} />
+              </Col>
+            </Row>
+          )}
 
-      <Form onSubmit={handleFilterSubmit} className="mb-4">
-        <Form.Group>
-          <Form.Label>Price Min</Form.Label>
-          <Form.Control
-            type="number"
-            name="priceMin"
-            value={filters.priceMin}
-            onChange={handleInputChange}
-            placeholder="Min Price"
-          />
-        </Form.Group>
-
-        <Form.Group>
-          <Form.Label>Price Max</Form.Label>
-          <Form.Control
-            type="number"
-            name="priceMax"
-            value={filters.priceMax}
-            onChange={handleInputChange}
-            placeholder="Max Price"
-          />
-        </Form.Group>
-
-        <Form.Group>
-          <Form.Label>Data Limit Min</Form.Label>
-          <Form.Control
-            type="number"
-            name="dataLimitMin"
-            value={filters.dataLimitMin}
-            onChange={handleInputChange}
-            placeholder="Min Data"
-          />
-        </Form.Group>
-
-        <Form.Group>
-          <Form.Label>Data Limit Max</Form.Label>
-          <Form.Control
-            type="number"
-            name="dataLimitMax"
-            value={filters.dataLimitMax}
-            onChange={handleInputChange}
-            placeholder="Max Data"
-          />
-        </Form.Group>
-
-        {userRole === UserRole.ROLE_EMPLOYEE && (
-          <Form.Group>
-            <Form.Label>Is Active</Form.Label>
-            <Form.Select
-              name="isActive"
-              value={filters.isActive}
-              onChange={handleSelectChange}
-            >
-              <option value="">Any</option>
-              <option value="true">Active</option>
-              <option value="false">Inactive</option>
-            </Form.Select>
-          </Form.Group>
-        )}
-        {userRole === UserRole.ROLE_EMPLOYEE && (
-          <Form.Group>
-            <Form.Label>Is Used</Form.Label>
-            <Form.Select
-              name="isUsed"
-              value={filters.isUsed}
-              onChange={handleSelectChange}
-            >
-              <option value="">Any</option>
-              <option value="true">Used</option>
-              <option value="false">Unused</option>
-            </Form.Select>
-          </Form.Group>
-        )}
-
-        <Button type="submit" variant="primary">
-          Search Tariffs
-        </Button>
-      </Form>
-
+          <Button onClick={onSubmit} variant="primary" className="mt-3">
+            Search Tariffs
+          </Button>
+        </Form>
+      </FormProvider>
       {error && <div>Something went wrong, please try again... {error}</div>}
       {isLoading && <Spinner animation="border" />}
       {!isLoading && !error && (

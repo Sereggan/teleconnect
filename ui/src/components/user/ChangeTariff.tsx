@@ -4,15 +4,40 @@ import { getAllTariffs } from "../../services/TariffClient";
 import { getUserById, updateUser } from "../../services/UserClient";
 import { Tariff } from "../../models/Tariff";
 import {
+  Form,
   Button,
   Container,
   Row,
   Col,
   Spinner,
-  Form,
   Card,
   ListGroup,
 } from "react-bootstrap";
+import { FormProvider, useForm } from "react-hook-form";
+import { FormInput } from "../common/FormInput";
+import {
+  callMinutesMaxValidation,
+  callMinutesMinValidation,
+  dataLimitMaxValidation,
+  dataLimitMinValidation,
+  isActiveValidation,
+  isUsedValidation,
+  priceMaxValidation,
+  priceMinValidation,
+  smsLimitMaxValidation,
+  smsLimitMinValidation,
+} from "../../utils/tariffFilterValidations";
+
+interface Filters {
+  priceMin: string;
+  priceMax: string;
+  dataLimitMin: string;
+  dataLimitMax: string;
+  callMinutesMin: string;
+  callMinutesMax: string;
+  smsLimitMin: string;
+  smsLimitMax: string;
+}
 
 export default function ChangeTariff() {
   const { id } = useParams<{ id: string }>();
@@ -31,6 +56,7 @@ export default function ChangeTariff() {
   });
   const navigate = useNavigate();
   const controllerRef = useRef<AbortController | null>(null);
+  const methods = useForm<Filters>();
 
   useEffect(() => {
     controllerRef.current = new AbortController();
@@ -98,162 +124,96 @@ export default function ChangeTariff() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
-  };
+  const onSubmit = methods.handleSubmit(() => {
+    const controller = new AbortController();
+    fetchTariffs(controller);
+    return () => {
+      controller.abort();
+    };
+  });
 
   return (
     <Container>
       <h2>Choose a Tariff</h2>
       {error && <div>{error}</div>}
       {isLoading && <Spinner animation="border" />}
+      <FormProvider {...methods}>
+        <Form
+          onSubmit={(e) => e.preventDefault()}
+          noValidate
+          autoComplete="off"
+          className="mb-4"
+        >
+          <Row>
+            <Col md={2}>
+              <FormInput {...priceMinValidation} />
+            </Col>
+            <Col md={2}>
+              <FormInput {...priceMaxValidation} />
+            </Col>
+            <Col md={2}>
+              <FormInput {...dataLimitMinValidation} />
+            </Col>
+            <Col md={2}>
+              <FormInput {...dataLimitMaxValidation} />
+            </Col>
+            <Col md={2}>
+              <FormInput {...callMinutesMinValidation} />
+            </Col>
+            <Col md={2}>
+              <FormInput {...callMinutesMaxValidation} />
+            </Col>
+          </Row>
+          <Row className="mt-3">
+            <Col md={2}>
+              <FormInput {...smsLimitMinValidation} />
+            </Col>
+            <Col md={2}>
+              <FormInput {...smsLimitMaxValidation} />
+            </Col>
+            <Col>
+              <Button onClick={onSubmit} variant="primary" className="mt-3">
+                Search Tariffs
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </FormProvider>
       {!isLoading && (
-        <>
-          <Form className="mb-4">
-            <Row>
-              <Col md={2}>
-                <Form.Group>
-                  <Form.Label>Price Min</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="priceMin"
-                    value={filters.priceMin}
-                    onChange={handleInputChange}
-                    placeholder="Min Price"
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={2}>
-                <Form.Group>
-                  <Form.Label>Price Max</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="priceMax"
-                    value={filters.priceMax}
-                    onChange={handleInputChange}
-                    placeholder="Max Price"
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={2}>
-                <Form.Group>
-                  <Form.Label>Data Limit Min</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="dataLimitMin"
-                    value={filters.dataLimitMin}
-                    onChange={handleInputChange}
-                    placeholder="Min Data"
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={2}>
-                <Form.Group>
-                  <Form.Label>Data Limit Max</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="dataLimitMax"
-                    value={filters.dataLimitMax}
-                    onChange={handleInputChange}
-                    placeholder="Max Data"
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={2}>
-                <Form.Group>
-                  <Form.Label>Call Minutes Min</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="callMinutesMin"
-                    value={filters.callMinutesMin}
-                    onChange={handleInputChange}
-                    placeholder="Min Minutes"
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={2}>
-                <Form.Group>
-                  <Form.Label>Call Minutes Max</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="callMinutesMax"
-                    value={filters.callMinutesMax}
-                    onChange={handleInputChange}
-                    placeholder="Max Minutes"
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={2}>
-                <Form.Group>
-                  <Form.Label>SMS Limit Min</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="smsLimitMin"
-                    value={filters.smsLimitMin}
-                    onChange={handleInputChange}
-                    placeholder="Min SMS"
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={2}>
-                <Form.Group>
-                  <Form.Label>SMS Limit Max</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="smsLimitMax"
-                    value={filters.smsLimitMax}
-                    onChange={handleInputChange}
-                    placeholder="Max SMS"
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row className="mt-3">
-              <Col>
-                <Button onClick={() => fetchTariffs(controllerRef.current!)}>
-                  Apply Filters
+        <div>
+          {tariffs &&
+            tariffs.map((tariff) => (
+              <Card
+                key={tariff.id}
+                className="mb-3"
+                style={{
+                  backgroundColor: tariff.isActive
+                    ? "lightgreen"
+                    : "lightcoral",
+                }}
+              >
+                <Card.Title>{tariff.name}</Card.Title>
+                <Card.Text>
+                  <ListGroup>
+                    <ListGroup.Item>{tariff.price} Euro</ListGroup.Item>
+                    <ListGroup.Item>{tariff.description}</ListGroup.Item>
+                    <ListGroup.Item>
+                      Data Limit: {tariff.dataLimit ?? "Unlimited"} GB
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      Minutes: {tariff.callMinutes ?? "Unlimited"}
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      SMS Limit: {tariff.smsLimit ?? "Unlimited"}
+                    </ListGroup.Item>
+                  </ListGroup>
+                </Card.Text>
+                <Button onClick={() => handleConnectTariff(tariff.id)}>
+                  Connect
                 </Button>
-              </Col>
-            </Row>
-          </Form>
-          <div>
-            {tariffs &&
-              tariffs.map((tariff) => (
-                <Card
-                  key={tariff.id}
-                  className="mb-3"
-                  style={{
-                    backgroundColor: tariff.isActive
-                      ? "lightgreen"
-                      : "lightcoral",
-                  }}
-                >
-                  <Card.Title>{tariff.name}</Card.Title>
-                  <Card.Text>
-                    <ListGroup>
-                      <ListGroup.Item>{tariff.price} Euro</ListGroup.Item>
-                      <ListGroup.Item>{tariff.description}</ListGroup.Item>
-                      <ListGroup.Item>
-                        Data Limit: {tariff.dataLimit ?? "Unlimited"} GB
-                      </ListGroup.Item>
-                      <ListGroup.Item>
-                        Minutes: {tariff.callMinutes ?? "Unlimited"}
-                      </ListGroup.Item>
-                      <ListGroup.Item>
-                        SMS Limit: {tariff.smsLimit ?? "Unlimited"}
-                      </ListGroup.Item>
-                    </ListGroup>
-                  </Card.Text>
-                  <Button onClick={() => handleConnectTariff(tariff.id)}>
-                    Connect
-                  </Button>
-                </Card>
-              ))}
-          </div>
-        </>
+              </Card>
+            ))}
+        </div>
       )}
     </Container>
   );

@@ -53,7 +53,7 @@ export default function UserDetails() {
     <Container>
       <h2>User Details</h2>
       <p>
-        <strong>Name:</strong> {user.name} {user.surname}
+        <strong>Name:</strong> {user.name} {user.familyName}
       </p>
       <p>
         <strong>Phone Number:</strong> {user.phoneNumber}
