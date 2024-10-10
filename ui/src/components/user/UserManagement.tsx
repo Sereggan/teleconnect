@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAllUsers } from "../../services/UserClient";
 import { User } from "../../models/User";
 import {
@@ -37,10 +37,8 @@ export default function UserManagement() {
   const [isLoading, setIsLoading] = useState(false);
   const [userList, setUserList] = useState<User[]>([]);
   const [pagination, setPagination] = useState({
-    currentPage: 1,
+    currentPage: 0,
     totalPages: 0,
-    totalItems: 0,
-    itemsOnPage: 25,
   });
   const [filters, setFilters] = useState<Filters>({
     phoneNumber: "",
@@ -61,11 +59,15 @@ export default function UserManagement() {
     };
   }, []);
 
-  const fetchUsers = async (page = 1, controller: AbortController) => {
+  const fetchUsers = async (
+    page = 1,
+    controller: AbortController,
+    filters: Filters
+  ) => {
     setIsLoading(true);
 
     try {
-      const { users: users, pagination: paginationData } = await getAllUsers(
+      const { users, totalPages, currentPage } = await getAllUsers(
         {
           phoneNumber: filters.phoneNumber || undefined,
           email: filters.email || undefined,
@@ -78,15 +80,12 @@ export default function UserManagement() {
         },
         controller
       );
-      if (isMountedRef.current) {
-        setUserList(users ?? []);
-        setPagination({
-          currentPage: page,
-          totalPages: paginationData.totalPages,
-          totalItems: paginationData.totalItems,
-          itemsOnPage: paginationData.itemsOnPage,
-        });
-      }
+
+      setUserList(users ?? []);
+      setPagination({
+        currentPage,
+        totalPages,
+      });
     } catch (error: any) {
       if (!controller.signal.aborted) {
         setError(error.message);
@@ -101,18 +100,18 @@ export default function UserManagement() {
   const onSubmit = methods.handleSubmit((data: Filters) => {
     const controller = new AbortController();
     setFilters(data);
-    fetchUsers(1, controller);
+    fetchUsers(0, controller, data);
     return () => controller.abort();
   });
 
   const handlePageChange = (page: number) => {
     const controller = new AbortController();
-    fetchUsers(page, controller);
+    fetchUsers(page, controller, filters);
   };
 
   useEffect(() => {
     const controller = new AbortController();
-    fetchUsers(pagination.currentPage, controller);
+    fetchUsers(pagination.currentPage, controller, filters);
     return () => controller.abort();
   }, []);
 
@@ -190,13 +189,13 @@ export default function UserManagement() {
           </Row>
 
           <Pagination>
-            {Array.from({ length: pagination.totalPages }, (_, idx) => (
+            {[...Array(pagination.totalPages)].map((_, i) => (
               <Pagination.Item
-                key={idx}
-                active={idx + 1 === pagination.currentPage}
-                onClick={() => handlePageChange(idx + 1)}
+                key={i}
+                active={i === pagination.currentPage}
+                onClick={() => handlePageChange(i)}
               >
-                {pagination.currentPage}
+                {i + 1}
               </Pagination.Item>
             ))}
           </Pagination>

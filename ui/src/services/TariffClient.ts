@@ -24,15 +24,13 @@ export const getAllTariffs = async (
   abortController: AbortController
 ): Promise<{
   tariffs: Tariff[];
-  totalItems: number;
+  currentPage: number;
   totalPages: number;
-  itemsOnPage: number;
 }> => {
   const response: AxiosResponse<{
     tariffs: Tariff[];
-    totalItems: number;
+    currentPage: number;
     totalPages: number;
-    itemsOnPage: number;
   }> = await tariffClient.get(basePath + tariffEndpoint, {
     params: queryParams,
     signal: abortController.signal,

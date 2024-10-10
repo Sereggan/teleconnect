@@ -32,7 +32,7 @@ export const priceMaxValidation = {
 
 export const dataLimitMinValidation = {
   name: "dataLimitMin",
-  label: "Data Limit Min, MB",
+  label: "Data Limit Min, GB",
   type: "number",
   id: "dataLimitMin",
   placeholder: "Min Data Limit",
@@ -46,7 +46,7 @@ export const dataLimitMinValidation = {
 
 export const dataLimitMaxValidation = {
   name: "dataLimitMax",
-  label: "Data Limit Max, MB",
+  label: "Data Limit Max, GB",
   type: "number",
   id: "dataLimitMax",
   placeholder: "Max Data Limit",

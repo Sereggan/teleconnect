@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { getTariffById } from "../../services/TariffClient";
 import { Tariff } from "../../models/Tariff";
 import { Container, Spinner, Alert, Card, ListGroup } from "react-bootstrap";
+import { getUserRoleFromToken } from "../auth/AuthUtils";
+import { UserRole } from "../../models/User";
 
 export default function TariffDetails() {
   const { id } = useParams<{ id: string }>();
@@ -10,6 +12,7 @@ export default function TariffDetails() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
+  const userRole = getUserRoleFromToken();
 
   useEffect(() => {
     const fetchTariff = async (controller: AbortController) => {
@@ -61,12 +64,16 @@ export default function TariffDetails() {
                   Call Minutes: {tariff.callMinutes}
                 </ListGroup.Item>
                 <ListGroup.Item>SMS Limit: {tariff.smsLimit}</ListGroup.Item>
-                <ListGroup.Item>
-                  Active: {tariff.isActive ? "Yes" : "No"}
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  Is used by users: {tariff.isUsed ? "Yes" : "No"}
-                </ListGroup.Item>
+                {userRole === UserRole.ROLE_EMPLOYEE && (
+                  <ListGroup.Item>
+                    Active: {tariff.isActive ? "Yes" : "No"}
+                  </ListGroup.Item>
+                )}
+                {userRole === UserRole.ROLE_EMPLOYEE && (
+                  <ListGroup.Item>
+                    Is used by users: {tariff.isUsed ? "Yes" : "No"}
+                  </ListGroup.Item>
+                )}
               </ListGroup>
             </Card.Text>
           </Card.Body>

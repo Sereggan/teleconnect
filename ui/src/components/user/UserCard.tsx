@@ -11,20 +11,18 @@ export default function UserCard({ user }: { user: User }) {
         <Card.Title>
           {user.name} {user.familyName}
         </Card.Title>
-        <Card.Text>
-          <ListGroup>
-            <ListGroup.Item>Phone Number: {user.phoneNumber}</ListGroup.Item>
-            <ListGroup.Item>Email: {user.email}</ListGroup.Item>
-            <ListGroup.Item>Role: {user.role}</ListGroup.Item>
-            {user.tariffId && (
-              <ListGroup.Item>
-                <Button onClick={() => navigate(`/tariffs/${user.tariffId}`)}>
-                  Tariff Info
-                </Button>
-              </ListGroup.Item>
-            )}
-          </ListGroup>
-        </Card.Text>
+        <ListGroup>
+          <ListGroup.Item>Phone Number: {user.phoneNumber}</ListGroup.Item>
+          <ListGroup.Item>Email: {user.email}</ListGroup.Item>
+          <ListGroup.Item>Role: {user.role}</ListGroup.Item>
+          {user.tariffId && (
+            <ListGroup.Item>
+              <Button onClick={() => navigate(`/tariffs/${user.tariffId}`)}>
+                Tariff Info
+              </Button>
+            </ListGroup.Item>
+          )}
+        </ListGroup>
         <Row>
           <Button onClick={() => navigate(`/users/${user.id}`)}>
             User Info

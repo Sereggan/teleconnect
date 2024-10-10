@@ -20,21 +20,13 @@ export const getAllUsers = async (
   abortController: AbortController
 ): Promise<{
   users: User[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalItems: number;
-    itemsOnPage: number;
-  };
+  currentPage: number;
+  totalPages: number;
 }> => {
   const response: AxiosResponse<{
     users: User[];
-    pagination: {
-      currentPage: number;
-      totalPages: number;
-      totalItems: number;
-      itemsOnPage: number;
-    };
+    currentPage: number;
+    totalPages: number;
   }> = await userClient.get(basePath + userEndpoint, {
     params: queryParams,
     signal: abortController.signal,
