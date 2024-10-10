@@ -39,10 +39,8 @@ export default function TariffManagement() {
   const [isLoading, setIsLoading] = useState(false);
   const [tariffList, setTariffList] = useState<Tariff[]>([]);
   const [pagination, setPagination] = useState({
-    currentPage: 1,
+    currentPage: 0,
     totalPages: 0,
-    totalItems: 0,
-    itemsOnPage: 25,
   });
 
   const [filters, setFilters] = useState<Filters>({
@@ -50,7 +48,7 @@ export default function TariffManagement() {
     priceMax: "",
     dataLimitMin: "",
     dataLimitMax: "",
-    isActive: "",
+    isActive: "true",
     isUsed: "",
   });
 
@@ -68,52 +66,43 @@ export default function TariffManagement() {
     };
   }, []);
 
-  const fetchTariffs = async (page = 1, controller: AbortController) => {
+  const fetchTariffs = async (
+    page = 0,
+    controller: AbortController,
+    filters: Filters
+  ) => {
     setIsLoading(true);
 
     try {
-      let isActive: boolean | undefined;
-      let isUsed: boolean | undefined;
+      const { tariffs, totalPages, currentPage } = await getAllTariffs(
+        {
+          priceMin: filters.priceMin ? parseFloat(filters.priceMin) : undefined,
+          priceMax: filters.priceMax ? parseFloat(filters.priceMax) : undefined,
+          dataLimitMin: filters.dataLimitMin
+            ? parseInt(filters.dataLimitMin)
+            : undefined,
+          dataLimitMax: filters.dataLimitMax
+            ? parseInt(filters.dataLimitMax)
+            : undefined,
+          isActive:
+            filters.isActive === "" || filters.isActive === undefined
+              ? undefined
+              : filters.isActive === "true",
+          isUsed:
+            filters.isUsed === "" || filters.isUsed === undefined
+              ? undefined
+              : filters.isUsed === "true",
+          limit: 9,
+          offset: page,
+        },
+        controller
+      );
 
-      if (userRole === UserRole.ROLE_CUSTOMER) {
-        isActive = true;
-        isUsed = undefined;
-      } else {
-        isActive =
-          filters.isActive !== "" ? filters.isActive === "true" : undefined;
-        isUsed = filters.isUsed !== "" ? filters.isUsed === "true" : undefined;
-      }
-      const { tariffs, totalItems, totalPages, itemsOnPage } =
-        await getAllTariffs(
-          {
-            priceMin: filters.priceMin
-              ? parseFloat(filters.priceMin)
-              : undefined,
-            priceMax: filters.priceMax
-              ? parseFloat(filters.priceMax)
-              : undefined,
-            dataLimitMin: filters.dataLimitMin
-              ? parseInt(filters.dataLimitMin)
-              : undefined,
-            dataLimitMax: filters.dataLimitMax
-              ? parseInt(filters.dataLimitMax)
-              : undefined,
-            isActive: isActive,
-            isUsed: isUsed,
-            limit: 25,
-            offset: page - 1,
-          },
-          controller
-        );
-      if (isMountedRef.current) {
-        setTariffList(tariffs ?? []);
-        setPagination({
-          currentPage: page,
-          totalItems,
-          totalPages,
-          itemsOnPage,
-        });
-      }
+      setTariffList(tariffs ?? []);
+      setPagination({
+        currentPage,
+        totalPages,
+      });
     } catch (error: any) {
       if (!controller.signal.aborted) {
         setError(error.message);
@@ -128,7 +117,8 @@ export default function TariffManagement() {
   const onSubmit = methods.handleSubmit((data: Filters) => {
     const controller = new AbortController();
     setFilters(data);
-    fetchTariffs(1, controller);
+    console.log(data);
+    fetchTariffs(0, controller, data);
     return () => {
       controller.abort();
     };
@@ -136,12 +126,13 @@ export default function TariffManagement() {
 
   const handlePageChange = (page: number) => {
     const controller = new AbortController();
-    fetchTariffs(page, controller);
+    fetchTariffs(page, controller, filters);
   };
 
   useEffect(() => {
     const controller = new AbortController();
-    fetchTariffs(pagination.currentPage, controller);
+    fetchTariffs(pagination.currentPage, controller, filters);
+
     return () => {
       controller.abort();
     };
@@ -203,7 +194,7 @@ export default function TariffManagement() {
       {error && <div>Something went wrong, please try again... {error}</div>}
       {isLoading && <Spinner animation="border" />}
       {!isLoading && !error && (
-        <Container>
+        <>
           <Row>
             {tariffList.length === 0 ? (
               <Col>
@@ -219,17 +210,17 @@ export default function TariffManagement() {
           </Row>
 
           <Pagination>
-            {Array.from({ length: pagination.totalPages }, (_, idx) => (
+            {[...Array(pagination.totalPages)].map((_, i) => (
               <Pagination.Item
-                key={idx}
-                active={idx + 1 === pagination.currentPage}
-                onClick={() => handlePageChange(idx + 1)}
+                key={i}
+                active={i === pagination.currentPage}
+                onClick={() => handlePageChange(i)}
               >
-                {pagination.currentPage}
+                {i + 1}
               </Pagination.Item>
             ))}
           </Pagination>
-        </Container>
+        </>
       )}
     </Container>
   );

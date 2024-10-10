@@ -77,7 +77,7 @@ public class UserService {
     public PaginatedUserResponse getAllUsers(String phoneNumber, String email, String name, String familyName, String role, Integer tariffId, Integer limit, Integer offset) {
         Specification<User> specification = userSpecification.getUserSpecification(phoneNumber, email, name, familyName, role, tariffId);
 
-        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.Direction.ASC, "user_id");
+        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.Direction.ASC, "name");
         Page<User> usersPage = userRepository.findAll(specification, pageRequest);
 
         List<UserDto> users = usersPage.getContent().stream()

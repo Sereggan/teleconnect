@@ -88,7 +88,7 @@ class TariffServiceTest {
         Boolean existsByTariffId = false;
 
         Specification<Tariff> specification = mock(Specification.class);
-        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.Direction.ASC, "tariff_id");
+        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.Direction.ASC, "name");
         Tariff tariff = mock(Tariff.class);
         TariffDTO tariffDTO = mock(TariffDTO.class);
         List<Tariff> tariffList = List.of(tariff);

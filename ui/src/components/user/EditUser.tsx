@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { deleteUser, getUserById, updateUser } from "../../services/UserClient";
-import { getTariffById } from "../../services/TariffClient";
+import { getAllTariffs, getTariffById } from "../../services/TariffClient";
 import {
   deleteTariffAdjustment,
   getTariffAdjustment,
@@ -14,6 +14,7 @@ import { Button, Col, Container, Form, Nav, Row } from "react-bootstrap";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormInput } from "../common/FormInput";
 import { FormSelect } from "../common/FormSelect";
+import Select, { createFilter, GroupBase, OptionsOrGroups } from "react-select";
 import {
   phoneNumberValidation,
   emailValidation,
@@ -34,6 +35,19 @@ export default function EditUser() {
   const [adjustment, setAdjustment] = useState<TariffAdjustment | undefined>(
     undefined
   );
+  const [tariffs, setTariffs] = useState<Tariff[] | undefined>(undefined);
+
+  const [tariffChoice, setTariffChoice] = useState<Tariff | undefined>(
+    undefined
+  );
+  type TariffOption = {
+    value: string;
+    label: string;
+  };
+  const [tariffOptions, setTariffOptions] = useState<
+    OptionsOrGroups<TariffOption, GroupBase<TariffOption>>
+  >([]);
+
   const navigate = useNavigate();
 
   const controllerRef = useRef<AbortController | null>(null);
@@ -69,6 +83,22 @@ export default function EditUser() {
                 setAdjustment(fetchedAdjustment);
               }
             }
+
+            if (fetchedUser.role === UserRole.ROLE_CUSTOMER) {
+              getAllTariffs(
+                {
+                  isActive: true,
+                  limit: 50,
+                },
+                controller
+              )
+                .then((response) => {
+                  setTariffs(response.tariffs);
+                })
+                .catch(() => {
+                  setTariffs(undefined);
+                });
+            }
           } else {
             setError("User not found");
           }
@@ -83,6 +113,14 @@ export default function EditUser() {
     };
 
     loadUserData();
+    if (tariffs) {
+      setTariffOptions(
+        tariffs.map((tariff) => ({
+          value: tariff.id.toString(),
+          label: `${tariff.name} - $${tariff.price}`,
+        }))
+      );
+    }
 
     return () => {
       controller.abort();
@@ -106,11 +144,15 @@ export default function EditUser() {
             controllerRef.current
           );
         }
+      } else if (adjustment && adjustment.id) {
+        await deleteTariffAdjustment(adjustment.id, controllerRef.current);
+        setAdjustment(undefined);
       }
 
       updatedUser = {
         ...updatedUser,
         tariffAdjustmentId: updatedAdjustment?.id,
+        tariffId: tariffChoice?.id,
       };
 
       const fetchedUser = await updateUser(updatedUser, controllerRef.current);
@@ -133,10 +175,16 @@ export default function EditUser() {
     const userWithoutTariff = {
       ...user,
       tariffId: undefined,
+      tariffAdjustmentId: undefined,
     };
     controllerRef.current = new AbortController();
     setIsLoading(true);
     try {
+      if (adjustment && adjustment.id) {
+        await deleteTariffAdjustment(adjustment.id, controllerRef.current);
+        setAdjustment(undefined);
+      }
+
       const updatedUser = await updateUser(
         userWithoutTariff,
         controllerRef.current
@@ -145,6 +193,7 @@ export default function EditUser() {
         setUser(updatedUser);
         setCurrentTariff(undefined);
       }
+      setTariffChoice(undefined);
     } catch (error) {
       if (!controllerRef.current.signal.aborted) {
         setError("Error disabling tariff");
@@ -169,6 +218,17 @@ export default function EditUser() {
       }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const filterTariffOptions = (
+    candidate: { label: string; value: string; data: any },
+    input: string
+  ) => {
+    if (input) {
+      return candidate.value === input;
+    } else {
+      return true;
     }
   };
 
@@ -224,13 +284,18 @@ export default function EditUser() {
                     <Nav.Link as={Link} to={`/tariffs/${user.tariffId}`}>
                       Current tariff Info
                     </Nav.Link>
-                    <Button
-                      onClick={() =>
-                        navigate(`/users/${user.id}/change-tariff`)
-                      }
-                    >
-                      Change Basic Tariff
-                    </Button>
+                    {tariffs && (
+                      <Select
+                        defaultValue={tariffOptions[0]}
+                        isClearable
+                        isSearchable
+                        name="name"
+                        options={tariffOptions}
+                        placeholder="Select a tariff"
+                        filterOption={filterTariffOptions}
+                      />
+                    )}
+                    {!tariffs && <p>No tariffs available.</p>}
                     <Button onClick={handleDisableTariff}>
                       Disable Tariff
                     </Button>

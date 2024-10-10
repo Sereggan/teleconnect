@@ -13,7 +13,6 @@ import LoginPage from "./components/auth/LoginPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { AuthProvider } from "./components/auth/AuthProvider";
 import { UserRole } from "./models/User";
-import ChangeTariff from "./components/user/ChangeTariff";
 import UserTariff from "./components/user/UserTariff";
 import StatisticsDashboard from "./components/statistics/StatisticsDashboard";
 
@@ -49,14 +48,6 @@ const router = createBrowserRouter([
             requiredRoles={[UserRole.ROLE_EMPLOYEE, UserRole.ROLE_CUSTOMER]}
           >
             <UserDetails />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "users/:id/change-tariff",
-        element: (
-          <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
-            <ChangeTariff />
           </ProtectedRoute>
         ),
       },

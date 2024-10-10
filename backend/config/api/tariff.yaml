@@ -148,7 +148,7 @@ paths:
           schema:
             type: integer
             default: 25
-            minimum: 0
+            minimum: 1
           description: Number of items to return per page (default is 25)
           example: 25
         - name: offset

@@ -206,7 +206,7 @@ class UserServiceTest {
         Integer offset = 0;
 
         Specification<User> specification = mock(Specification.class);
-        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.Direction.ASC, "user_id");
+        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.Direction.ASC, "name");
         User user = mock(User.class);
         UserDto userDto = mock(UserDto.class);
         List<User> userList = List.of(user);

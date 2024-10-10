@@ -52,7 +52,7 @@ public class TariffService {
         Specification<Tariff> specification = tariffSpecification.getTariffSpecification(priceMin, priceMax, dataLimitMin, dataLimitMax,
                 callMinutesMin, callMinutesMax, smsLimitMin, smsLimitMax, isActive, isUsed);
 
-        PageRequest page = PageRequest.of(offset, limit, Sort.Direction.ASC, "tariff_id");
+        PageRequest page = PageRequest.of(offset, limit, Sort.Direction.ASC, "name");
         Page<Tariff> tariffsPage = tariffRepository.findAll(specification, page);
 
         List<TariffDTO> tariffs = tariffsPage.getContent().stream()
