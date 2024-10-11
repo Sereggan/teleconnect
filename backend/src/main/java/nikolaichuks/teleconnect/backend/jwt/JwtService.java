@@ -8,6 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import lombok.Getter;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
+import nikolaichuks.teleconnect.backend.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,10 +31,14 @@ public class JwtService {
     private String accessTokenSecretKey;
     @Value("${security.jwt.refresh-secret-key}")
     private String refreshTokenSecretKey;
+    @Value("${security.jwt.reset-password-secret-key}")
+    private String resetPasswordTokenSecretKey;
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
     @Value("${security.jwt.refresh-expiration-time}")
     private long refreshJwtExpiration;
+    @Value("${security.jwt.reset-password-expiration-time}")
+    private long resetPasswordJwtExpiration;
 
     public String generateToken(UserDetails userDetails, HashMap<String, String> claims) {
         return Jwts
@@ -56,6 +61,18 @@ public class JwtService {
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + refreshJwtExpiration))
                 .signWith(getSignInKey(refreshTokenSecretKey), SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    public String generateResetPasswordToken(User user) {
+        return Jwts
+                .builder()
+                .setIssuer(ISSUER)
+                .setClaims(new HashMap<>())
+                .setSubject(user.getEmail())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + resetPasswordJwtExpiration))
+                .signWith(getSignInKey(resetPasswordTokenSecretKey), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -91,6 +108,11 @@ public class JwtService {
         return claims.getSubject();
     }
 
+    public String extractResetPasswordTokenEmail(String token) {
+        var claims = extractAllClaims(token, resetPasswordTokenSecretKey);
+        return claims.getSubject();
+    }
+
     private boolean isTokenExpired(Claims claims) {
         claims.getExpiration();
         return claims.getExpiration().before(new Date());
@@ -116,4 +138,5 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(key);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
 }

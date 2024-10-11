@@ -3,23 +3,27 @@ package nikolaichuks.teleconnect.backend.service;
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.jwt.JwtService;
-import nikolaichuks.teleconnect.backend.model.TokenBlacklist;
-import nikolaichuks.teleconnect.backend.model.TokenType;
-import nikolaichuks.teleconnect.backend.model.User;
-import nikolaichuks.teleconnect.backend.model.UserRole;
+import nikolaichuks.teleconnect.backend.model.*;
+import nikolaichuks.teleconnect.backend.repository.PasswordResetTokenRepository;
 import nikolaichuks.teleconnect.backend.repository.TokenBlacklistRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import teleconnect.auth.model.*;
 
+import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Authentication service
@@ -28,11 +32,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
+    @Value("${security.jwt.reset-password-expiration-time}")
+    private long resetPasswordJwtExpiration;
+
     private final UserRepository userRepository;
     private final TokenBlacklistRepository tokenBlacklistRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
     public AuthResponse signup(RegisterUserRequest newUser) {
         var user = User.builder()
@@ -114,6 +123,51 @@ public class AuthenticationService {
         tokenBlacklistRepository.saveAll(List.of(invalidAccessToken, invalidRefreshToken));
     }
 
+    @Async
+    public void sendResetPasswordMail(String email) {
+        userRepository.findByEmail(email)
+                .ifPresent(user -> {
+                    LocalDate expiryDate = LocalDateTime.now()
+                            .plus(resetPasswordJwtExpiration, ChronoUnit.MILLIS)
+                            .toLocalDate();
+                    String code = generateSecretCode();
+                    PasswordResetToken passwordResetToken = PasswordResetToken.builder()
+                            .code(code)
+                            .user(user)
+                            .expiryDate(expiryDate)
+                            .build();
+                    passwordResetTokenRepository.save(passwordResetToken);
+
+                    emailService.sendSimpleMessage("sergei.ni@yandex.ru", "Reset password", String.format("Your reset password code is: %s\n" +
+                            "if you don't know why you got this message just ignore it.", code));
+                });
+    }
+
+    public String validateResetPasswordCode(String email, String code) {
+
+        Optional<PasswordResetToken> passwordResetToken = passwordResetTokenRepository.findByCode(code);
+        if (passwordResetToken.isPresent()) {
+            PasswordResetToken token = passwordResetToken.get();
+            if (token.getUser().getEmail().equals(email) && token.getExpiryDate().isAfter(LocalDate.now())) {
+                return jwtService.generateResetPasswordToken(token.getUser());
+            } else {
+                throw new CustomRestException("Invalid code", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            throw new CustomRestException("Invalid code", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        userRepository.findByEmail(jwtService.extractResetPasswordTokenEmail(token))
+                .ifPresentOrElse(user -> {
+                    user.setPassword(passwordEncoder.encode(newPassword));
+                    userRepository.save(user);
+                },() -> {
+                    throw new CustomRestException("User not found", HttpStatus.NOT_FOUND);
+                });
+    }
+
     private AuthResponse getAuthResponse(User user) {
         HashMap<String, String> claims = new HashMap<>();
         claims.put("userId", user.getId().toString());
@@ -128,6 +182,12 @@ public class AuthenticationService {
         authResponse.setUserId(user.getId());
         authResponse.setRole(user.getRole().getName());
         return authResponse;
+    }
+
+    private String generateSecretCode() {
+        SecureRandom secureRandom = new SecureRandom();
+        int code = 100000 + secureRandom.nextInt(900000);
+        return String.valueOf(code);
     }
 
 }

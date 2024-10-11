@@ -107,6 +107,78 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthError'
+  /auth/resetPassword:
+    post:
+      summary: Reset password
+      operationId: resetPassword
+      tags:
+        - auth
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: newPassword
+          in: query
+          required: true
+          schema:
+            type: string
+            format: password
+      responses:
+        '200':
+          description: Password reset successfully
+        '400':
+          description: Invalid token or password
+  /auth/sendResetPasswordMail:
+    get:
+      summary: Send a reset password email
+      operationId: sendResetPasswordMail
+      tags:
+        - auth
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: Reset password email sent successfully
+        '400':
+          description: Bad request, invalid email
+  /auth/validateResetPasswordCode:
+    get:
+      summary: Validate reset password code
+      operationId: validateResetPasswordCode
+      tags:
+        - auth
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            format: email
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Reset password token generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetPasswordTokenResponse'
+        '400':
+          description: Invalid code or email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
 components:
   schemas:
     RegisterUserRequest:
@@ -173,6 +245,13 @@ components:
       required:
         - token
         - refreshToken
+    ResetPasswordTokenResponse:
+      type: object
+      properties:
+        resetToken:
+          type: string
+      required:
+        - resetToken
     AuthError:
       type: object
       properties:
