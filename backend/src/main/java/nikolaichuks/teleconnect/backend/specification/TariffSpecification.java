@@ -2,8 +2,8 @@ package nikolaichuks.teleconnect.backend.specification;
 
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
-import nikolaichuks.teleconnect.backend.model.Tariff;
-import nikolaichuks.teleconnect.backend.model.User;
+import nikolaichuks.teleconnect.backend.model.tariff.Tariff;
+import nikolaichuks.teleconnect.backend.model.user.User;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 

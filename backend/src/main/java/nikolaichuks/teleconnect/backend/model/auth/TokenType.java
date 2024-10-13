@@ -1,4 +1,4 @@
-package nikolaichuks.teleconnect.backend.model;
+package nikolaichuks.teleconnect.backend.model.auth;
 
 import lombok.Getter;
 

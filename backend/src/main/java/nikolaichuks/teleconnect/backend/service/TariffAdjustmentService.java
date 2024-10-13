@@ -3,7 +3,7 @@ package nikolaichuks.teleconnect.backend.service;
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
-import nikolaichuks.teleconnect.backend.model.TariffAdjustment;
+import nikolaichuks.teleconnect.backend.model.tariff.TariffAdjustment;
 import nikolaichuks.teleconnect.backend.repository.TariffAdjustmentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

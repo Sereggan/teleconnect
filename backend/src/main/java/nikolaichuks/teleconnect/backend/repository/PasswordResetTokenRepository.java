@@ -1,6 +1,6 @@
 package nikolaichuks.teleconnect.backend.repository;
 
-import nikolaichuks.teleconnect.backend.model.PasswordResetToken;
+import nikolaichuks.teleconnect.backend.model.auth.PasswordResetToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

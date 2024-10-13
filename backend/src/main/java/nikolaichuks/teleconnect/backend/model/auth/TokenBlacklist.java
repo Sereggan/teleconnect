@@ -1,8 +1,9 @@
-package nikolaichuks.teleconnect.backend.model;
+package nikolaichuks.teleconnect.backend.model.auth;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import nikolaichuks.teleconnect.backend.model.user.User;
 
 import java.time.LocalDateTime;
 

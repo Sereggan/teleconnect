@@ -1,6 +1,6 @@
 package nikolaichuks.teleconnect.backend.repository;
 
-import nikolaichuks.teleconnect.backend.model.Tariff;
+import nikolaichuks.teleconnect.backend.model.tariff.Tariff;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;

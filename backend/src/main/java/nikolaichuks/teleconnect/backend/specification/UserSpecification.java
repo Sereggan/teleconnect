@@ -1,6 +1,6 @@
 package nikolaichuks.teleconnect.backend.specification;
 
-import nikolaichuks.teleconnect.backend.model.User;
+import nikolaichuks.teleconnect.backend.model.user.User;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 

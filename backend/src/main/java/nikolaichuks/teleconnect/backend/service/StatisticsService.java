@@ -24,10 +24,10 @@ public class StatisticsService {
 
     public List<UserByTariffResponse> getUsersByTariff() {
         return userRepository.countUsersByTariff().stream()
-                .map(obj -> {
+                .map(res -> {
                     UserByTariffResponse response = new UserByTariffResponse();
-                    response.setTariffName((String) obj[0]);
-                    response.setUserCount((Long) obj[1]);
+                    response.setTariffName(res.getTariffName());
+                    response.setUserCount(res.getUserCount());
                     return response;
                 })
                 .collect(Collectors.toList());
@@ -35,10 +35,10 @@ public class StatisticsService {
 
     public List<AdjustmentByTariffResponse> getAdjustmentsByTariff() {
         return tariffAdjustmentRepository.countAdjustmentsByTariff().stream()
-                .map(obj -> {
+                .map(ta -> {
                     AdjustmentByTariffResponse response = new AdjustmentByTariffResponse();
-                    response.setTariffName((String) obj[0]);
-                    response.setAdjustmentCount((Long) obj[1]);
+                    response.setTariffName(ta.getTariffName());
+                    response.setAdjustmentCount(ta.getAdjustmentCount());
                     return response;
                 })
                 .collect(Collectors.toList());
@@ -47,10 +47,10 @@ public class StatisticsService {
     public MostDiscountedTariffResponse getMostDiscountedTariff() {
         return tariffAdjustmentRepository.findMostDiscountedTariff().stream()
                 .findFirst()
-                .map(obj -> {
+                .map(tariff -> {
                     MostDiscountedTariffResponse response = new MostDiscountedTariffResponse();
-                    response.setTariffName((String) obj[0]);
-                    response.setAverageDiscount((Float) obj[1]);
+                    response.setTariffName(tariff.getTariffName());
+                    response.setAverageDiscount(tariff.getMaxDiscountPercentage());
                     return response;
                 })
                 .orElse(null);

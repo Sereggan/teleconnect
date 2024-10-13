@@ -2,8 +2,8 @@ package nikolaichuks.teleconnect.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
-import nikolaichuks.teleconnect.backend.model.User;
-import nikolaichuks.teleconnect.backend.model.UserRole;
+import nikolaichuks.teleconnect.backend.model.user.User;
+import nikolaichuks.teleconnect.backend.model.user.UserRole;
 import nikolaichuks.teleconnect.backend.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

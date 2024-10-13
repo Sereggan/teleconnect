@@ -3,7 +3,7 @@ package nikolaichuks.teleconnect.backend.service;
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
-import nikolaichuks.teleconnect.backend.model.User;
+import nikolaichuks.teleconnect.backend.model.user.User;
 import nikolaichuks.teleconnect.backend.repository.TariffAdjustmentRepository;
 import nikolaichuks.teleconnect.backend.repository.TariffRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;

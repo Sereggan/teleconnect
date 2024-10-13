@@ -1,4 +1,4 @@
-package nikolaichuks.teleconnect.backend.model;
+package nikolaichuks.teleconnect.backend.model.document;
 
 
 import jakarta.persistence.*;
@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nikolaichuks.teleconnect.backend.model.user.User;
 
 /**
  * Entity for storing document information associated with a user

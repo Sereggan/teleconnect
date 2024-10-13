@@ -1,7 +1,7 @@
 package nikolaichuks.teleconnect.backend.repository;
 
-import nikolaichuks.teleconnect.backend.model.TokenBlacklist;
-import nikolaichuks.teleconnect.backend.model.User;
+import nikolaichuks.teleconnect.backend.model.auth.TokenBlacklist;
+import nikolaichuks.teleconnect.backend.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

@@ -2,7 +2,7 @@ package nikolaichuks.teleconnect.backend.service;
 
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
-import nikolaichuks.teleconnect.backend.model.Tariff;
+import nikolaichuks.teleconnect.backend.model.tariff.Tariff;
 import nikolaichuks.teleconnect.backend.repository.TariffRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
 import nikolaichuks.teleconnect.backend.specification.TariffSpecification;

@@ -1,4 +1,4 @@
-package nikolaichuks.teleconnect.backend.model;
+package nikolaichuks.teleconnect.backend.model.tariff;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

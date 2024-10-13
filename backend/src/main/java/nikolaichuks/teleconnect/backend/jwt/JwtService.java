@@ -8,7 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import lombok.Getter;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
-import nikolaichuks.teleconnect.backend.model.User;
+import nikolaichuks.teleconnect.backend.model.user.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;

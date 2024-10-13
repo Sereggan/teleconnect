@@ -1,4 +1,4 @@
-package nikolaichuks.teleconnect.backend.model;
+package nikolaichuks.teleconnect.backend.model.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import nikolaichuks.teleconnect.backend.model.tariff.Tariff;
+import nikolaichuks.teleconnect.backend.model.tariff.TariffAdjustment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

@@ -1,9 +1,9 @@
 package nikolaichuks.teleconnect.backend.mapper;
 
-import nikolaichuks.teleconnect.backend.model.Tariff;
-import nikolaichuks.teleconnect.backend.model.TariffAdjustment;
-import nikolaichuks.teleconnect.backend.model.User;
-import nikolaichuks.teleconnect.backend.model.UserRole;
+import nikolaichuks.teleconnect.backend.model.tariff.Tariff;
+import nikolaichuks.teleconnect.backend.model.tariff.TariffAdjustment;
+import nikolaichuks.teleconnect.backend.model.user.User;
+import nikolaichuks.teleconnect.backend.model.user.UserRole;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
