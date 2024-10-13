@@ -154,15 +154,25 @@ paths:
 
 components:
   schemas:
+    DocumentFile:
+      type: object
+      properties:
+        documentId:
+          type: string
+          description: Document ID
+        originalFileName:
+          type: string
+          description: The original name of the document
+        fileSize:
+          type: integer
+          description: File size in bytes
     DocumentListResponse:
       type: object
       properties:
         files:
           type: array
           items:
-            type: string
-            description: Document ID
-
+            $ref: '#/components/schemas/DocumentFile'
     UploadDocumentResponse:
       type: object
       properties:

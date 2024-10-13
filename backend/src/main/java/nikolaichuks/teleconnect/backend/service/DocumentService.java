@@ -3,8 +3,8 @@ package nikolaichuks.teleconnect.backend.service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
-import nikolaichuks.teleconnect.backend.model.user.User;
 import nikolaichuks.teleconnect.backend.model.document.UserDocuments;
+import nikolaichuks.teleconnect.backend.model.user.User;
 import nikolaichuks.teleconnect.backend.repository.UserDocumentsRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import teleconnect.document.model.DocumentFile;
 import teleconnect.document.model.DocumentListResponse;
 import teleconnect.document.model.UploadDocumentResponse;
 
@@ -24,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,8 +60,14 @@ public class DocumentService {
     }
 
     public DocumentListResponse getDocumentsList(String userId) {
-        List<String> documents = userDocumentsRepository.findAllByUserId(Integer.parseInt(userId)).stream()
-                .map(UserDocuments::getDocumentId)
+        List<DocumentFile> documents = userDocumentsRepository.findAllByUserId(Integer.parseInt(userId)).stream()
+                .map(userDocument -> {
+                    DocumentFile document = new DocumentFile();
+                    document.setDocumentId(userDocument.getDocumentId());
+                    document.setOriginalFileName(userDocument.getOriginalFileName());
+                    document.setFileSize(userDocument.getFileSize());
+                    return document;
+                })
                 .toList();
         DocumentListResponse response = new DocumentListResponse();
         response.setFiles(documents);
@@ -90,6 +98,9 @@ public class DocumentService {
         String generatedFileName = UUID.randomUUID() + "_" + sanitizeFileName(fileName);
         UserDocuments userDocuments = UserDocuments.builder()
                 .documentId(generatedFileName)
+                .originalFileName(fileName)
+                .creationTime(LocalDateTime.now())
+                .fileSize((int) file.getSize())
                 .user(user)
                 .build();
 
