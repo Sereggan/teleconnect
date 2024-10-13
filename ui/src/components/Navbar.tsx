@@ -32,7 +32,7 @@ function Header() {
         <Navbar.Brand>
           <h1>TeleConnect</h1>
         </Navbar.Brand>
-        <Nav className="me-auto">
+        <Nav className="ms-auto w-100">
           <Nav.Link as={Link} to="/">
             Tariffs
           </Nav.Link>
@@ -41,14 +41,9 @@ function Header() {
               Users
             </Nav.Link>
           )}
-          {userRole === UserRole.ROLE_EMPLOYEE && (
+          {userRole === UserRole.ROLE_CUSTOMER && (
             <Nav.Link as={Link} to="/users/my-tariff">
               My Tariff
-            </Nav.Link>
-          )}
-          {userRole === UserRole.ROLE_EMPLOYEE && (
-            <Nav.Link as={Link} to="/users">
-              Users
             </Nav.Link>
           )}
           {userRole && (
@@ -62,12 +57,12 @@ function Header() {
             </Nav.Link>
           )}
           {!userRole && (
-            <Nav.Link as={Link} to="/login">
+            <Nav.Link className="ms-auto" as={Link} to="/login">
               Login
             </Nav.Link>
           )}
           {userRole && (
-            <Button variant="outline-danger" onClick={handleLogout}>
+            <Button className="ms-auto" variant="danger" onClick={handleLogout}>
               Logout
             </Button>
           )}

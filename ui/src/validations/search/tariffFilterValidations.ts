@@ -4,6 +4,8 @@ export const priceMinValidation = {
   type: "number",
   id: "priceMin",
   placeholder: "Min Price",
+  requirred: false,
+  disabled: false,
   validation: {
     min: {
       value: 0,
@@ -18,6 +20,8 @@ export const priceMaxValidation = {
   type: "number",
   id: "priceMax",
   placeholder: "Max Price",
+  requirred: false,
+  disabled: false,
   validation: {
     min: {
       value: 0,
@@ -36,6 +40,8 @@ export const dataLimitMinValidation = {
   type: "number",
   id: "dataLimitMin",
   placeholder: "Min Data Limit",
+  requirred: false,
+  disabled: false,
   validation: {
     min: {
       value: 0,
@@ -50,6 +56,8 @@ export const dataLimitMaxValidation = {
   type: "number",
   id: "dataLimitMax",
   placeholder: "Max Data Limit",
+  requirred: false,
+  disabled: false,
   validation: {
     max: {
       value: 1000000,
@@ -64,6 +72,18 @@ export const isActiveValidation = {
   type: "select",
   id: "isActive",
   validation: {},
+  requirred: false,
+  disabled: false,
+  options: [
+    {
+      value: "true",
+      label: "True",
+    },
+    {
+      value: "false",
+      label: "False",
+    },
+  ],
 };
 
 export const isUsedValidation = {
@@ -72,6 +92,18 @@ export const isUsedValidation = {
   type: "select",
   id: "isUsed",
   validation: {},
+  requirred: false,
+  disabled: false,
+  options: [
+    {
+      value: "true",
+      label: "True",
+    },
+    {
+      value: "false",
+      label: "False",
+    },
+  ],
 };
 
 export const callMinutesMinValidation = {
@@ -80,6 +112,8 @@ export const callMinutesMinValidation = {
   type: "number",
   id: "callMinutesMin",
   placeholder: "Min Minutes",
+  requirred: false,
+  disabled: false,
   validation: {
     min: {
       value: 0,
@@ -94,6 +128,8 @@ export const callMinutesMaxValidation = {
   type: "number",
   id: "callMinutesMax",
   placeholder: "Max Minutes",
+  requirred: false,
+  disabled: false,
   validation: {
     max: {
       value: 10_000,
@@ -108,6 +144,8 @@ export const smsLimitMinValidation = {
   type: "number",
   id: "smsLimitMin",
   placeholder: "Min SMS",
+  requirred: false,
+  disabled: false,
   validation: {
     min: {
       value: 0,
@@ -122,6 +160,8 @@ export const smsLimitMaxValidation = {
   type: "number",
   id: "smsLimitMax",
   placeholder: "Max SMS",
+  requirred: false,
+  disabled: false,
   validation: {
     max: {
       value: 10_000,

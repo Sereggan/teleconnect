@@ -1,9 +1,25 @@
+export const idValidation = {
+  name: "id",
+  label: "Id",
+  type: "number",
+  id: "id",
+  placeholder: "",
+  disabled: true,
+  validation: {
+    required: {
+      value: true,
+      message: "Id is required",
+    },
+  },
+};
+
 export const nameValidation = {
   name: "name",
   label: "Name",
   type: "text",
   id: "name",
   placeholder: "Enter name",
+  disabled: false,
   validation: {
     required: {
       value: true,
@@ -22,6 +38,7 @@ export const priceValidation = {
   type: "number",
   id: "price",
   placeholder: "Enter price",
+  disabled: false,
   validation: {
     required: {
       value: true,
@@ -44,6 +61,7 @@ export const descriptionValidation = {
   type: "text",
   id: "description",
   placeholder: "Enter description",
+  disabled: false,
   validation: {
     required: {
       value: true,
@@ -62,6 +80,7 @@ export const dataLimitValidation = {
   type: "number",
   id: "dataLimit",
   placeholder: "Enter data limit",
+  disabled: false,
   validation: {
     min: {
       value: 0,
@@ -80,6 +99,7 @@ export const callMinutesValidation = {
   type: "number",
   id: "callMinutes",
   placeholder: "Enter call minutes",
+  disabled: false,
   validation: {
     min: {
       value: 0,
@@ -98,6 +118,7 @@ export const smsLimitValidation = {
   type: "number",
   id: "smsLimit",
   placeholder: "Enter SMS limit",
+  disabled: false,
   validation: {
     min: {
       value: 0,
@@ -115,5 +136,21 @@ export const isActiveValidation = {
   label: "Active",
   type: "checkbox",
   id: "isActive",
-  validation: {},
+  validation: {
+    required: {
+      value: true,
+      message: "Field is required",
+    },
+  },
+  disabled: false,
+  options: [
+    {
+      value: "true",
+      label: "True",
+    },
+    {
+      value: "false",
+      label: "False",
+    },
+  ],
 };

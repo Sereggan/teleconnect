@@ -10,11 +10,14 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 
 const refreshTokenBasePath = "http://localhost:8080/auth/refresh-token";
 
+const token = localStorage.getItem("accessToken");
+
 const createAxiosClient = (baseURL: string): AxiosInstance => {
   const client = axios.create({
     baseURL,
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
 

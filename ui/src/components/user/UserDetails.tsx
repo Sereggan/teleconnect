@@ -23,8 +23,10 @@ export default function UserDetails() {
             setError("User not found");
           }
         } catch (error) {
-          console.log(error);
-          setError("Error fetching user");
+          if (!abortController.signal.aborted) {
+            console.log(error);
+            setError("Error fetching user");
+          }
         } finally {
           setIsLoading(false);
         }
@@ -63,8 +65,15 @@ export default function UserDetails() {
       <p>
         <strong>Role:</strong> {user.role}
       </p>
+      <p>
+        <strong>Birth date:</strong> {user.birthDate}
+      </p>
       {user.role === UserRole.ROLE_CUSTOMER && user.tariffId && (
-        <Nav.Link as={Link} to={`/tariffs/${user.tariffId}`}>
+        <Nav.Link
+          className="text-primary fw-bold"
+          as={Link}
+          to={`/tariffs/${user.tariffId}`}
+        >
           Tariff Info
         </Nav.Link>
       )}

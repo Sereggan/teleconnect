@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   deleteTariff,
@@ -21,11 +21,13 @@ import {
   callMinutesValidation,
   dataLimitValidation,
   descriptionValidation,
+  idValidation,
   isActiveValidation,
   nameValidation,
   priceValidation,
   smsLimitValidation,
-} from "../../validations/newTariffValidations";
+} from "../../validations/modification/newTariffValidations";
+import { FormSelect } from "../common/FormSelect";
 
 export default function EditTariff() {
   const { id } = useParams<{ id: string }>();
@@ -33,11 +35,11 @@ export default function EditTariff() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const controllerRef = useRef<AbortController | null>(null);
   const methods = useForm<Tariff>();
 
   useEffect(() => {
     const controller = new AbortController();
+
     const fetchTariff = async () => {
       if (id) {
         setIsLoading(true);
@@ -50,8 +52,10 @@ export default function EditTariff() {
             setError("Tariff not found");
           }
         } catch (error) {
-          console.log(error);
-          setError("Error fetching tariff");
+          if (!controller.signal.aborted) {
+            console.log(error);
+            setError("Error fetching tariff");
+          }
         } finally {
           setIsLoading(false);
         }
@@ -59,36 +63,39 @@ export default function EditTariff() {
     };
 
     fetchTariff();
-
     return () => controller.abort();
-  }, [id]);
+  }, []);
 
-  const onSubmit = methods.handleSubmit(async (tariff: Tariff) => {
+  const onSubmit = methods.handleSubmit(async (tariffFilter: Tariff) => {
     if (!tariff) return;
     setIsLoading(true);
-    setTariff(tariff);
+    setTariff(tariffFilter);
+    const controller = new AbortController();
     try {
-      await updateTariff(tariff, controllerRef.current!);
+      await updateTariff(tariffFilter, controller);
       navigate("/tariffs");
     } catch (error) {
       console.log(error);
       setError("Error updating tariff");
     } finally {
       setIsLoading(false);
+      controller.abort();
     }
   });
 
   const handleDelete = async () => {
     if (!tariff || !tariff.id) return;
     setIsLoading(true);
+    const controller = new AbortController();
     try {
-      await deleteTariff(tariff.id, controllerRef.current!);
+      await deleteTariff(tariff.id, controller);
       navigate("/tariffs");
     } catch (error) {
       console.log(error);
       setError("Error deleting tariff");
     } finally {
       setIsLoading(false);
+      controller.abort();
     }
   };
 
@@ -105,35 +112,64 @@ export default function EditTariff() {
             className="mb-4"
           >
             <Row>
-              <Col md={12}>
-                <FormInput {...nameValidation} />
+              <Col md={6}>
+                <FormInput
+                  {...idValidation}
+                  value={tariff?.id ? tariff?.id : 0}
+                />
+              </Col>
+              <Col md={6}>
+                <FormInput
+                  {...nameValidation}
+                  value={tariff?.name ? tariff?.name : ""}
+                />
               </Col>
             </Row>
 
             <Row>
               <Col md={6}>
-                <FormInput {...priceValidation} />
+                <FormInput
+                  {...priceValidation}
+                  value={tariff?.price ? tariff?.price : ""}
+                />
               </Col>
               <Col md={6}>
-                <FormInput {...descriptionValidation} />
-              </Col>
-            </Row>
-
-            <Row>
-              <Col md={6}>
-                <FormInput {...dataLimitValidation} />
-              </Col>
-              <Col md={6}>
-                <FormInput {...callMinutesValidation} />
+                <FormInput
+                  {...descriptionValidation}
+                  value={tariff?.description ? tariff?.description : ""}
+                />
               </Col>
             </Row>
 
             <Row>
               <Col md={6}>
-                <FormInput {...smsLimitValidation} />
+                <FormInput
+                  {...dataLimitValidation}
+                  value={tariff?.dataLimit ? tariff?.dataLimit : ""}
+                />
               </Col>
               <Col md={6}>
-                <FormInput {...isActiveValidation} />
+                <FormInput
+                  {...callMinutesValidation}
+                  value={tariff?.callMinutes ? tariff?.callMinutes : ""}
+                />
+              </Col>
+            </Row>
+
+            <Row>
+              <Col md={6}>
+                <FormInput
+                  {...smsLimitValidation}
+                  value={tariff?.smsLimit ? tariff?.smsLimit : ""}
+                />
+              </Col>
+              <Col md={6}>
+                <FormSelect
+                  {...isActiveValidation}
+                  value={
+                    tariff?.isActive ? tariff?.isActive.toString() : "false"
+                  }
+                />
               </Col>
             </Row>
 

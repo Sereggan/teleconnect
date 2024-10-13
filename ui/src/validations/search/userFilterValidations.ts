@@ -1,10 +1,11 @@
-// userFilterValidations.ts
 export const phoneNumberValidation = {
   name: "phoneNumber",
   label: "Phone Number",
   type: "text",
   id: "phoneNumber",
   placeholder: "Phone Number",
+  requirred: false,
+  disabled: false,
   validation: {
     maxLength: {
       value: 15,
@@ -19,6 +20,8 @@ export const emailValidation = {
   type: "email",
   id: "email",
   placeholder: "Email",
+  requirred: false,
+  disabled: false,
   validation: {
     maxLength: {
       value: 30,
@@ -41,6 +44,8 @@ export const nameValidation = {
   type: "text",
   id: "name",
   placeholder: "Name",
+  requirred: false,
+  disabled: false,
   validation: {
     maxLength: {
       value: 30,
@@ -54,11 +59,13 @@ export const nameValidation = {
 };
 
 export const familyNameValidation = {
-  name: "FamilyName",
+  name: "familyName",
   label: "FamilyName",
   type: "text",
   id: "familyName",
   placeholder: "FamilyName",
+  requirred: false,
+  disabled: false,
   validation: {
     maxLength: {
       value: 30,
@@ -76,6 +83,8 @@ export const roleValidation = {
   label: "Role",
   type: "select",
   id: "role",
+  requirred: false,
+  disabled: false,
   validation: {},
 };
 
@@ -85,6 +94,8 @@ export const tariffIdValidation = {
   type: "number",
   id: "tariffId",
   placeholder: "Tariff ID",
+  requirred: false,
+  disabled: false,
   validation: {
     min: {
       value: 0,

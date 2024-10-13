@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import {
   FieldErrors,
@@ -15,6 +15,7 @@ interface FormSelectProps {
   id?: string;
   validation?: RegisterOptions<FieldValues, string> | undefined;
   options: Array<{ value: string; label: string }>;
+  value?: string;
 }
 
 export const FormSelect: React.FC<FormSelectProps> = ({
@@ -23,14 +24,20 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   id,
   validation,
   options,
+  value,
 }) => {
   const {
     register,
     formState: { errors },
+    setValue,
   } = useFormContext();
 
   const inputErrors: FieldErrors<FieldValues> = findInputError(errors, name);
   const isInvalid = isFormInvalid(inputErrors);
+
+  useEffect(() => {
+    setValue(name, value);
+  }, [value]);
 
   const errorMessage =
     inputErrors?.error?.message && typeof inputErrors.error.message === "string"
@@ -38,7 +45,7 @@ export const FormSelect: React.FC<FormSelectProps> = ({
       : null;
 
   return (
-    <Form.Group controlId={id} className="mt-3">
+    <Form.Group controlId={id}>
       <Form.Label>{label}</Form.Label>
       <Form.Select {...register(name, validation)} isInvalid={isInvalid}>
         <option value="">Select {label}</option>

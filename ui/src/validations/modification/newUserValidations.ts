@@ -1,18 +1,31 @@
-// newUserValidations.ts
+import { UserRole } from "../../models/User";
+
+export const idValidation = {
+  name: "id",
+  label: "User ID",
+  type: "number",
+  id: "id",
+  placeholder: "",
+  disabled: true,
+  validation: {
+    required: {
+      value: true,
+      message: "Id is required",
+    },
+  },
+};
+
 export const phoneNumberValidation = {
   name: "phoneNumber",
   label: "Phone Number",
   type: "text",
   id: "phoneNumber",
   placeholder: "Phone Number",
+  disabled: false,
   validation: {
     required: {
       value: true,
       message: "Phone Number is required",
-    },
-    pattern: {
-      value: /^(\\+\\d{1,3}[- ]?)?\\d{10,15}$/,
-      message: "Phone Number is not valid",
     },
     minLength: {
       value: 10,
@@ -31,6 +44,7 @@ export const passwordValidation = {
   type: "password",
   id: "password",
   placeholder: "Password",
+  disabled: false,
   validation: {
     required: {
       value: true,
@@ -49,6 +63,7 @@ export const emailValidation = {
   type: "email",
   id: "email",
   placeholder: "Email",
+  disabled: false,
   validation: {
     required: {
       value: true,
@@ -67,6 +82,7 @@ export const nameValidation = {
   type: "text",
   id: "name",
   placeholder: "Name",
+  disabled: false,
   validation: {
     required: {
       value: true,
@@ -85,6 +101,7 @@ export const familyNameValidation = {
   type: "text",
   id: "familyName",
   placeholder: "Family Name",
+  disabled: false,
   validation: {
     required: {
       value: true,
@@ -102,12 +119,17 @@ export const roleValidation = {
   label: "Role",
   type: "select",
   id: "role",
+  disabled: false,
   validation: {
     required: {
       value: true,
       message: "Role is required",
     },
   },
+  options: [
+    { value: UserRole.ROLE_CUSTOMER, label: "Customer" },
+    { value: UserRole.ROLE_EMPLOYEE, label: "Employee" },
+  ],
 };
 
 export const birthDateValidation = {
@@ -116,6 +138,7 @@ export const birthDateValidation = {
   type: "date",
   id: "birthDate",
   placeholder: "Birth Date",
+  disabled: false,
   validation: {
     required: {
       value: true,

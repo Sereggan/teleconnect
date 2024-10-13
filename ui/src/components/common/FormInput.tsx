@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import {
   FieldErrors,
@@ -16,6 +16,8 @@ interface FormInputProps {
   id?: string;
   placeholder?: string;
   validation?: RegisterOptions<FieldValues, string> | undefined;
+  value?: string | number;
+  disabled: boolean;
 }
 
 export const FormInput: React.FC<FormInputProps> = ({
@@ -25,11 +27,18 @@ export const FormInput: React.FC<FormInputProps> = ({
   id,
   placeholder,
   validation,
+  value,
+  disabled,
 }) => {
   const {
     register,
     formState: { errors },
+    setValue,
   } = useFormContext();
+
+  useEffect(() => {
+    setValue(name, value);
+  }, [value]);
 
   const inputErrors: FieldErrors<FieldValues> = findInputError(errors, name);
   const isInvalid = isFormInvalid(inputErrors);
@@ -48,6 +57,7 @@ export const FormInput: React.FC<FormInputProps> = ({
         placeholder={placeholder}
         {...register(name, validation)}
         isInvalid={isInvalid}
+        disabled={disabled}
       />
       {inputErrors && (
         <Form.Control.Feedback type="invalid">

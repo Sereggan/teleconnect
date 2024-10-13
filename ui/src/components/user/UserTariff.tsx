@@ -25,8 +25,10 @@ export default function UserTariff() {
         const adjustment = await getTariffAdjustment(userId, controller);
         setAdjustment(adjustment);
       } catch (error) {
-        console.log(error);
-        setError("Error fetching tariff or adjustment");
+        if (!controller.signal.aborted) {
+          console.log(error);
+          setError("Error fetching tariff or adjustment");
+        }
       } finally {
         setIsLoading(false);
       }
