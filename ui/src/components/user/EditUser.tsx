@@ -13,6 +13,7 @@ import { TariffAdjustment } from "../../models/TariffAdjustment";
 import {
   Button,
   Col,
+  Collapse,
   Container,
   Form,
   FormGroup,
@@ -54,6 +55,12 @@ export default function EditUser() {
   const [tariffOptions, setTariffOptions] = useState<
     OptionsOrGroups<TariffOption, GroupBase<TariffOption>>
   >([]);
+
+  const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(false);
+
+  const toggleAdjustments = () => {
+    setIsAdjustmentsOpen(!isOpen);
+  };
 
   const navigate = useNavigate();
 
@@ -388,37 +395,53 @@ export default function EditUser() {
                       </Button>
                     )}
                     {currentTariff && (
-                      <FormGroup>
-                        <h3>Tariff Adjustments</h3>
-                        <FormInput
-                          name="adjustedDataLimit"
-                          label="Adjusted Data Limit"
-                          type="number"
-                          placeholder="Adjusted Data Limit"
-                          disabled={false}
-                        />
-                        <FormInput
-                          name="adjustedCallMinutes"
-                          label="Adjusted Call Minutes"
-                          type="number"
-                          placeholder="Adjusted Call Minutes"
-                          disabled={false}
-                        />
-                        <FormInput
-                          name="adjustedSmsLimit"
-                          label="Adjusted SMS Limit"
-                          type="number"
-                          placeholder="Adjusted SMS Limit"
-                          disabled={false}
-                        />
-                        <FormInput
-                          name="discountPercentage"
-                          label="Discount Percentage"
-                          type="number"
-                          placeholder="Discount Percentage"
-                          disabled={false}
-                        />
-                      </FormGroup>
+                      <>
+                        <Button
+                          onClick={toggleAdjustments}
+                          className="btn btn-primary"
+                        >
+                          {isAdjustmentsOpen
+                            ? "Hide ajustments"
+                            : "Showadjustments"}
+                        </Button>
+                        <Collapse
+                          className={`collapse ${
+                            isAdjustmentsOpen ? "show" : ""
+                          } mt-2`}
+                        >
+                          <FormGroup>
+                            <h3>Tariff Adjustments</h3>
+                            <FormInput
+                              name="adjustedDataLimit"
+                              label="Adjusted Data Limit"
+                              type="number"
+                              placeholder="Adjusted Data Limit"
+                              disabled={false}
+                            />
+                            <FormInput
+                              name="adjustedCallMinutes"
+                              label="Adjusted Call Minutes"
+                              type="number"
+                              placeholder="Adjusted Call Minutes"
+                              disabled={false}
+                            />
+                            <FormInput
+                              name="adjustedSmsLimit"
+                              label="Adjusted SMS Limit"
+                              type="number"
+                              placeholder="Adjusted SMS Limit"
+                              disabled={false}
+                            />
+                            <FormInput
+                              name="discountPercentage"
+                              label="Discount Percentage"
+                              type="number"
+                              placeholder="Discount Percentage"
+                              disabled={false}
+                            />
+                          </FormGroup>
+                        </Collapse>
+                      </>
                     )}
                   </Container>
                 </>
