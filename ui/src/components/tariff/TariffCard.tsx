@@ -18,14 +18,14 @@ export default function TariffCard({ tariff }: { tariff: Tariff }) {
           <ListGroup>
             <ListGroup.Item>Price: {tariff.price} Euro</ListGroup.Item>
             <ListGroup.Item>
-              Call minutes: {tariff.callMinutes ?? "Not available"}
+              Call minutes: {tariff.callMinutes ?? "Unlimited"}
             </ListGroup.Item>
             <ListGroup.Item>
-              Data limit: {tariff?.dataLimit ?? "Not available"}{" "}
+              Data limit: {tariff?.dataLimit ?? "Unlimited"}{" "}
               {tariff.dataLimit && "GB"}
             </ListGroup.Item>
             <ListGroup.Item>
-              SMS limit: {tariff?.smsLimit ?? "Not available"}
+              SMS limit: {tariff?.smsLimit ?? "Unlimited"}
             </ListGroup.Item>
             <ListGroup.Item>Price: {tariff.price} Euro</ListGroup.Item>
             {userRole === UserRole.ROLE_EMPLOYEE && (

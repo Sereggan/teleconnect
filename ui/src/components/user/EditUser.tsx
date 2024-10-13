@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { deleteUser, getUserById, updateUser } from "../../clients/UserClient";
 import { getAllTariffs, getTariffById } from "../../clients/TariffClient";
@@ -10,11 +10,19 @@ import {
 import { User, UserRole } from "../../models/User";
 import { Tariff } from "../../models/Tariff";
 import { TariffAdjustment } from "../../models/TariffAdjustment";
-import { Button, Col, Container, Form, Nav, Row } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Container,
+  Form,
+  FormGroup,
+  Nav,
+  Row,
+} from "react-bootstrap";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormInput } from "../common/FormInput";
 import { FormSelect } from "../common/FormSelect";
-import Select, { createFilter, GroupBase, OptionsOrGroups } from "react-select";
+import Select, { GroupBase, OptionsOrGroups } from "react-select";
 import {
   phoneNumberValidation,
   emailValidation,
@@ -22,24 +30,23 @@ import {
   familyNameValidation,
   passwordValidation,
   roleValidation,
-} from "../../validations/newUserValidations";
+  birthDateValidation,
+  idValidation,
+} from "../../validations/modification/newUserValidations";
 
 export default function EditUser() {
   const { id } = useParams<{ id: string }>();
   const [user, setUser] = useState<User>();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [currentTariff, setCurrentTariff] = useState<Tariff | undefined>(
-    undefined
-  );
+  const [error, setError] = useState<string>("");
+
+  const [currentTariff, setCurrentTariff] = useState<Tariff>();
   const [adjustment, setAdjustment] = useState<TariffAdjustment | undefined>(
     undefined
   );
-  const [tariffs, setTariffs] = useState<Tariff[] | undefined>(undefined);
+  const [tariffs, setTariffs] = useState<Tariff[]>();
 
-  const [tariffChoice, setTariffChoice] = useState<Tariff | undefined>(
-    undefined
-  );
+  const [selectedTariff, setSelectedTariff] = useState<Tariff>();
   type TariffOption = {
     value: string;
     label: string;
@@ -71,6 +78,7 @@ export default function EditUser() {
               );
               if (fetchedTariff) {
                 setCurrentTariff(fetchedTariff);
+                setSelectedTariff(fetchedTariff);
               }
             }
 
@@ -105,39 +113,45 @@ export default function EditUser() {
           }
         }
       } catch (error) {
-        setUser(undefined);
-        setTariffs(undefined);
-        setAdjustment(undefined);
-        setError("Error fetching data");
+        if (!controller.signal.aborted) {
+          setUser(undefined);
+          setTariffs(undefined);
+          setAdjustment(undefined);
+          setError("Error fetching data");
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     loadUserData();
-    if (tariffs) {
-      setTariffOptions(
-        tariffs
-          .filter((tariff) => tariff.id !== undefined)
-          .map((tariff) => ({
-            value: tariff.id.toString(),
-            label: `${tariff.name} - $${tariff.price}`,
-          }))
-      );
-    }
 
     return () => {
       controller.abort();
     };
   }, [id]);
 
-  const onSubmit = methods.handleSubmit(async (user: User) => {
+  useEffect(() => {
+    if (tariffs) {
+      setTariffOptions(
+        tariffs
+          .filter((tariff) => tariff.id != null)
+          .map((tariff) => ({
+            value: tariff.id!.toString(),
+            label: `${tariff.name} - $${tariff.price}`,
+          }))
+      );
+    }
+  }, [tariffs]);
+
+  const onSubmit = methods.handleSubmit(async (filterUser: User) => {
     if (!user || !user.id) return;
 
     controllerRef.current = new AbortController();
     setIsLoading(true);
     try {
-      let updatedUser = { ...user };
+      let updatedUser = { ...user, ...filterUser };
+
       let updatedAdjustment = undefined;
       if (user.tariffId) {
         if (adjustment) {
@@ -156,13 +170,21 @@ export default function EditUser() {
       updatedUser = {
         ...updatedUser,
         tariffAdjustmentId: updatedAdjustment?.id,
-        tariffId: tariffChoice?.id,
+        tariffId: selectedTariff?.id,
       };
 
       const fetchedUser = await updateUser(updatedUser, controllerRef.current);
 
       if (fetchedUser) {
         setUser(fetchedUser);
+      }
+
+      if (fetchedUser?.tariffId) {
+        const currentTariff = tariffs?.filter(
+          (t) => t.id === fetchedUser?.tariffId
+        )[0];
+        setCurrentTariff(currentTariff);
+        setSelectedTariff(currentTariff);
       }
     } catch (error) {
       if (!controllerRef.current.signal.aborted) {
@@ -197,7 +219,7 @@ export default function EditUser() {
         setUser(updatedUser);
         setCurrentTariff(undefined);
       }
-      setTariffChoice(undefined);
+      setSelectedTariff(undefined);
     } catch (error) {
       if (!controllerRef.current.signal.aborted) {
         setError("Error disabling tariff");
@@ -226,7 +248,7 @@ export default function EditUser() {
   };
 
   const filterTariffOptions = (
-    candidate: { label: string; value: string; data: any },
+    candidate: { label: string; value: string },
     input: string
   ) => {
     if (input) {
@@ -235,6 +257,21 @@ export default function EditUser() {
       return true;
     }
   };
+
+  const selectedTariffOption = useMemo(() => {
+    if (selectedTariff) {
+      return {
+        value: selectedTariff.id!.toString(),
+        label: `${selectedTariff.name}`,
+      };
+    } else if (currentTariff) {
+      return {
+        value: currentTariff.id!.toString(),
+        label: `${currentTariff.name}`,
+      };
+    }
+    return null;
+  }, [currentTariff, selectedTariff]);
 
   return (
     <Container>
@@ -249,86 +286,140 @@ export default function EditUser() {
           >
             <Row>
               <Col md={6}>
-                <FormInput {...nameValidation} />
-              </Col>
-              <Col md={6}>
-                <FormInput {...familyNameValidation} />
+                <FormInput {...idValidation} value={user?.id ? user?.id : ""} />
               </Col>
             </Row>
-
             <Row>
               <Col md={6}>
-                <FormInput {...phoneNumberValidation} />
+                <FormInput
+                  {...nameValidation}
+                  value={user?.name ? user?.name : ""}
+                />
               </Col>
               <Col md={6}>
-                <FormInput {...emailValidation} />
-              </Col>
-            </Row>
-
-            <Row>
-              <Col md={6}>
-                <FormInput {...passwordValidation} />
-              </Col>
-              <Col md={6}>
-                <FormSelect
-                  {...roleValidation}
-                  options={[
-                    { value: UserRole.ROLE_CUSTOMER, label: "Customer" },
-                    { value: UserRole.ROLE_EMPLOYEE, label: "Employee" },
-                  ]}
+                <FormInput
+                  {...familyNameValidation}
+                  value={user?.familyName ? user?.familyName : ""}
                 />
               </Col>
             </Row>
 
+            <Row>
+              <Col md={6}>
+                <FormInput
+                  {...phoneNumberValidation}
+                  value={user?.phoneNumber ? user?.phoneNumber : ""}
+                />
+              </Col>
+              <Col md={6}>
+                <FormInput
+                  {...emailValidation}
+                  value={user?.email ? user?.email : ""}
+                />
+              </Col>
+            </Row>
+
+            <Row>
+              <Col md={6}>
+                <FormInput
+                  {...{
+                    ...passwordValidation,
+                    validation: {
+                      ...passwordValidation.validation,
+                      required: false,
+                    },
+                  }}
+                  value={undefined}
+                />
+              </Col>
+              <Col md={6}>
+                <FormSelect
+                  {...roleValidation}
+                  value={user?.role ? user?.role : undefined}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6}>
+                <FormInput
+                  {...birthDateValidation}
+                  value={user?.birthDate ? user?.birthDate : undefined}
+                />
+              </Col>
+            </Row>
+
+            <Row>
+              <Col>
+                {tariffs && (
+                  <Select
+                    value={selectedTariffOption}
+                    onChange={(option) => {
+                      const selected = tariffs!.find(
+                        (tariff) => tariff.id!.toString() === option?.value
+                      );
+                      setSelectedTariff(selected);
+                    }}
+                    isClearable
+                    isSearchable
+                    name="name"
+                    options={tariffOptions}
+                    placeholder="Select a tariff"
+                    filterOption={filterTariffOptions}
+                  />
+                )}
+              </Col>
+            </Row>
             {user &&
               methods.getValues().role === UserRole.ROLE_CUSTOMER &&
               currentTariff && (
                 <>
                   <Container>
-                    <Nav.Link as={Link} to={`/tariffs/${user.tariffId}`}>
+                    <Nav.Link
+                      className="text-primary fw-bold"
+                      as={Link}
+                      to={`/tariffs/${user.tariffId}`}
+                    >
                       Current tariff Info
                     </Nav.Link>
-                    {tariffs && (
-                      <Select
-                        defaultValue={tariffOptions[0]}
-                        isClearable
-                        isSearchable
-                        name="name"
-                        options={tariffOptions}
-                        placeholder="Select a tariff"
-                        filterOption={filterTariffOptions}
-                      />
-                    )}
                     {!tariffs && <p>No tariffs available.</p>}
-                    <Button onClick={handleDisableTariff}>
-                      Disable Tariff
-                    </Button>
-
-                    <h3>Tariff Adjustments</h3>
-                    <FormInput
-                      name="adjustedDataLimit"
-                      label="Adjusted Data Limit"
-                      type="number"
-                      placeholder="Adjusted Data Limit"
-                    />
-                    <FormInput
-                      name="adjustedCallMinutes"
-                      label="Adjusted Call Minutes"
-                      type="number"
-                      placeholder="Adjusted Call Minutes"
-                    />
-                    <FormInput
-                      name="adjustedSmsLimit"
-                      label="Adjusted SMS Limit"
-                      type="number"
-                      placeholder="Adjusted SMS Limit"
-                    />
-                    <FormInput
-                      name="discountPercentage"
-                      label="Discount Percentage"
-                      type="number"
-                      placeholder="Discount Percentage"
-                    />
+                    {currentTariff && (
+                      <Button className="mt-3" onClick={handleDisableTariff}>
+                        Disable Tariff
+                      </Button>
+                    )}
+                    {currentTariff && (
+                      <FormGroup>
+                        <h3>Tariff Adjustments</h3>
+                        <FormInput
+                          name="adjustedDataLimit"
+                          label="Adjusted Data Limit"
+                          type="number"
+                          placeholder="Adjusted Data Limit"
+                          disabled={false}
+                        />
+                        <FormInput
+                          name="adjustedCallMinutes"
+                          label="Adjusted Call Minutes"
+                          type="number"
+                          placeholder="Adjusted Call Minutes"
+                          disabled={false}
+                        />
+                        <FormInput
+                          name="adjustedSmsLimit"
+                          label="Adjusted SMS Limit"
+                          type="number"
+                          placeholder="Adjusted SMS Limit"
+                          disabled={false}
+                        />
+                        <FormInput
+                          name="discountPercentage"
+                          label="Discount Percentage"
+                          type="number"
+                          placeholder="Discount Percentage"
+                          disabled={false}
+                        />
+                      </FormGroup>
+                    )}
                   </Container>
                 </>
               )}

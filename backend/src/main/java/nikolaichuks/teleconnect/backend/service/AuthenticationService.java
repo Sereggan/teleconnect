@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import teleconnect.auth.model.*;
 
 import java.security.SecureRandom;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -127,9 +126,8 @@ public class AuthenticationService {
     public void sendResetPasswordMail(String email) {
         userRepository.findByEmail(email)
                 .ifPresent(user -> {
-                    LocalDate expiryDate = LocalDateTime.now()
-                            .plus(resetPasswordJwtExpiration, ChronoUnit.MILLIS)
-                            .toLocalDate();
+                    LocalDateTime expiryDate = LocalDateTime.now()
+                            .plus(resetPasswordJwtExpiration, ChronoUnit.MILLIS);
                     String code = generateSecretCode();
                     PasswordResetToken passwordResetToken = PasswordResetToken.builder()
                             .code(code)
@@ -138,7 +136,7 @@ public class AuthenticationService {
                             .build();
                     passwordResetTokenRepository.save(passwordResetToken);
 
-                    emailService.sendSimpleMessage("sergei.ni@yandex.ru", "Reset password", String.format("Your reset password code is: %s\n" +
+                    emailService.sendSimpleMessage(email, "Reset password", String.format("Your reset password code is: %s\n" +
                             "if you don't know why you got this message just ignore it.", code));
                 });
     }
@@ -147,7 +145,7 @@ public class AuthenticationService {
         Optional<PasswordResetToken> passwordResetToken = passwordResetTokenRepository.findByCode(code);
         if (passwordResetToken.isPresent()) {
             PasswordResetToken token = passwordResetToken.get();
-            if (token.getUser().getEmail().equals(email) && token.getExpiryDate().isAfter(LocalDate.now())) {
+            if (token.getUser().getEmail().equals(email) && token.getExpiryDate().isAfter(LocalDateTime.now())) {
                 return jwtService.generateResetPasswordToken(token.getUser());
             } else {
                 throw new CustomRestException("Invalid code", HttpStatus.BAD_REQUEST);

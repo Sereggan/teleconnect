@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { User } from "../../models/User";
-import { Card, Button, ListGroup, Row } from "react-bootstrap";
+import { Card, Button, ListGroup, Row, Nav } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 export default function UserCard({ user }: { user: User }) {
   const navigate = useNavigate();
@@ -17,20 +18,30 @@ export default function UserCard({ user }: { user: User }) {
           <ListGroup.Item>Role: {user.role}</ListGroup.Item>
           {user.tariffId && (
             <ListGroup.Item>
-              <Button onClick={() => navigate(`/tariffs/${user.tariffId}`)}>
+              <Nav.Link
+                className="text-primary fw-bold"
+                as={Link}
+                to={`/tariffs/${user.tariffId}`}
+              >
                 Tariff Info
-              </Button>
+              </Nav.Link>
             </ListGroup.Item>
           )}
+          <ListGroup.Item className="d-flex justify-content-start">
+            <Button
+              className="me-2 mt-3"
+              onClick={() => navigate(`/users/${user.id}`)}
+            >
+              User Info
+            </Button>
+            <Button
+              className="mt-3"
+              onClick={() => navigate(`/users/edit/${user.id}`)}
+            >
+              Edit User
+            </Button>
+          </ListGroup.Item>
         </ListGroup>
-        <Row>
-          <Button onClick={() => navigate(`/users/${user.id}`)}>
-            User Info
-          </Button>
-          <Button onClick={() => navigate(`/users/edit/${user.id}`)}>
-            Edit User
-          </Button>
-        </Row>
       </Card.Body>
     </Card>
   );

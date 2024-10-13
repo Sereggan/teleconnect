@@ -27,8 +27,10 @@ export default function TariffDetails() {
             setError("Tariff not found");
           }
         } catch (error) {
-          console.log(error);
-          setError("Error fetching tariff");
+          if (!controller.signal.aborted) {
+            console.log(error);
+            setError("Error fetching tariff");
+          }
         } finally {
           setIsLoading(false);
         }
@@ -54,15 +56,21 @@ export default function TariffDetails() {
             <Card.Text>
               <ListGroup>
                 <ListGroup.Item>Name: {tariff.name}</ListGroup.Item>
-                <ListGroup.Item>Price: {tariff.price}</ListGroup.Item>
+                <ListGroup.Item>Price: {tariff.price} Euro</ListGroup.Item>
                 <ListGroup.Item>
                   Description: {tariff.description}
                 </ListGroup.Item>
-                <ListGroup.Item>Data Limit: {tariff.dataLimit}</ListGroup.Item>
                 <ListGroup.Item>
-                  Call Minutes: {tariff.callMinutes}
+                  Data Limit:{" "}
+                  {tariff.dataLimit ? tariff.dataLimit + " GB" : "Unlimited"}
                 </ListGroup.Item>
-                <ListGroup.Item>SMS Limit: {tariff.smsLimit}</ListGroup.Item>
+                <ListGroup.Item>
+                  Call Minutes:{" "}
+                  {tariff.callMinutes ? tariff.callMinutes : "Unlimited"}
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  SMS Limit: {tariff.smsLimit ? tariff.smsLimit : "Unlimited"}
+                </ListGroup.Item>
                 {userRole === UserRole.ROLE_EMPLOYEE && (
                   <ListGroup.Item>
                     Active: {tariff.isActive ? "Yes" : "No"}

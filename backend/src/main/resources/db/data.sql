@@ -12,28 +12,28 @@ VALUES ('Basic Plan', 19.99, 'Basic plan with limited features', true, 5, 100, 5
        ('Night Owl Plan', 19.99, 'Discounted night-time data', true, 15, 500, 200),
        ('Freelancer Plan', 34.99, 'Ideal plan for freelancers with balanced data and calls', true, 20, 1000, 500),
        ('Weekend Plan', 9.99, 'Weekend special with unlimited data', true, NULL, 300, 100),
-       ('Data Lover Plan', 69.99, 'Huge data plan for heavy users', true, 100, 3000, 1000);
+       ('Data Lover Plan', 69.99, 'Huge data plan for heavy users', false, 100, 3000, 1000);
 
 -- employee_password and customer_password
-INSERT INTO users (phone_number, password, email, name, familyName, role, birth_date, tariff_id)
+INSERT INTO users (phone_number, password, email, name, family_name, role, birth_date, tariff_id)
 VALUES
     ('11111111111', '$2a$10$85VWTBqLP8nAZNU4an6i2uI2whSkKsnOjBC5MgiGvdu44FRXh/TYu', 'employee@example.com', 'Employee', 'User', 'ROLE_EMPLOYEE', '2020-01-01', NULL),
     ('1234567890211', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer@example.com', 'Customer', 'User', 'ROLE_CUSTOMER', '1999-04-01', 1),
-    ('1112223334', '$2a$10$85VWTBqLP8nAZNU4an6i2uI2whSkKsnOjBC5MgiGvdu44FRXh/TYu', 'manager1@example.com', 'Manager', 'One', 'ROLE_EMPLOYEE', '1985-07-22', NULL),
-    ('2223334445', '$2a$10$85VWTBqLP8nAZNU4an6i2uI2whSkKsnOjBC5MgiGvdu44FRXh/TYu', 'manager2@example.com', 'Manager', 'Two', 'ROLE_EMPLOYEE', '1980-03-12', NULL),
-    ('3334445556', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer1@example.com', 'Customer', 'One', 'ROLE_CUSTOMER', '1995-09-11', 2),
-    ('4445556667', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer2@example.com', 'Customer', 'Two', 'ROLE_CUSTOMER', '1998-11-24', 3),
-    ('5556667778', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer3@example.com', 'Customer', 'Three', 'ROLE_CUSTOMER', '2000-05-05', 4),
-    ('6667778889', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer4@example.com', 'Customer', 'Four', 'ROLE_CUSTOMER', '1992-02-15', 5),
-    ('7778889990', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer5@example.com', 'Customer', 'Five', 'ROLE_CUSTOMER', '1990-10-25', 6),
-    ('8889990001', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer6@example.com', 'Customer', 'Six', 'ROLE_CUSTOMER', '1997-01-18', 7),
-    ('9990001112', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer7@example.com', 'Customer', 'Seven', 'ROLE_CUSTOMER', '1996-07-04', 8),
-    ('0001112223', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer8@example.com', 'Customer', 'Eight', 'ROLE_CUSTOMER', '1989-09-30', 9),
-    ('11122233340', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer9@example.com', 'Customer', 'Nine', 'ROLE_CUSTOMER', '1994-03-27', 10),
-    ('22233344450', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer10@example.com', 'Customer', 'Ten', 'ROLE_CUSTOMER', '1993-12-01', 1),
-    ('33344455560', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer11@example.com', 'Customer', 'Eleven', 'ROLE_CUSTOMER', '1999-08-09', 2),
-    ('44455566670', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer12@example.com', 'Customer', 'Twelve', 'ROLE_CUSTOMER', '1991-04-16', 3),
-    ('55566677780', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer13@example.com', 'Customer', 'Thirteen', 'ROLE_CUSTOMER', '1992-06-11', 4);
+    ('1112223334', '$2a$10$85VWTBqLP8nAZNU4an6i2uI2whSkKsnOjBC5MgiGvdu44FRXh/TYu', 'sergei.ni@yandex.ru', 'Manager', 'One', 'ROLE_EMPLOYEE', '1985-07-22', NULL),
+    ('2223334445', '$2a$10$85VWTBqLP8nAZNU4an6i2uI2whSkKsnOjBC5MgiGvdu44FRXh/TYu', 'manager2.new@example.com', 'John', 'Doe', 'ROLE_EMPLOYEE', '1980-03-12', NULL),
+    ('3334445556', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer1.new@example.com', 'Alice', 'Smith', 'ROLE_CUSTOMER', '1995-09-11', 2),
+    ('4445556667', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer2.new@example.com', 'Bob', 'Johnson', 'ROLE_CUSTOMER', '1998-11-24', 3),
+    ('5556667778', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer3.new@example.com', 'Charlie', 'Brown', 'ROLE_CUSTOMER', '2000-05-05', 4),
+    ('6667778889', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer4.new@example.com', 'David', 'Miller', 'ROLE_CUSTOMER', '1992-02-15', 5),
+    ('7778889990', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer5.new@example.com', 'Eve', 'Davis', 'ROLE_CUSTOMER', '1990-10-25', 6),
+    ('8889990001', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer6.new@example.com', 'Frank', 'Garcia', 'ROLE_CUSTOMER', '1997-01-18', 7),
+    ('9990001112', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer7.new@example.com', 'Grace', 'Martinez', 'ROLE_CUSTOMER', '1996-07-04', 8),
+    ('0001112223', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer8.new@example.com', 'Hank', 'Lee', 'ROLE_CUSTOMER', '1989-09-30', 9),
+    ('11122233340', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer9.new@example.com', 'Ivy', 'Clark', 'ROLE_CUSTOMER', '1994-03-27', 10),
+    ('22233344450', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer10.new@example.com', 'Jack', 'Walker', 'ROLE_CUSTOMER', '1993-12-01', 1),
+    ('33344455560', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer11.new@example.com', 'Karen', 'Hall', 'ROLE_CUSTOMER', '1999-08-09', 2),
+    ('44455566670', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer12.new@example.com', 'Liam', 'Young', 'ROLE_CUSTOMER', '1991-04-16', 3),
+    ('55566677780', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer13.new@example.com', 'Mia', 'Harris', 'ROLE_CUSTOMER', '1992-06-11', 4);
 
 -- Insert tariff adjustments for customers
 INSERT INTO tariff_adjustment (adjusted_data_limit, adjusted_call_minutes, adjusted_sms_limit, discount_percentage, tariff_id, user_id)

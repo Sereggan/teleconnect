@@ -21,7 +21,7 @@ import {
   familyNameValidation,
   roleValidation,
   tariffIdValidation,
-} from "../../validations/userFilterValidations";
+} from "../../validations/search/userFilterValidations";
 
 interface Filters {
   phoneNumber: string;
@@ -60,13 +60,16 @@ export default function UserManagement() {
   }, []);
 
   const fetchUsers = async (
-    page = 1,
+    page = 0,
     controller: AbortController,
     filters: Filters
   ) => {
     setIsLoading(true);
 
     try {
+      setError("");
+      console.log(filters);
+      console.log(filters.familyName);
       const { users, totalPages, currentPage } = await getAllUsers(
         {
           phoneNumber: filters.phoneNumber || undefined,
@@ -75,8 +78,8 @@ export default function UserManagement() {
           familyName: filters.familyName || undefined,
           role: filters.role || undefined,
           tariffId: filters.tariffId ? parseInt(filters.tariffId) : undefined,
-          limit: 25,
-          offset: page - 1,
+          limit: 12,
+          offset: page,
         },
         controller
       );
@@ -87,8 +90,10 @@ export default function UserManagement() {
         totalPages,
       });
     } catch (error) {
-      console.log(error);
-      setError("Could not fetch tariffs");
+      if (!controller.signal.aborted) {
+        console.log(error);
+        setError("Could not fetch tariffs");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -174,11 +179,7 @@ export default function UserManagement() {
               </Col>
             ) : (
               userList.map((user) => (
-                <Col
-                  key={user.id}
-                  md={4}
-                  className="d-flex align-items-stretch"
-                >
+                <Col key={user.id} md={4}>
                   <UserCard user={user} />
                 </Col>
               ))

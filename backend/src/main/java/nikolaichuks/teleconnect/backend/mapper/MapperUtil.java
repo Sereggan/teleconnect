@@ -58,12 +58,12 @@ public class MapperUtil {
     }
 
     public User mapUserDtoToUser(UserDto source, User target) {
-
         return target.setName(source.getName())
                 .setFamilyName(source.getFamilyName())
                 .setPhoneNumber(source.getPhoneNumber())
                 .setEmail(source.getEmail())
-                .setRole(UserRole.fromString(source.getRole()));
+                .setRole(UserRole.fromString(source.getRole()))
+                .setBirthDate(source.getBirthDate());
     }
 
     public TariffDTO mapTariffToTariffDto(Tariff tariff) {

@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Password reset token entity
@@ -31,5 +31,5 @@ public class PasswordResetToken {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private LocalDate expiryDate;
+    private LocalDateTime expiryDate;
 }

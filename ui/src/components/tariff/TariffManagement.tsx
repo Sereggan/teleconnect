@@ -22,8 +22,9 @@ import {
   isUsedValidation,
   priceMaxValidation,
   priceMinValidation,
-} from "../../validations/tariffFilterValidations";
+} from "../../validations/search/tariffFilterValidations";
 import { FormProvider, useForm } from "react-hook-form";
+import { FormSelect } from "../common/FormSelect";
 
 interface Filters {
   priceMin: string;
@@ -48,7 +49,7 @@ export default function TariffManagement() {
     priceMax: "",
     dataLimitMin: "",
     dataLimitMax: "",
-    isActive: "true",
+    isActive: "",
     isUsed: "",
   });
 
@@ -72,8 +73,28 @@ export default function TariffManagement() {
     filters: Filters
   ) => {
     setIsLoading(true);
+    setError("");
 
     try {
+      console.log(filters.isActive);
+      let isActiveFlag: boolean | undefined;
+      if (userRole === UserRole.ROLE_CUSTOMER) {
+        isActiveFlag = true;
+      } else if (filters.isActive === "" || filters.isActive === undefined) {
+        isActiveFlag = undefined;
+      } else {
+        isActiveFlag = filters.isActive === "true";
+      }
+
+      let isUsedFlag: boolean | undefined;
+      if (userRole === UserRole.ROLE_CUSTOMER) {
+        isUsedFlag = undefined;
+      } else if (filters.isUsed === "" || filters.isUsed === undefined) {
+        isUsedFlag = undefined;
+      } else {
+        isUsedFlag = filters.isUsed === "true";
+      }
+
       const { tariffs, totalPages, currentPage } = await getAllTariffs(
         {
           priceMin: filters.priceMin ? parseFloat(filters.priceMin) : undefined,
@@ -84,14 +105,8 @@ export default function TariffManagement() {
           dataLimitMax: filters.dataLimitMax
             ? parseInt(filters.dataLimitMax)
             : undefined,
-          isActive:
-            filters.isActive === "" || filters.isActive === undefined
-              ? undefined
-              : filters.isActive === "true",
-          isUsed:
-            filters.isUsed === "" || filters.isUsed === undefined
-              ? undefined
-              : filters.isUsed === "true",
+          isActive: isActiveFlag,
+          isUsed: isUsedFlag,
           limit: 9,
           offset: page,
         },
@@ -104,10 +119,14 @@ export default function TariffManagement() {
         totalPages,
       });
     } catch (error) {
-      console.log(error);
-      setError("Could not load tariffs.");
+      if (!controller.signal.aborted) {
+        console.log(error);
+        setError("Could not load tariffs.");
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -175,10 +194,10 @@ export default function TariffManagement() {
           {userRole === UserRole.ROLE_EMPLOYEE && (
             <Row>
               <Col md={6}>
-                <FormInput {...isActiveValidation} />
+                <FormSelect {...isActiveValidation} />
               </Col>
               <Col md={6}>
-                <FormInput {...isUsedValidation} />
+                <FormSelect {...isUsedValidation} />
               </Col>
             </Row>
           )}
