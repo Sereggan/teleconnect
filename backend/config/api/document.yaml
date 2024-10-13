@@ -1,0 +1,190 @@
+openapi: 3.0.1
+info:
+  title: Document Processing API
+  description: API for document management (upload, download)
+  version: 1.0.0
+tags:
+  - name: document
+    description: API for document processing operations
+paths:
+  /document:
+    get:
+      summary: Get list of files for a specific user
+      operationId: getDocumentsList
+      tags:
+        - document
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved the list of files
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentListResponse'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '500':
+          description: Internal server error
+    post:
+      summary: Upload a document in .doc, .docs and .pdf formats
+      operationId: uploadFile
+      tags:
+        - document
+      requestBody:
+        description: Upload document
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                fileName:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+                userId:
+                  type: integer
+              required:
+                - fileName
+                - file
+                - userId
+      responses:
+        '201':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadDocumentResponse'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '500':
+          description: Internal server error
+  /document/{id}:
+    get:
+      summary: Download a file by id
+      operationId: downloadDocument
+      tags:
+        - document
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Document downloaded successfully
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: File not found
+        '500':
+          description: Internal server error
+    delete:
+      summary: Delete a document by id
+      operationId: deleteDocument
+      tags:
+        - document
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Document deleted successfully
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: Document not found
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    DocumentListResponse:
+      type: object
+      properties:
+        files:
+          type: array
+          items:
+            type: string
+            description: Document ID
+
+    UploadDocumentResponse:
+      type: object
+      properties:
+        documentId:
+          type: string
+          description: The ID of the uploaded document
+
+    AuthError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid or missing token"
+
+    ForbiddenError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Forbidden: insufficient permissions"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

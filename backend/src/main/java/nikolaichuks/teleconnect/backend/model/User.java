@@ -50,7 +50,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "tariff_id")
     private Tariff tariff;
 

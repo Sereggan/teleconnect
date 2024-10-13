@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS tariff CASCADE;
 DROP TABLE IF EXISTS token_blacklist CASCADE;
 DROP TABLE IF EXISTS tariff_adjustment CASCADE;
 DROP TABLE IF EXISTS password_reset_token CASCADE;
+DROP TABLE IF EXISTS user_documents CASCADE;
 
 CREATE TABLE IF NOT EXISTS tariff (
     id SERIAL PRIMARY KEY,
@@ -56,3 +57,10 @@ CREATE TABLE password_reset_token (
     expiry_date TIMESTAMP NOT NULL,
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
 );
+
+CREATE TABLE IF NOT EXISTS user_documents (
+    id SERIAL PRIMARY KEY,
+    document_id VARCHAR(100) NOT NULL,
+    user_id INTEGER NOT NULL,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
+    );
