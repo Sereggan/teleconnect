@@ -1,4 +1,3 @@
-import { AxiosResponse } from "axios";
 import { Tariff } from "../models/Tariff";
 import createAxiosClient from "./AxiosClient";
 
@@ -20,18 +19,14 @@ export const getAllTariffs = async (
     isUsed?: boolean;
     limit?: number;
     offset?: number;
-  } = {},
+  },
   abortController: AbortController
 ): Promise<{
   tariffs: Tariff[];
   currentPage: number;
   totalPages: number;
 }> => {
-  const response: AxiosResponse<{
-    tariffs: Tariff[];
-    currentPage: number;
-    totalPages: number;
-  }> = await tariffClient.get(basePath + tariffEndpoint, {
+  const response = await tariffClient.get(basePath + tariffEndpoint, {
     params: queryParams,
     signal: abortController.signal,
   });
@@ -42,7 +37,7 @@ export const getTariffById = async (
   id: number,
   abortController: AbortController
 ): Promise<Tariff | undefined> => {
-  const response: AxiosResponse<Tariff> = await tariffClient.get(
+  const response = await tariffClient.get(
     `${basePath}${tariffEndpoint}/${id}`,
     { signal: abortController.signal }
   );
@@ -53,11 +48,9 @@ export const createTariff = async (
   tariff: Tariff,
   abortController: AbortController
 ): Promise<Tariff | undefined> => {
-  const response: AxiosResponse<Tariff> = await tariffClient.post(
-    basePath + tariffEndpoint,
-    tariff,
-    { signal: abortController.signal }
-  );
+  const response = await tariffClient.post(basePath + tariffEndpoint, tariff, {
+    signal: abortController.signal,
+  });
   return response.data;
 };
 
@@ -65,11 +58,9 @@ export const updateTariff = async (
   tariff: Tariff,
   abortController: AbortController
 ): Promise<Tariff | undefined> => {
-  const response: AxiosResponse<Tariff> = await tariffClient.put(
-    basePath + tariffEndpoint,
-    tariff,
-    { signal: abortController.signal }
-  );
+  const response = await tariffClient.put(basePath + tariffEndpoint, tariff, {
+    signal: abortController.signal,
+  });
   return response.data;
 };
 
@@ -86,7 +77,7 @@ export const getTariffByUserId = async (
   userId: number,
   abortController: AbortController
 ): Promise<Tariff | undefined> => {
-  const response: AxiosResponse<Tariff> = await tariffClient.get(
+  const response = await tariffClient.get(
     `${basePath}${tariffEndpoint}/user/${userId}`,
     { signal: abortController.signal }
   );

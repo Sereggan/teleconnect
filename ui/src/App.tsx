@@ -15,6 +15,7 @@ import { AuthProvider } from "./components/auth/AuthProvider";
 import { UserRole } from "./models/User";
 import UserTariff from "./components/user/UserTariff";
 import StatisticsDashboard from "./components/statistics/StatisticsDashboard";
+import ResetPassword from "./components/auth/ResetPassword";
 
 const router = createBrowserRouter([
   {
@@ -102,6 +103,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <LoginPage />,
+      },
+      {
+        path: "resetPassword",
+        element: <ResetPassword />,
       },
       {
         path: "*",

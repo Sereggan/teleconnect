@@ -1,4 +1,3 @@
-import { AxiosResponse } from "axios";
 import { User } from "../models/User";
 import createAxiosClient from "./AxiosClient";
 
@@ -23,11 +22,7 @@ export const getAllUsers = async (
   currentPage: number;
   totalPages: number;
 }> => {
-  const response: AxiosResponse<{
-    users: User[];
-    currentPage: number;
-    totalPages: number;
-  }> = await userClient.get(basePath + userEndpoint, {
+  const response = await userClient.get(basePath + userEndpoint, {
     params: queryParams,
     signal: abortController.signal,
   });
@@ -38,10 +33,9 @@ export const getUserById = async (
   id: number,
   abortController: AbortController
 ): Promise<User | undefined> => {
-  const response: AxiosResponse<User> = await userClient.get(
-    `${basePath}${userEndpoint}/${id}`,
-    { signal: abortController.signal }
-  );
+  const response = await userClient.get(`${basePath}${userEndpoint}/${id}`, {
+    signal: abortController.signal,
+  });
   return response.data;
 };
 
@@ -49,11 +43,9 @@ export const createUser = async (
   user: User,
   abortController: AbortController
 ): Promise<User | undefined> => {
-  const response: AxiosResponse<User> = await userClient.post(
-    basePath + userEndpoint,
-    user,
-    { signal: abortController.signal }
-  );
+  const response = await userClient.post(basePath + userEndpoint, user, {
+    signal: abortController.signal,
+  });
   return response.data;
 };
 
@@ -61,11 +53,9 @@ export const updateUser = async (
   user: User,
   abortController: AbortController
 ): Promise<User | undefined> => {
-  const response: AxiosResponse<User> = await userClient.put(
-    basePath + userEndpoint,
-    user,
-    { signal: abortController.signal }
-  );
+  const response = await userClient.put(basePath + userEndpoint, user, {
+    signal: abortController.signal,
+  });
   return response.data;
 };
 

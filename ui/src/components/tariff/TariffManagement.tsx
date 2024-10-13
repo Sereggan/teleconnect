@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllTariffs } from "../../services/TariffClient";
+import { getAllTariffs } from "../../clients/TariffClient";
 import { Tariff } from "../../models/Tariff";
 import {
   Button,
@@ -22,7 +22,7 @@ import {
   isUsedValidation,
   priceMaxValidation,
   priceMinValidation,
-} from "../../utils/tariffFilterValidations";
+} from "../../validations/tariffFilterValidations";
 import { FormProvider, useForm } from "react-hook-form";
 
 interface Filters {
@@ -103,14 +103,11 @@ export default function TariffManagement() {
         currentPage,
         totalPages,
       });
-    } catch (error: any) {
-      if (!controller.signal.aborted) {
-        setError(error.message);
-      }
+    } catch (error) {
+      console.log(error);
+      setError("Could not load tariffs.");
     } finally {
-      if (isMountedRef.current) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   };
 

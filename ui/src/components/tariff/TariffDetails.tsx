@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { getTariffById } from "../../services/TariffClient";
+import { getTariffById } from "../../clients/TariffClient";
 import { Tariff } from "../../models/Tariff";
 import { Container, Spinner, Alert, Card, ListGroup } from "react-bootstrap";
 import { getUserRoleFromToken } from "../auth/AuthUtils";
@@ -26,10 +26,9 @@ export default function TariffDetails() {
           } else {
             setError("Tariff not found");
           }
-        } catch (error: any) {
-          if (!controller.signal.aborted) {
-            setError(error.message || "Error fetching tariff");
-          }
+        } catch (error) {
+          console.log(error);
+          setError("Error fetching tariff");
         } finally {
           setIsLoading(false);
         }

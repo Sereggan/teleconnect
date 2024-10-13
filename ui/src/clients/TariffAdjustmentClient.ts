@@ -1,4 +1,3 @@
-import { AxiosResponse } from "axios";
 import { TariffAdjustment } from "../models/TariffAdjustment";
 import createAxiosClient from "./AxiosClient";
 
@@ -10,7 +9,7 @@ export const getTariffAdjustment = async (
   userId: number,
   abortController: AbortController
 ): Promise<TariffAdjustment | undefined> => {
-  const response: AxiosResponse<TariffAdjustment> = await adjustmentClient.get(
+  const response = await adjustmentClient.get(
     `${basePath}${adjustmentEndpoint}/${userId}`,
     { signal: abortController.signal }
   );
@@ -21,7 +20,7 @@ export const updateTariffAdjustment = async (
   adjustment: TariffAdjustment,
   abortController: AbortController
 ): Promise<TariffAdjustment | undefined> => {
-  const response: AxiosResponse<TariffAdjustment> = await adjustmentClient.put(
+  const response = await adjustmentClient.put(
     `${basePath}${adjustmentEndpoint}`,
     adjustment,
     { signal: abortController.signal }

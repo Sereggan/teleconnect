@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from "react";
-import { getTariffByUserId } from "../../services/TariffClient";
-import { getTariffAdjustment } from "../../services/TariffAdjustmentClient";
+import { getTariffByUserId } from "../../clients/TariffClient";
+import { getTariffAdjustment } from "../../clients/TariffAdjustmentClient";
 import { Tariff } from "../../models/Tariff";
 import { Spinner, Container, Row, Col, Alert } from "react-bootstrap";
 import { TariffAdjustment } from "../../models/TariffAdjustment";
 
 export default function UserTariff() {
   const userId: string | null = localStorage.getItem("userId");
-  const [userTariff, setUserTariff] = useState<Tariff | undefined>();
+  const [userTariff, setUserTariff] = useState<Tariff>();
   const [adjustment, setAdjustment] = useState<TariffAdjustment | undefined>();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState("");
   const controllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -24,10 +24,9 @@ export default function UserTariff() {
         setUserTariff(tariff);
         const adjustment = await getTariffAdjustment(userId, controller);
         setAdjustment(adjustment);
-      } catch (error: any) {
-        if (!controller.signal.aborted) {
-          setError("Error fetching tariff or adjustment");
-        }
+      } catch (error) {
+        console.log(error);
+        setError("Error fetching tariff or adjustment");
       } finally {
         setIsLoading(false);
       }
@@ -36,6 +35,8 @@ export default function UserTariff() {
     controllerRef.current = new AbortController();
     if (userId) {
       fetchTariffAndAdjustment(parseInt(userId), controllerRef.current);
+    } else {
+      setError("Could not fetch user.");
     }
 
     return () => controllerRef.current?.abort();

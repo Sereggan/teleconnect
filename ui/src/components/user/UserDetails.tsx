@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getUserById } from "../../services/UserClient";
+import { getUserById } from "../../clients/UserClient";
 import { User, UserRole } from "../../models/User";
 import { Container, Spinner, Alert, Nav } from "react-bootstrap";
 
@@ -22,10 +22,9 @@ export default function UserDetails() {
           } else {
             setError("User not found");
           }
-        } catch (error: any) {
-          if (!abortController.signal.aborted) {
-            setError(error.message || "Error fetching user");
-          }
+        } catch (error) {
+          console.log(error);
+          setError("Error fetching user");
         } finally {
           setIsLoading(false);
         }

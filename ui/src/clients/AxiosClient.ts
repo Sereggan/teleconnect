@@ -39,7 +39,8 @@ const createAxiosClient = (baseURL: string): AxiosInstance => {
             originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
             return client(originalRequest);
           } catch (refreshError) {
-            console.error("Failed to refresh token:", refreshError);
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
             window.location.href = "/";
           }
         }

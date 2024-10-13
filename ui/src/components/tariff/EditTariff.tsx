@@ -4,7 +4,7 @@ import {
   deleteTariff,
   getTariffById,
   updateTariff,
-} from "../../services/TariffClient";
+} from "../../clients/TariffClient";
 import { Tariff } from "../../models/Tariff";
 import {
   Button,
@@ -25,7 +25,7 @@ import {
   nameValidation,
   priceValidation,
   smsLimitValidation,
-} from "../../utils/newTariffValidations";
+} from "../../validations/newTariffValidations";
 
 export default function EditTariff() {
   const { id } = useParams<{ id: string }>();
@@ -49,10 +49,9 @@ export default function EditTariff() {
           } else {
             setError("Tariff not found");
           }
-        } catch (error: any) {
-          if (!controller.signal.aborted) {
-            setError(error.message || "Error fetching tariff");
-          }
+        } catch (error) {
+          console.log(error);
+          setError("Error fetching tariff");
         } finally {
           setIsLoading(false);
         }
@@ -71,7 +70,8 @@ export default function EditTariff() {
     try {
       await updateTariff(tariff, controllerRef.current!);
       navigate("/tariffs");
-    } catch (error: any) {
+    } catch (error) {
+      console.log(error);
       setError("Error updating tariff");
     } finally {
       setIsLoading(false);
@@ -84,7 +84,8 @@ export default function EditTariff() {
     try {
       await deleteTariff(tariff.id, controllerRef.current!);
       navigate("/tariffs");
-    } catch (error: any) {
+    } catch (error) {
+      console.log(error);
       setError("Error deleting tariff");
     } finally {
       setIsLoading(false);

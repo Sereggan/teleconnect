@@ -144,7 +144,6 @@ public class AuthenticationService {
     }
 
     public String validateResetPasswordCode(String email, String code) {
-
         Optional<PasswordResetToken> passwordResetToken = passwordResetTokenRepository.findByCode(code);
         if (passwordResetToken.isPresent()) {
             PasswordResetToken token = passwordResetToken.get();

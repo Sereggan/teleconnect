@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
-import axios from "axios";
+import { Form, Button, Container, Row, Col, Alert, Nav } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { signInUser } from "../../clients/AuthClient";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -11,18 +12,21 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const abortController = new AbortController();
     try {
-      const response = await axios.post("http://localhost:8080/auth/login", {
-        username,
-        password,
-      });
-      localStorage.setItem("accessToken", response.data.token);
-      localStorage.setItem("refreshToken", response.data.refreshToken);
-      localStorage.setItem("userId", response.data.userId);
+      const { token, refreshToken, userId } = await signInUser(
+        { username, password },
+        abortController
+      );
+      localStorage.setItem("accessToken", token);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("userId", userId);
       navigate("/");
-    } catch (error: any) {
+    } catch (error) {
       setError("Invalid credentials, please try again.");
     }
+
+    return () => abortController.abort();
   };
 
   return (
@@ -53,7 +57,9 @@ export default function LoginPage() {
                 required
               />
             </Form.Group>
-
+            <Nav.Link as={Link} to="/resetPassword">
+              Forgot password?
+            </Nav.Link>
             <Button variant="primary" type="submit" className="mt-3">
               Login
             </Button>

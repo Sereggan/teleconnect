@@ -16,7 +16,7 @@ import {
   getUsersWithoutTariff,
   getAdjustmentsByTariff,
   getMostDiscountedTariff,
-} from "../../services/StatisticsClient";
+} from "../../clients/StatisticsClient";
 import {
   UserByTariffResponse,
   AdjustmentByTariffResponse,

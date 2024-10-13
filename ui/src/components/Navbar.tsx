@@ -3,6 +3,7 @@ import { getUserIdFromToken, getUserRoleFromToken } from "./auth/AuthUtils";
 import { UserRole } from "../models/User";
 import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { logoutUser } from "../clients/AuthClient";
 
 function Header() {
   const navigate = useNavigate();
@@ -10,9 +11,19 @@ function Header() {
   const userId: string | null = getUserIdFromToken();
 
   const handleLogout = () => {
+    const abortController = new AbortController();
+
+    const token = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (token && refreshToken) {
+      logoutUser({ token, refreshToken }, abortController);
+    }
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userId");
     navigate("/login");
+
+    return () => abortController.abort();
   };
 
   return (

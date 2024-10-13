@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { createTariff } from "../../services/TariffClient";
+import { createTariff } from "../../clients/TariffClient";
 import { Tariff } from "../../models/Tariff";
 import { FormInput } from "../common/FormInput";
 import { FormProvider, useForm } from "react-hook-form";
@@ -13,7 +13,7 @@ import {
   nameValidation,
   priceValidation,
   smsLimitValidation,
-} from "../../utils/newTariffValidations";
+} from "../../validations/newTariffValidations";
 
 export default function NewTariff() {
   const methods = useForm<Tariff>();
@@ -28,7 +28,8 @@ export default function NewTariff() {
       controllerRef.current = controller;
       await createTariff(tariff, controller);
       navigate("/tariffs");
-    } catch (error: any) {
+    } catch (error) {
+      console.log(error);
       setError("Error creating tariff");
     }
   });

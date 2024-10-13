@@ -6,8 +6,8 @@ import {
   RegisterOptions,
   useFormContext,
 } from "react-hook-form";
-import { isFormInvalid } from "../../utils/isFormInvalid";
-import { findInputError } from "../../utils/findInputError";
+import { isFormInvalid } from "../../validations/isFormInvalid";
+import { findInputError } from "../../validations/findInputError";
 
 interface FormSelectProps {
   name: string;

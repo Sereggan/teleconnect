@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { deleteUser, getUserById, updateUser } from "../../services/UserClient";
-import { getAllTariffs, getTariffById } from "../../services/TariffClient";
+import { deleteUser, getUserById, updateUser } from "../../clients/UserClient";
+import { getAllTariffs, getTariffById } from "../../clients/TariffClient";
 import {
   deleteTariffAdjustment,
   getTariffAdjustment,
   updateTariffAdjustment,
-} from "../../services/TariffAdjustmentClient";
+} from "../../clients/TariffAdjustmentClient";
 import { User, UserRole } from "../../models/User";
 import { Tariff } from "../../models/Tariff";
 import { TariffAdjustment } from "../../models/TariffAdjustment";
@@ -22,7 +22,7 @@ import {
   familyNameValidation,
   passwordValidation,
   roleValidation,
-} from "../../utils/newUserValidations";
+} from "../../validations/newUserValidations";
 
 export default function EditUser() {
   const { id } = useParams<{ id: string }>();
@@ -85,28 +85,30 @@ export default function EditUser() {
             }
 
             if (fetchedUser.role === UserRole.ROLE_CUSTOMER) {
-              getAllTariffs(
-                {
-                  isActive: true,
-                  limit: 50,
-                },
-                controller
-              )
-                .then((response) => {
-                  setTariffs(response.tariffs);
-                })
-                .catch(() => {
-                  setTariffs(undefined);
-                });
+              try {
+                const { tariffs } = await getAllTariffs(
+                  {
+                    isActive: true,
+                    limit: 50,
+                  },
+                  controller
+                );
+                setTariffs(tariffs);
+              } catch (err) {
+                console.log(err);
+                setError("Could not fetch tariffs");
+                setTariffs(undefined);
+              }
             }
           } else {
             setError("User not found");
           }
         }
       } catch (error) {
-        if (!controller.signal.aborted) {
-          setError("Error fetching data");
-        }
+        setUser(undefined);
+        setTariffs(undefined);
+        setAdjustment(undefined);
+        setError("Error fetching data");
       } finally {
         setIsLoading(false);
       }
@@ -115,10 +117,12 @@ export default function EditUser() {
     loadUserData();
     if (tariffs) {
       setTariffOptions(
-        tariffs.map((tariff) => ({
-          value: tariff.id.toString(),
-          label: `${tariff.name} - $${tariff.price}`,
-        }))
+        tariffs
+          .filter((tariff) => tariff.id !== undefined)
+          .map((tariff) => ({
+            value: tariff.id.toString(),
+            label: `${tariff.name} - $${tariff.price}`,
+          }))
       );
     }
 

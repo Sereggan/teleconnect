@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { createUser } from "../../services/UserClient";
+import { createUser } from "../../clients/UserClient";
 import { User, UserRole } from "../../models/User";
 import { Button, Form, Container, Alert, Row, Col } from "react-bootstrap";
 import { FormProvider, useForm } from "react-hook-form";
@@ -13,7 +13,7 @@ import {
   familyNameValidation,
   roleValidation,
   birthDateValidation,
-} from "../../utils/newUserValidations";
+} from "../../validations/newUserValidations";
 import { FormSelect } from "../common/FormSelect";
 
 export default function NewUser() {
@@ -28,7 +28,8 @@ export default function NewUser() {
       controllerRef.current = controller;
       await createUser(user, controller);
       navigate("/users");
-    } catch (error: any) {
+    } catch (error) {
+      console.log(error);
       setError("Error creating user");
     }
   });

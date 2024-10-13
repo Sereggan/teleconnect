@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllUsers } from "../../services/UserClient";
+import { getAllUsers } from "../../clients/UserClient";
 import { User } from "../../models/User";
 import {
   Button,
@@ -21,7 +21,7 @@ import {
   familyNameValidation,
   roleValidation,
   tariffIdValidation,
-} from "../../utils/userFilterValidations";
+} from "../../validations/userFilterValidations";
 
 interface Filters {
   phoneNumber: string;
@@ -86,14 +86,11 @@ export default function UserManagement() {
         currentPage,
         totalPages,
       });
-    } catch (error: any) {
-      if (!controller.signal.aborted) {
-        setError(error.message);
-      }
+    } catch (error) {
+      console.log(error);
+      setError("Could not fetch tariffs");
     } finally {
-      if (isMountedRef.current) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   };
 
