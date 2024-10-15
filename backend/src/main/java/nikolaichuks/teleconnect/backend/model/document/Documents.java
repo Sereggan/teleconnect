@@ -18,8 +18,8 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_documents")
-public class UserDocuments {
+@Table(name = "documents")
+public class Documents {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

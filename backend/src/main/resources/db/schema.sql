@@ -59,7 +59,7 @@ CREATE TABLE password_reset_token (
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
-CREATE TABLE IF NOT EXISTS user_documents (
+CREATE TABLE IF NOT EXISTS documents (
     id SERIAL PRIMARY KEY,
     document_id VARCHAR(100) NOT NULL,
     original_file_name VARCHAR(100) NOT NULL,

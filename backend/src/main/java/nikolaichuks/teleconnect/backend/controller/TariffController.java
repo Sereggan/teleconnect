@@ -1,13 +1,10 @@
 package nikolaichuks.teleconnect.backend.controller;
 
 import lombok.RequiredArgsConstructor;
-import nikolaichuks.teleconnect.backend.model.user.User;
-import nikolaichuks.teleconnect.backend.model.user.UserRole;
 import nikolaichuks.teleconnect.backend.service.TariffService;
+import nikolaichuks.teleconnect.backend.util.AuthUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 import teleconnect.tariff.api.TariffApi;
 import teleconnect.tariff.model.PaginatedTariffResponse;
@@ -17,6 +14,7 @@ import teleconnect.tariff.model.TariffDTO;
 @RequiredArgsConstructor
 public class TariffController implements TariffApi {
 
+    private final AuthUtil authUtil;
     private final TariffService tariffService;
 
     /*
@@ -73,19 +71,10 @@ public class TariffController implements TariffApi {
      */
     @Override
     public ResponseEntity<TariffDTO> getTariffByUserId(Integer id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        User currentUser = (User) authentication.getPrincipal();
-        if (hasEmployeeRole() || id.equals(currentUser.getId())) {
+        if (authUtil.hasEmployeeRoleOrEqualToUserId(id.toString())) {
             return ResponseEntity.ok(tariffService.getTariffByUserId(id));
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-    }
-
-    private boolean hasEmployeeRole() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = (User) authentication.getPrincipal();
-        return currentUser.getRole().equals(UserRole.ROLE_EMPLOYEE);
     }
 }

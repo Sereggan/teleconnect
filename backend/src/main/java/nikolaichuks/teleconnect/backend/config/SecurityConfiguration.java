@@ -33,6 +33,8 @@ public class SecurityConfiguration {
     private static final String USERS_URL = "/users/**";
     private static final String TARIFF_ADJUSTMENT_URL = "/tariff-adjustment/**";
     private static final String STATISTICS_URL = "/statistics/**";
+    private static final String TICKET_URL = "/ticket/**";
+    private static final String DOCUMENT_URL = "/document/**";
 
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -57,6 +59,14 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.PUT, TARIFF_ADJUSTMENT_URL).hasRole(ROLE_EMPLOYEE)
                         .requestMatchers(HttpMethod.DELETE, TARIFF_ADJUSTMENT_URL).hasRole(ROLE_EMPLOYEE)
                         .requestMatchers(STATISTICS_URL).hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(TICKET_URL).hasAnyRole(ROLE_EMPLOYEE, ROLE_CUSTOMER)
+                        .requestMatchers(HttpMethod.GET, TICKET_URL).hasAnyRole(ROLE_EMPLOYEE, ROLE_CUSTOMER)
+                        .requestMatchers(HttpMethod.POST, TICKET_URL).hasAnyRole(ROLE_EMPLOYEE, ROLE_CUSTOMER)
+                        .requestMatchers(HttpMethod.PUT, TICKET_URL).hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.GET, DOCUMENT_URL).hasAnyRole(ROLE_EMPLOYEE, ROLE_CUSTOMER)
+                        .requestMatchers(HttpMethod.POST, DOCUMENT_URL).hasRole(ROLE_EMPLOYEE)
+                        .requestMatchers(HttpMethod.DELETE, DOCUMENT_URL).hasRole(ROLE_EMPLOYEE)
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

@@ -2,6 +2,7 @@ package nikolaichuks.teleconnect.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.service.DocumentService;
+import nikolaichuks.teleconnect.backend.util.AuthUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,17 +15,22 @@ import teleconnect.document.model.UploadDocumentResponse;
 @RequiredArgsConstructor
 public class DocumentController implements DocumentApi {
 
+    private final AuthUtil authUtil;
     private final DocumentService documentService;
 
     @Override
     public ResponseEntity<org.springframework.core.io.Resource> downloadDocument(String id) {
         return ResponseEntity.ok(documentService.downloadDocument(id));
-
     }
 
     @Override
     public ResponseEntity<DocumentListResponse> getDocumentsList(String userId) {
-        return ResponseEntity.ok(documentService.getDocumentsList(userId));
+        if (authUtil.hasEmployeeRoleOrEqualToUserId(userId)) {
+            return ResponseEntity.ok(documentService.getDocumentsList(userId));
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
     }
 
     @Override
@@ -37,5 +43,4 @@ public class DocumentController implements DocumentApi {
         documentService.deleteDocument(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }

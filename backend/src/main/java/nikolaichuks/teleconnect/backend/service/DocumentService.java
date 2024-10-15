@@ -3,10 +3,11 @@ package nikolaichuks.teleconnect.backend.service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
-import nikolaichuks.teleconnect.backend.model.document.UserDocuments;
+import nikolaichuks.teleconnect.backend.model.document.Documents;
 import nikolaichuks.teleconnect.backend.model.user.User;
-import nikolaichuks.teleconnect.backend.repository.UserDocumentsRepository;
+import nikolaichuks.teleconnect.backend.repository.DocumentsRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
+import nikolaichuks.teleconnect.backend.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -33,14 +34,23 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DocumentService {
 
-    private final UserDocumentsRepository userDocumentsRepository;
+    private final AuthUtil authUtil;
     private final UserRepository userRepository;
+    private final DocumentsRepository documentsRepository;
 
     @Value("${document.filePath}")
     String basePath;
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024;  // 10 MB
 
     public Resource downloadDocument(String id) {
+        documentsRepository.findByDocumentId(id)
+                .ifPresentOrElse(userDocument -> {
+                    if (!authUtil.hasEmployeeRoleOrEqualToUserId(userDocument.getUser().getId().toString())) {
+                        throw new CustomRestException("Access denied", HttpStatus.FORBIDDEN);
+                    }
+                }, () -> {
+                    throw new CustomRestException("Document not found: " + id, HttpStatus.NOT_FOUND);
+                });
         try {
             Path filePath = Paths.get(basePath).toAbsolutePath().normalize().resolve(id).normalize();
 
@@ -60,7 +70,7 @@ public class DocumentService {
     }
 
     public DocumentListResponse getDocumentsList(String userId) {
-        List<DocumentFile> documents = userDocumentsRepository.findAllByUserId(Integer.parseInt(userId)).stream()
+        List<DocumentFile> documents = documentsRepository.findAllByUserId(Integer.parseInt(userId)).stream()
                 .map(userDocument -> {
                     DocumentFile document = new DocumentFile();
                     document.setDocumentId(userDocument.getDocumentId());
@@ -96,7 +106,7 @@ public class DocumentService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomRestException("User not found: " + userId, HttpStatus.NOT_FOUND));
         String generatedFileName = UUID.randomUUID() + "_" + sanitizeFileName(fileName);
-        UserDocuments userDocuments = UserDocuments.builder()
+        Documents documents = Documents.builder()
                 .documentId(generatedFileName)
                 .originalFileName(fileName)
                 .creationTime(LocalDateTime.now())
@@ -108,7 +118,7 @@ public class DocumentService {
         try (InputStream inputStream = file.getInputStream()) {
             Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
 
-            userDocumentsRepository.save(userDocuments);
+            documentsRepository.save(documents);
 
             UploadDocumentResponse response = new UploadDocumentResponse();
             response.setDocumentId(generatedFileName);
@@ -124,7 +134,7 @@ public class DocumentService {
         try {
             if (Files.exists(path)) {
                 Files.delete(path);
-                userDocumentsRepository.deleteByDocumentId(id);
+                documentsRepository.deleteByDocumentId(id);
             } else {
                 throw new CustomRestException("File not found: " + id, HttpStatus.NOT_FOUND);
             }
