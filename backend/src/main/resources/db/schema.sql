@@ -31,10 +31,10 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS tariff_adjustment (
     id SERIAL PRIMARY KEY,
-    adjusted_data_limit INTEGER,
-    adjusted_call_minutes INTEGER,
-    adjusted_sms_limit INTEGER,
-    discount_percentage NUMERIC(5, 2),
+    data_limit INTEGER,
+    call_minutes INTEGER,
+    sms_limit INTEGER,
+    price NUMERIC(5, 2),
     tariff_id INTEGER NOT NULL UNIQUE,
     user_id INTEGER NOT NULL UNIQUE,
     CONSTRAINT fk_tariff FOREIGN KEY (tariff_id) REFERENCES tariff(id),

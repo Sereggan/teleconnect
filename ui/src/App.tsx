@@ -16,6 +16,7 @@ import { UserRole } from "./models/User";
 import UserTariff from "./components/user/UserTariff";
 import StatisticsDashboard from "./components/statistics/StatisticsDashboard";
 import ResetPassword from "./components/auth/ResetPassword";
+import { EditTariffAdjustment } from "./components/tariff/EditTariffAdjustment";
 
 const router = createBrowserRouter([
   {
@@ -65,6 +66,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
             <EditUser />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "users/:id/tariff-adjustment",
+        element: (
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
+            <EditTariffAdjustment />
           </ProtectedRoute>
         ),
       },

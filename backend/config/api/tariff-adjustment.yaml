@@ -107,21 +107,21 @@ components:
           type: integer
         tariffId:
           type: integer
-        adjustedDataLimit:
+        dataLimit:
           type: integer
           minimum: 0
-        adjustedCallMinutes:
+        callMinutes:
           type: integer
           minimum: 0
-        adjustedSmsLimit:
+        smsLimit:
           type: integer
           minimum: 0
-        discountPercentage:
+        price:
           type: number
           format: double
           minimum: 0
           maximum: 100
-          description: Percentage discount on tariff price
+          description: Special price for the user
     AuthError:
       type: object
       properties:

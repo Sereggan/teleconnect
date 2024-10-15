@@ -22,7 +22,7 @@ import {
   isUsedValidation,
   priceMaxValidation,
   priceMinValidation,
-} from "../../validations/search/tariffFilterValidations";
+} from "../../validations/filtering/tariffValidations";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormSelect } from "../common/FormSelect";
 

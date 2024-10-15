@@ -76,7 +76,7 @@ export const descriptionValidation = {
 
 export const dataLimitValidation = {
   name: "dataLimit",
-  label: "Data Limit (MB)",
+  label: "Data Limit (GB)",
   type: "number",
   id: "dataLimit",
   placeholder: "Enter data limit",

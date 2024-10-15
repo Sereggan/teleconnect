@@ -94,10 +94,10 @@ public class MapperUtil {
     }
 
     public TariffAdjustment mapTariffAdjustmentDtoToTariffAdjustment(TariffAdjustmentDTO source, TariffAdjustment target) {
-        target.setDiscountPercentage(source.getDiscountPercentage());
-        target.setAdjustedCallMinutes(source.getAdjustedCallMinutes());
-        target.setAdjustedSmsLimit(source.getAdjustedSmsLimit());
-        target.setAdjustedDataLimit(source.getAdjustedDataLimit());
+        target.setPrice(source.getPrice());
+        target.setCallMinutes(source.getCallMinutes());
+        target.setCallMinutes(source.getCallMinutes());
+        target.setDataLimit(source.getDataLimit());
         return target;
     }
 }

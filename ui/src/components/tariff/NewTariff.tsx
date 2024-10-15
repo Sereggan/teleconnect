@@ -13,7 +13,7 @@ import {
   nameValidation,
   priceValidation,
   smsLimitValidation,
-} from "../../validations/modification/newTariffValidations";
+} from "../../validations/modification/tariffValidations";
 
 export default function NewTariff() {
   const methods = useForm<Tariff>();

@@ -24,10 +24,10 @@ public class TariffAdjustment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Integer adjustedDataLimit;
-    private Integer adjustedCallMinutes;
-    private Integer adjustedSmsLimit;
-    private Double discountPercentage;
+    private Integer dataLimit;
+    private Integer callMinutes;
+    private Integer smsLimit;
+    private Double price;
 
     @ManyToOne
     @JoinColumn(name = "tariff_id", nullable = false)

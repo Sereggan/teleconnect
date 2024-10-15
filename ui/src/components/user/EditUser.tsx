@@ -2,24 +2,9 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { deleteUser, getUserById, updateUser } from "../../clients/UserClient";
 import { getAllTariffs, getTariffById } from "../../clients/TariffClient";
-import {
-  deleteTariffAdjustment,
-  getTariffAdjustment,
-  updateTariffAdjustment,
-} from "../../clients/TariffAdjustmentClient";
 import { User, UserRole } from "../../models/User";
 import { Tariff } from "../../models/Tariff";
-import { TariffAdjustment } from "../../models/TariffAdjustment";
-import {
-  Button,
-  Col,
-  Collapse,
-  Container,
-  Form,
-  FormGroup,
-  Nav,
-  Row,
-} from "react-bootstrap";
+import { Button, Col, Container, Form, Nav, Row } from "react-bootstrap";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormInput } from "../common/FormInput";
 import { FormSelect } from "../common/FormSelect";
@@ -33,7 +18,7 @@ import {
   roleValidation,
   birthDateValidation,
   idValidation,
-} from "../../validations/modification/newUserValidations";
+} from "../../validations/modification/userValidations";
 
 export default function EditUser() {
   const { id } = useParams<{ id: string }>();
@@ -42,9 +27,6 @@ export default function EditUser() {
   const [error, setError] = useState<string>("");
 
   const [currentTariff, setCurrentTariff] = useState<Tariff>();
-  const [adjustment, setAdjustment] = useState<TariffAdjustment | undefined>(
-    undefined
-  );
   const [tariffs, setTariffs] = useState<Tariff[]>();
 
   const [selectedTariff, setSelectedTariff] = useState<Tariff>();
@@ -55,12 +37,6 @@ export default function EditUser() {
   const [tariffOptions, setTariffOptions] = useState<
     OptionsOrGroups<TariffOption, GroupBase<TariffOption>>
   >([]);
-
-  const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(false);
-
-  const toggleAdjustments = () => {
-    setIsAdjustmentsOpen(!isOpen);
-  };
 
   const navigate = useNavigate();
 
@@ -77,29 +53,18 @@ export default function EditUser() {
           const fetchedUser = await getUserById(userId, controller);
           if (fetchedUser) {
             setUser(fetchedUser);
-
-            if (fetchedUser.tariffId) {
-              const fetchedTariff = await getTariffById(
-                fetchedUser.tariffId,
-                controller
-              );
-              if (fetchedTariff) {
-                setCurrentTariff(fetchedTariff);
-                setSelectedTariff(fetchedTariff);
-              }
-            }
-
-            if (fetchedUser.tariffAdjustmentId) {
-              const fetchedAdjustment = await getTariffAdjustment(
-                fetchedUser.tariffAdjustmentId,
-                controller
-              );
-              if (fetchedAdjustment) {
-                setAdjustment(fetchedAdjustment);
-              }
-            }
-
             if (fetchedUser.role === UserRole.ROLE_CUSTOMER) {
+              if (fetchedUser.tariffId) {
+                const fetchedTariff = await getTariffById(
+                  fetchedUser.tariffId,
+                  controller
+                );
+                if (fetchedTariff) {
+                  setCurrentTariff(fetchedTariff);
+                  setSelectedTariff(fetchedTariff);
+                }
+              }
+
               try {
                 const { tariffs } = await getAllTariffs(
                   {
@@ -123,7 +88,6 @@ export default function EditUser() {
         if (!controller.signal.aborted) {
           setUser(undefined);
           setTariffs(undefined);
-          setAdjustment(undefined);
           setError("Error fetching data");
         }
       } finally {
@@ -135,6 +99,7 @@ export default function EditUser() {
 
     return () => {
       controller.abort();
+      controllerRef.current?.abort();
     };
   }, [id]);
 
@@ -159,25 +124,12 @@ export default function EditUser() {
     try {
       let updatedUser = { ...user, ...filterUser };
 
-      let updatedAdjustment = undefined;
-      if (user.tariffId) {
-        if (adjustment) {
-          adjustment.tariffId = user.tariffId;
-          adjustment.id = user.tariffAdjustmentId;
-          updatedAdjustment = await updateTariffAdjustment(
-            adjustment,
-            controllerRef.current
-          );
-        }
-      } else if (adjustment && adjustment.id) {
-        await deleteTariffAdjustment(adjustment.id, controllerRef.current);
-        setAdjustment(undefined);
-      }
-
       updatedUser = {
         ...updatedUser,
-        tariffAdjustmentId: updatedAdjustment?.id,
         tariffId: selectedTariff?.id,
+        tariffAdjustmentId: selectedTariff?.id
+          ? updatedUser.tariffAdjustmentId
+          : undefined,
       };
 
       const fetchedUser = await updateUser(updatedUser, controllerRef.current);
@@ -213,11 +165,6 @@ export default function EditUser() {
     controllerRef.current = new AbortController();
     setIsLoading(true);
     try {
-      if (adjustment && adjustment.id) {
-        await deleteTariffAdjustment(adjustment.id, controllerRef.current);
-        setAdjustment(undefined);
-      }
-
       const updatedUser = await updateUser(
         userWithoutTariff,
         controllerRef.current
@@ -388,60 +335,25 @@ export default function EditUser() {
                     >
                       Current tariff Info
                     </Nav.Link>
-                    {!tariffs && <p>No tariffs available.</p>}
+
+                    <Nav.Link
+                      className="text-primary fw-bold"
+                      as={Link}
+                      to={`users/${user.id!}/tariff-adjustment`}
+                      state={{
+                        userId: user.id,
+                        tariff: currentTariff,
+                        tariffAdjustmentId: user.tariffAdjustmentId,
+                      }}
+                    >
+                      {user.tariffAdjustmentId
+                        ? "User's special tariff plan"
+                        : "Create special tariff plan"}
+                    </Nav.Link>
                     {currentTariff && (
                       <Button className="mt-3" onClick={handleDisableTariff}>
                         Disable Tariff
                       </Button>
-                    )}
-                    {currentTariff && (
-                      <>
-                        <Button
-                          onClick={toggleAdjustments}
-                          className="btn btn-primary"
-                        >
-                          {isAdjustmentsOpen
-                            ? "Hide ajustments"
-                            : "Showadjustments"}
-                        </Button>
-                        <Collapse
-                          className={`collapse ${
-                            isAdjustmentsOpen ? "show" : ""
-                          } mt-2`}
-                        >
-                          <FormGroup>
-                            <h3>Tariff Adjustments</h3>
-                            <FormInput
-                              name="adjustedDataLimit"
-                              label="Adjusted Data Limit"
-                              type="number"
-                              placeholder="Adjusted Data Limit"
-                              disabled={false}
-                            />
-                            <FormInput
-                              name="adjustedCallMinutes"
-                              label="Adjusted Call Minutes"
-                              type="number"
-                              placeholder="Adjusted Call Minutes"
-                              disabled={false}
-                            />
-                            <FormInput
-                              name="adjustedSmsLimit"
-                              label="Adjusted SMS Limit"
-                              type="number"
-                              placeholder="Adjusted SMS Limit"
-                              disabled={false}
-                            />
-                            <FormInput
-                              name="discountPercentage"
-                              label="Discount Percentage"
-                              type="number"
-                              placeholder="Discount Percentage"
-                              disabled={false}
-                            />
-                          </FormGroup>
-                        </Collapse>
-                      </>
                     )}
                   </Container>
                 </>

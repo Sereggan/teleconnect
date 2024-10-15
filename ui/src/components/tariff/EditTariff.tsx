@@ -26,7 +26,7 @@ import {
   nameValidation,
   priceValidation,
   smsLimitValidation,
-} from "../../validations/modification/newTariffValidations";
+} from "../../validations/modification/tariffValidations";
 import { FormSelect } from "../common/FormSelect";
 
 export default function EditTariff() {

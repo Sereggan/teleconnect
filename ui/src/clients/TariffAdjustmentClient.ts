@@ -6,11 +6,11 @@ const adjustmentEndpoint: string = "/tariff-adjustment";
 const adjustmentClient = createAxiosClient(basePath);
 
 export const getTariffAdjustment = async (
-  userId: number,
+  id: number,
   abortController: AbortController
 ): Promise<TariffAdjustment | undefined> => {
   const response = await adjustmentClient.get(
-    `${basePath}${adjustmentEndpoint}/${userId}`,
+    `${basePath}${adjustmentEndpoint}/${id}`,
     { signal: abortController.signal }
   );
   return response.data;

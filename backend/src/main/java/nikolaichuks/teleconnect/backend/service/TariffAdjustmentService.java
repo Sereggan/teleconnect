@@ -23,10 +23,10 @@ public class TariffAdjustmentService {
         if (adjustmentDTO.getId() != null) {
             return tariffAdjustmentRepository.findById(adjustmentDTO.getId())
                     .map(adjustment -> {
-                        adjustment.setDiscountPercentage(adjustmentDTO.getDiscountPercentage());
-                        adjustment.setAdjustedCallMinutes(adjustmentDTO.getAdjustedCallMinutes());
-                        adjustment.setAdjustedSmsLimit(adjustmentDTO.getAdjustedSmsLimit());
-                        adjustment.setAdjustedDataLimit(adjustmentDTO.getAdjustedDataLimit());
+                        adjustment.setPrice(adjustmentDTO.getPrice());
+                        adjustment.setCallMinutes(adjustmentDTO.getCallMinutes());
+                        adjustment.setSmsLimit(adjustmentDTO.getSmsLimit());
+                        adjustment.setDataLimit(adjustmentDTO.getDataLimit());
                         return tariffAdjustmentRepository.save(mapper.mapTariffAdjustmentDtoToTariffAdjustment(adjustmentDTO, adjustment));
                     })
                     .map(mapper::mapTariffAdjustmentToTariffAdjustmentDto)

@@ -21,7 +21,7 @@ import {
   familyNameValidation,
   roleValidation,
   tariffIdValidation,
-} from "../../validations/search/userFilterValidations";
+} from "../../validations/filtering/userValidations";
 
 interface Filters {
   phoneNumber: string;

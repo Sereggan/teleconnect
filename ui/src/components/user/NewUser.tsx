@@ -13,7 +13,7 @@ import {
   familyNameValidation,
   roleValidation,
   birthDateValidation,
-} from "../../validations/modification/newUserValidations";
+} from "../../validations/modification/userValidations";
 import { FormSelect } from "../common/FormSelect";
 
 export default function NewUser() {

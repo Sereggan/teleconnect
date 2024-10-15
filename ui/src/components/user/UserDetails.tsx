@@ -1,14 +1,27 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getUserById } from "../../clients/UserClient";
-import { User, UserRole } from "../../models/User";
-import { Container, Spinner, Alert, Nav } from "react-bootstrap";
+import { User } from "../../models/User";
+import {
+  Container,
+  Spinner,
+  Alert,
+  Nav,
+  Card,
+  ListGroup,
+} from "react-bootstrap";
+import { Tariff } from "../../models/Tariff";
+import { TariffAdjustment } from "../../models/TariffAdjustment";
+import { getTariffById } from "../../clients/TariffClient";
+import { getTariffAdjustment } from "../../clients/TariffAdjustmentClient";
 
 export default function UserDetails() {
   const { id } = useParams<{ id: string }>();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User>();
+  const [tariff, setTariff] = useState<Tariff>();
+  const [tariffAdjustment, setTariffAdjustment] = useState<TariffAdjustment>();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchUser = async (abortController: AbortController) => {
@@ -38,12 +51,88 @@ export default function UserDetails() {
     return () => abortController.abort();
   }, [id]);
 
+  useEffect(() => {
+    const fetchTariff = async (abortController: AbortController) => {
+      if (user?.tariffId) {
+        try {
+          const fetchedTariff = await getTariffById(
+            user.tariffId,
+            abortController
+          );
+          setTariff(fetchedTariff);
+        } catch (error) {
+          if (!abortController.signal.aborted) {
+            console.log(error);
+            setError("Error fetching tariff");
+          }
+        }
+      }
+    };
+
+    const fetchTariffAdjustment = async (abortController: AbortController) => {
+      if (user?.tariffAdjustmentId) {
+        try {
+          const fetchedTariffAdjustment = await getTariffAdjustment(
+            user.tariffAdjustmentId,
+            abortController
+          );
+          setTariffAdjustment(fetchedTariffAdjustment);
+        } catch (error) {
+          if (!abortController.signal.aborted) {
+            console.log(error);
+            setError("Error fetching tariff adjustment");
+          }
+        }
+      }
+    };
+
+    const abortController = new AbortController();
+    setIsLoading(true);
+
+    fetchTariff(abortController);
+    fetchTariffAdjustment(abortController);
+    setIsLoading(false);
+
+    return () => abortController.abort();
+  }, [user?.tariffId, user?.tariffAdjustmentId]);
+
+  function getValue(
+    tariffValue: string | number | undefined,
+    adjustedValue: string | number | undefined,
+    unit: string
+  ) {
+    if (tariffValue === undefined && adjustedValue === undefined) {
+      return <p>Unlimited</p>;
+    } else if (tariffValue !== undefined) {
+      return (
+        <p>
+          {tariffValue} {unit}
+        </p>
+      );
+    } else {
+      return (
+        <p>
+          <span className="text-muted text-decoration-line-through me-2">
+            {tariffValue}
+          </span>
+          <span className="text-success fw-bold">
+            {adjustedValue} {unit}
+          </span>
+        </p>
+      );
+    }
+  }
+
   if (isLoading) {
-    return <Spinner animation="border" />;
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    );
   }
 
   if (error) {
-    return <Alert variant="danger">{error}</Alert>;
+    return <p>Something went wrong...</p>;
   }
 
   if (!user) {
@@ -52,30 +141,58 @@ export default function UserDetails() {
 
   return (
     <Container>
-      <h2>User Details</h2>
-      <p>
-        <strong>Name:</strong> {user.name} {user.familyName}
-      </p>
-      <p>
-        <strong>Phone Number:</strong> {user.phoneNumber}
-      </p>
-      <p>
-        <strong>Email:</strong> {user.email}
-      </p>
-      <p>
-        <strong>Role:</strong> {user.role}
-      </p>
-      <p>
-        <strong>Birth date:</strong> {user.birthDate}
-      </p>
-      {user.role === UserRole.ROLE_CUSTOMER && user.tariffId && (
-        <Nav.Link
-          className="text-primary fw-bold"
-          as={Link}
-          to={`/tariffs/${user.tariffId}`}
-        >
-          Tariff Info
-        </Nav.Link>
+      <Card className="mb-3">
+        <Card.Body>
+          <Card.Title>User Details</Card.Title>
+          <ListGroup>
+            <ListGroup.Item>Name: {user.name}</ListGroup.Item>
+            <ListGroup.Item>Familyname: {user.familyName}</ListGroup.Item>
+            <ListGroup.Item>Phone Number: {user.phoneNumber}</ListGroup.Item>
+            <ListGroup.Item>Email: {user.email}</ListGroup.Item>
+            <ListGroup.Item>Role: {user.role}</ListGroup.Item>
+            <ListGroup.Item>Birh date: {user.birthDate}</ListGroup.Item>
+            {user.tariffId && (
+              <ListGroup.Item>
+                <Nav.Link
+                  className="text-primary fw-bold"
+                  as={Link}
+                  to={`/tariffs/${user.tariffId}`}
+                >
+                  Tariff Info
+                </Nav.Link>
+              </ListGroup.Item>
+            )}
+          </ListGroup>
+        </Card.Body>
+      </Card>
+      {user.tariffId && (
+        <Card className="mb-3">
+          <Card.Body>
+            <Card.Title>User tariffs's details:</Card.Title>
+            <ListGroup>
+              <ListGroup.Item>
+                Price:{" "}
+                {getValue(tariff?.price, tariffAdjustment?.price, "Euro")}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                Data:{" "}
+                {getValue(tariff?.dataLimit, tariffAdjustment?.dataLimit, "GB")}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                SMS:{" "}
+                {getValue(tariff?.smsLimit, tariffAdjustment?.smsLimit, "")}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                Calls:{" "}
+                {getValue(
+                  tariff?.callMinutes,
+                  tariffAdjustment?.callMinutes,
+                  "minutes"
+                )}
+              </ListGroup.Item>
+            </ListGroup>
+          </Card.Body>
+        </Card>
       )}
     </Container>
   );
