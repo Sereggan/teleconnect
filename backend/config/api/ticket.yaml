@@ -1,0 +1,215 @@
+openapi: 3.0.1
+info:
+  title: Ticket Management API
+  description: API for managing support tickets
+  version: 1.0.0
+tags:
+  - name: ticket
+    description: API for ticket operations
+paths:
+  /ticket:
+    post:
+      summary: Create a new ticket
+      operationId: createTicket
+      tags:
+        - ticket
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: Ticket creation payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketDto'
+      responses:
+        '201':
+          description: Ticket created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketDto'
+        '400':
+          description: Invalid request
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '500':
+          description: Internal server error
+    put:
+      summary: Update an existing ticket
+      operationId: updateTicket
+      tags:
+        - ticket
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: Ticket update payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketDto'
+      responses:
+        '201':
+          description: Ticket updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketDto'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: Ticket not found
+        '500':
+          description: Internal server error
+  /ticket/{id}:
+    get:
+      summary: Get a ticket by ID
+      operationId: getTicketById
+      tags:
+        - ticket
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Ticket retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketDto'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: Ticket not found
+        '500':
+          description: Internal server error
+
+  /ticket/user/{userId}:
+    get:
+      summary: Get tickets by user ID
+      operationId: getTicketsByUserId
+      tags:
+        - ticket
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tickets retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketListResponse'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '403':
+          description: Forbidden, insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: Ticket not found
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    TicketDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Ticket ID
+        title:
+          type: string
+          description: Title of the ticket
+        description:
+          type: string
+          description: Detailed description of the issue
+        status:
+          type: string
+          description: Status of the ticket
+        resolution:
+          type: string
+          description: Resolution details for the ticket
+        userId:
+          type: integer
+          description: ID of the user who created the ticket
+      required:
+        - title
+        - description
+        - status
+
+    TicketListResponse:
+      type: object
+      properties:
+        tickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketDto'
+
+    AuthError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid or missing token"
+
+    ForbiddenError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Forbidden: insufficient permissions"
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

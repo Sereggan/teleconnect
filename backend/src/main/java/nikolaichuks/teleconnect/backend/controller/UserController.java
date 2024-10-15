@@ -65,9 +65,7 @@ public class UserController implements UserApi {
      */
     @Override
     public ResponseEntity<UserDto> updateUser(UserDto userDTO) {
-
         return ResponseEntity.ok(userService.updateUser(userDTO));
-
     }
 
     /*

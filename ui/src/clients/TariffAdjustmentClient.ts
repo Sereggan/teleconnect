@@ -5,12 +5,12 @@ const basePath: string = "http://localhost:8080";
 const adjustmentEndpoint: string = "/tariff-adjustment";
 const adjustmentClient = createAxiosClient(basePath);
 
-export const getTariffAdjustment = async (
-  id: number,
+export const getTariffAdjustmentByUserId = async (
+  userId: number,
   abortController: AbortController
 ): Promise<TariffAdjustment | undefined> => {
   const response = await adjustmentClient.get(
-    `${basePath}${adjustmentEndpoint}/${id}`,
+    `${basePath}${adjustmentEndpoint}/${userId}`,
     { signal: abortController.signal }
   );
   return response.data;

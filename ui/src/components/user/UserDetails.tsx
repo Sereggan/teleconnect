@@ -151,49 +151,21 @@ export default function UserDetails() {
             <ListGroup.Item>Email: {user.email}</ListGroup.Item>
             <ListGroup.Item>Role: {user.role}</ListGroup.Item>
             <ListGroup.Item>Birh date: {user.birthDate}</ListGroup.Item>
+            {user.tariffId && <p>You don't have any active tariffs.</p>}
             {user.tariffId && (
               <ListGroup.Item>
                 <Nav.Link
                   className="text-primary fw-bold"
                   as={Link}
-                  to={`/tariffs/${user.tariffId}`}
+                  to={`/users/:id/my-tariff`}
                 >
-                  Tariff Info
+                  My tariff info
                 </Nav.Link>
               </ListGroup.Item>
             )}
           </ListGroup>
         </Card.Body>
       </Card>
-      {user.tariffId && (
-        <Card className="mb-3">
-          <Card.Body>
-            <Card.Title>User tariffs's details:</Card.Title>
-            <ListGroup>
-              <ListGroup.Item>
-                Price:{" "}
-                {getValue(tariff?.price, tariffAdjustment?.price, "Euro")}
-              </ListGroup.Item>
-              <ListGroup.Item>
-                Data:{" "}
-                {getValue(tariff?.dataLimit, tariffAdjustment?.dataLimit, "GB")}
-              </ListGroup.Item>
-              <ListGroup.Item>
-                SMS:{" "}
-                {getValue(tariff?.smsLimit, tariffAdjustment?.smsLimit, "")}
-              </ListGroup.Item>
-              <ListGroup.Item>
-                Calls:{" "}
-                {getValue(
-                  tariff?.callMinutes,
-                  tariffAdjustment?.callMinutes,
-                  "minutes"
-                )}
-              </ListGroup.Item>
-            </ListGroup>
-          </Card.Body>
-        </Card>
-      )}
     </Container>
   );
 }

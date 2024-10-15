@@ -12,26 +12,21 @@ import { TariffAdjustment } from "../../models/TariffAdjustment";
 import {
   deleteTariffAdjustment,
   getTariffAdjustment,
+  getTariffAdjustmentByUserId,
   updateTariffAdjustment,
 } from "../../clients/TariffAdjustmentClient";
 import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
 import { FormProvider, useForm } from "react-hook-form";
-import { useLocation, useNavigate } from "react-router-dom";
-
-interface TariffAdjustmentProps {
-  userId?: number;
-  tariff?: Tariff;
-  tariffAdjustmentId?: number;
-}
+import { useNavigate, useParams } from "react-router-dom";
+import { getTariffByUserId } from "../../clients/TariffClient";
 
 export default function EditTariffAdjustment() {
-  const location = useLocation();
-  const { userId, tariff, tariffAdjustmentId } =
-    (location.state as TariffAdjustmentProps) || {};
+  const { userId } = useParams();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [tariffAdjustment, setTarifAdjustment] = useState<TariffAdjustment>();
+  const [tariff, setTariff] = useState<Tariff>();
 
   const methods = useForm<TariffAdjustment>();
   const navigate = useNavigate();
@@ -41,40 +36,83 @@ export default function EditTariffAdjustment() {
   useEffect(() => {
     const controller = new AbortController();
 
-    if (!userId || !tariff!.id) {
-      setError("Cannot create adjustment without userId and tariffId");
+    if (!userId) {
+      setError("Cannot fetch tariff without userId");
       return;
     }
 
-    const loadTariffAdjustment = async () => {
-      if (tariffAdjustmentId) {
-        try {
-          const fetchedAdjastment = await getTariffAdjustment(
-            tariffAdjustmentId,
-            controller
-          );
-
-          setTarifAdjustment(fetchedAdjastment);
-        } catch (err) {
-          console.log(err);
-          setError("Could not fetch tariff adjustment");
+    const loadTariff = async () => {
+      try {
+        const fetchedTariff = await getTariffByUserId(
+          Number(userId),
+          controller
+        );
+        if (fetchedTariff) {
+          setTariff(fetchedTariff);
+        } else {
+          setError("Cannot create adjustment without tariff");
+          return;
         }
-      } else {
-        setTarifAdjustment({
-          userId,
-          tariffId: tariff!.id!,
-        });
+      } catch (err) {
+        setError("Could not fetch tariff");
+        console.log(err);
       }
     };
+
     setIsLoading(true);
-    loadTariffAdjustment();
+    loadTariff();
     setIsLoading(false);
 
     return () => {
       controller.abort();
       controllerRef.current?.abort();
     };
-  }, []);
+  }, [userId]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    if (!userId) {
+      setError("Cannot fetch tariff adjsutment without userId");
+      return;
+    }
+
+    const loadTariffAdjustment = async () => {
+      if (tariff) {
+        try {
+          const fetchedTariffAdjustment = await getTariffAdjustmentByUserId(
+            Number(userId),
+            controller
+          );
+
+          if (tariffAdjustment) {
+            setTarifAdjustment(fetchedTariffAdjustment);
+          } else {
+            setTarifAdjustment({
+              userId: Number(userId),
+              tariffId: tariff!.id!,
+            });
+          }
+        } catch (err) {
+          console.log(err);
+          setError("Could not fetch tariff adjustment");
+        }
+      } else {
+        setError("Cannot create adjustment without tariff");
+        return;
+      }
+    };
+
+    if (tariff) {
+      setIsLoading(true);
+      loadTariffAdjustment();
+      setIsLoading(false);
+    }
+
+    return () => {
+      controller.abort();
+      controllerRef.current?.abort();
+    };
+  }, [tariff, userId]);
 
   const onSubmit = methods.handleSubmit(
     async (filteredAdjustment: TariffAdjustment) => {
@@ -131,7 +169,7 @@ export default function EditTariffAdjustment() {
         <h3>Tariff Adjustments</h3>
         <Row>
           <Col md={6}>
-            <FormInput {...idValidation} value={tariff!.id!} />
+            <FormInput {...idValidation} value={tariffAdjustment!.id!} />
           </Col>
         </Row>
         <Row>

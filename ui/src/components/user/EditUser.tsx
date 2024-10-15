@@ -333,18 +333,13 @@ export default function EditUser() {
                       as={Link}
                       to={`/tariffs/${user.tariffId}`}
                     >
-                      Current tariff Info
+                      Current basic tariff Info
                     </Nav.Link>
 
                     <Nav.Link
                       className="text-primary fw-bold"
                       as={Link}
                       to={`users/${user.id!}/tariff-adjustment`}
-                      state={{
-                        userId: user.id,
-                        tariff: currentTariff,
-                        tariffAdjustmentId: user.tariffAdjustmentId,
-                      }}
                     >
                       {user.tariffAdjustmentId
                         ? "User's special tariff plan"

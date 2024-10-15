@@ -2,6 +2,7 @@ package nikolaichuks.teleconnect.backend.mapper;
 
 import nikolaichuks.teleconnect.backend.model.tariff.Tariff;
 import nikolaichuks.teleconnect.backend.model.tariff.TariffAdjustment;
+import nikolaichuks.teleconnect.backend.model.ticket.Ticket;
 import nikolaichuks.teleconnect.backend.model.user.User;
 import nikolaichuks.teleconnect.backend.model.user.UserRole;
 import org.modelmapper.Converter;
@@ -10,6 +11,7 @@ import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
 import teleconnect.tariff.model.TariffDTO;
 import teleconnect.tariffadjustment.model.TariffAdjustmentDTO;
+import teleconnect.ticket.model.TicketDto;
 import teleconnect.user.model.UserDto;
 
 /**
@@ -23,6 +25,7 @@ public class MapperUtil {
     public MapperUtil() {
         Converter<UserRole, String> userRoleToStringConverter = context -> context.getSource().getName();
         Converter<String, UserRole> userRoleConverter = context -> UserRole.fromString(context.getSource());
+        Converter<String, Ticket.Status> statustoTicketStatusConverter = context -> Ticket.Status.valueOf(context.getSource());
 
         mapper.addMappings(new PropertyMap<User, UserDto>() {
             @Override
@@ -45,6 +48,13 @@ public class MapperUtil {
             @Override
             protected void configure() {
                 skip(destination.getId());
+            }
+        });
+
+        mapper.addMappings(new PropertyMap<TicketDto, Ticket>() {
+            @Override
+            protected void configure() {
+                using(statustoTicketStatusConverter).map(source.getStatus()).setStatus(null);
             }
         });
     }
@@ -99,5 +109,21 @@ public class MapperUtil {
         target.setCallMinutes(source.getCallMinutes());
         target.setDataLimit(source.getDataLimit());
         return target;
+    }
+
+    public Ticket mapTicketDtoToTicket(TicketDto ticketDto) {
+        return mapper.map(ticketDto, Ticket.class);
+    }
+
+    public Ticket mapTicketDtoToTicket(TicketDto ticketDto, Ticket ticket) {
+        ticket.setTitle(ticketDto.getTitle());
+        ticket.setDescription(ticketDto.getDescription());
+        ticket.setStatus(Ticket.Status.valueOf(ticketDto.getStatus()));
+        ticket.setResolution(ticketDto.getResolution());
+        return ticket;
+    }
+
+    public TicketDto mapTicketToTicketDto(Ticket ticket) {
+        return mapper.map(ticket, TicketDto.class);
     }
 }

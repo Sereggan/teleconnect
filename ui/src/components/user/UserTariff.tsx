@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { getTariffByUserId } from "../../clients/TariffClient";
-import { getTariffAdjustment } from "../../clients/TariffAdjustmentClient";
+import { getTariffAdjustmentByUserId } from "../../clients/TariffAdjustmentClient";
 import { Tariff } from "../../models/Tariff";
-import { Spinner, Container, Row, Col, Alert } from "react-bootstrap";
+import { Spinner, Container, Alert, Card, ListGroup } from "react-bootstrap";
 import { TariffAdjustment } from "../../models/TariffAdjustment";
+import { useParams } from "react-router-dom";
 
 export default function UserTariff() {
-  const userId: string | null = localStorage.getItem("userId");
-  const [userTariff, setUserTariff] = useState<Tariff>();
+  const { userId } = useParams();
+  const [tariff, setTariff] = useState<Tariff>();
   const [adjustment, setAdjustment] = useState<TariffAdjustment | undefined>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -21,8 +22,11 @@ export default function UserTariff() {
       setIsLoading(true);
       try {
         const tariff = await getTariffByUserId(userId, controller);
-        setUserTariff(tariff);
-        const adjustment = await getTariffAdjustment(userId, controller);
+        setTariff(tariff);
+        const adjustment = await getTariffAdjustmentByUserId(
+          userId,
+          controller
+        );
         setAdjustment(adjustment);
       } catch (error) {
         if (!controller.signal.aborted) {
@@ -44,23 +48,34 @@ export default function UserTariff() {
     return () => controllerRef.current?.abort();
   }, [userId]);
 
-  const getAdjustedValue = (
-    defaultValue: number | undefined,
-    adjustedValue: number | undefined
-  ) => {
-    return adjustedValue === undefined || adjustedValue === null
-      ? defaultValue
-      : adjustedValue;
-  };
-
-  const calculateDiscountedPrice = (price: number, discount?: number) => {
-    if (discount) {
-      return price - (price * discount) / 100;
+  function getValue(
+    tariffValue: string | number | undefined,
+    adjustedValue: string | number | undefined,
+    unit: string
+  ) {
+    if (tariffValue === undefined && adjustedValue === undefined) {
+      return <p>Unlimited</p>;
+    } else if (tariffValue !== undefined) {
+      return (
+        <p>
+          {tariffValue} {unit}
+        </p>
+      );
+    } else {
+      return (
+        <p>
+          <span className="text-muted text-decoration-line-through me-2">
+            {tariffValue}
+          </span>
+          <span className="text-success fw-bold">
+            {adjustedValue} {unit}
+          </span>
+        </p>
+      );
     }
-    return price;
-  };
+  }
 
-  if (!userTariff) {
+  if (!tariff) {
     return <Alert variant="info">You have no active tariffs.</Alert>;
   }
 
@@ -68,47 +83,31 @@ export default function UserTariff() {
     <Container>
       {error && <Alert variant="danger">{error}</Alert>}
       {isLoading && <Spinner animation="border" />}
-      {!isLoading && !error && userTariff && (
-        <Container>
-          <Row>
-            <Col>
-              <h2>My current tariff:</h2>
-              <p>
-                <strong>Name: </strong> {userTariff.name}
-              </p>
-              <p>
-                <strong>Price: </strong>{" "}
-                {calculateDiscountedPrice(
-                  userTariff.price,
-                  adjustment?.discountPercentage
-                )}{" "}
-                Euro
-              </p>
-              <p>
-                <strong>Data Limit: </strong>
-                {getAdjustedValue(
-                  userTariff.dataLimit,
-                  adjustment?.adjustedDataLimit
-                ) ?? "Unlimited"}{" "}
-                GB
-              </p>
-              <p>
-                <strong>Call Minutes: </strong>
-                {getAdjustedValue(
-                  userTariff.callMinutes,
-                  adjustment?.adjustedCallMinutes
-                ) ?? "Unlimited"}
-              </p>
-              <p>
-                <strong>SMS Limit: </strong>
-                {getAdjustedValue(
-                  userTariff.smsLimit,
-                  adjustment?.adjustedSmsLimit
-                ) ?? "Unlimited"}
-              </p>
-            </Col>
-          </Row>
-        </Container>
+      {!isLoading && !error && tariff && (
+        <Card className="mb-3">
+          <Card.Body>
+            <Card.Title>Current tariff plan: {tariff.name}</Card.Title>
+            <ListGroup>
+              <ListGroup.Item>
+                Price: {getValue(tariff?.price, adjustment?.price, "Euro")}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                Data: {getValue(tariff?.dataLimit, adjustment?.dataLimit, "GB")}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                SMS: {getValue(tariff?.smsLimit, adjustment?.smsLimit, "")}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                Calls:{" "}
+                {getValue(
+                  tariff?.callMinutes,
+                  adjustment?.callMinutes,
+                  "minutes"
+                )}
+              </ListGroup.Item>
+            </ListGroup>
+          </Card.Body>
+        </Card>
       )}
     </Container>
   );

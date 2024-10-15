@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS token_blacklist CASCADE;
 DROP TABLE IF EXISTS tariff_adjustment CASCADE;
 DROP TABLE IF EXISTS password_reset_token CASCADE;
 DROP TABLE IF EXISTS user_documents CASCADE;
+DROP TABLE IF EXISTS tickets CASCADE;
 
 CREATE TABLE IF NOT EXISTS tariff (
     id SERIAL PRIMARY KEY,
@@ -64,6 +65,16 @@ CREATE TABLE IF NOT EXISTS user_documents (
     original_file_name VARCHAR(100) NOT NULL,
     creation_time TIMESTAMP NOT NULL,
     file_size INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+CREATE TABLE IF NOT EXISTS tickets (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    resolution TEXT,
     user_id INTEGER NOT NULL,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
     );
