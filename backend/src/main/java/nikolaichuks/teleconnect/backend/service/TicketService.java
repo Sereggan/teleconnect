@@ -6,8 +6,14 @@ import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
 import nikolaichuks.teleconnect.backend.model.ticket.Ticket;
 import nikolaichuks.teleconnect.backend.repository.TicketRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
+import nikolaichuks.teleconnect.backend.specification.TicketSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import teleconnect.ticket.model.PaginatedTicketResponse;
 import teleconnect.ticket.model.TicketDto;
 import teleconnect.ticket.model.TicketListResponse;
 
@@ -22,6 +28,7 @@ public class TicketService {
 
     private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
+    private final TicketSpecification ticketSpecification;
     private final MapperUtil mapperUtil;
 
     public TicketDto createTicket(TicketDto ticketDto) {
@@ -38,6 +45,24 @@ public class TicketService {
         return ticketRepository.findById(id)
                 .map(mapperUtil::mapTicketToTicketDto)
                 .orElseThrow(() -> new CustomRestException("Ticket not found", HttpStatus.NOT_FOUND));
+    }
+
+    public PaginatedTicketResponse listTickets(String status, Integer limit, Integer offset) {
+        Specification<Ticket> specification = ticketSpecification.getTicketSpecification(status);
+
+        PageRequest page = PageRequest.of(offset, limit, Sort.Direction.ASC, "title");
+        Page<Ticket> ticketPage = ticketRepository.findAll(specification, page);
+
+        List<TicketDto> tickets = ticketPage.getContent().stream()
+                .map(mapperUtil::mapTicketToTicketDto)
+                .toList();
+        var response = new PaginatedTicketResponse();
+        response.setTickets(tickets);
+        response.setTotalItems((int) ticketPage.getTotalElements());
+        response.setTotalPages(ticketPage.getTotalPages());
+        response.setCurrentPage(offset);
+        response.setItemsOnPage(tickets.size());
+        return response;
     }
 
     public TicketListResponse getTicketsByUserId(Integer userId) {
@@ -59,4 +84,5 @@ public class TicketService {
                 })
                 .orElseThrow(() -> new CustomRestException("Ticket not found", HttpStatus.NOT_FOUND));
     }
+
 }
