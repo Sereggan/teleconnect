@@ -5,8 +5,8 @@ import nikolaichuks.teleconnect.backend.service.StatisticsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import teleconnect.statistics.api.StatisticsApi;
-import teleconnect.statistics.model.AdjustmentByTariffResponse;
-import teleconnect.statistics.model.MostDiscountedTariffResponse;
+import teleconnect.statistics.model.TariffAdjustmentCountResponse;
+import teleconnect.statistics.model.TariffAgeGroupStatisticsResponse;
 import teleconnect.statistics.model.UserByTariffResponse;
 import teleconnect.statistics.model.UsersWithoutTariffResponse;
 
@@ -22,16 +22,16 @@ public class StatisticsController implements StatisticsApi {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<List<AdjustmentByTariffResponse>> getAdjustmentsByTariff() {
-        return ResponseEntity.ok(statisticsService.getAdjustmentsByTariff());
+    public ResponseEntity<List<TariffAdjustmentCountResponse>> getTariffAdjustmentCount() {
+        return ResponseEntity.ok(statisticsService.getTariffAdjustmentCount());
     }
 
     /*
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<MostDiscountedTariffResponse> getMostDiscountedTariff() {
-        return ResponseEntity.ok(statisticsService.getMostDiscountedTariff());
+    public ResponseEntity<List<TariffAgeGroupStatisticsResponse>> getTariffAgeGroupStatistics() {
+        return ResponseEntity.ok(statisticsService.getTariffAgeStatistics());
     }
 
     /*

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Tab, Tabs } from "react-bootstrap";
+import { Spinner, Tab, Tabs } from "react-bootstrap";
 import {
   PieChart,
   Pie,
@@ -14,109 +14,200 @@ import {
 import {
   getUsersByTariff,
   getUsersWithoutTariff,
-  getAdjustmentsByTariff,
-  getMostDiscountedTariff,
+  getTariffAgeGroupStatistics,
+  getTariffAdjustmentCount,
 } from "../../clients/StatisticsClient";
 import {
   UserByTariffResponse,
-  AdjustmentByTariffResponse,
-  MostDiscountedTariffResponse,
   UsersWithoutTariffResponse,
+  TariffAgeGroupStatisticsResponse,
+  TariffAdjustmentCountResponse,
 } from "../../models/Statistics";
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#d0ed57", "#ff8042"];
 
 export default function StatisticsDashboard() {
-  const [usersByTariff, setUsersByTariff] = useState<UserByTariffResponse[]>(
-    []
-  );
+  const [key, setKey] = useState<string>("usersByTariff");
+  const [usersByTariff, setUsersByTariff] = useState<UserByTariffResponse[]>();
+  const [usersByTariffError, setUsersByTariffError] = useState("");
+
   const [usersWithoutTariff, setUsersWithoutTariff] =
-    useState<UsersWithoutTariffResponse | null>(null);
-  const [adjustmentsByTariff, setAdjustmentsByTariff] = useState<
-    AdjustmentByTariffResponse[]
-  >([]);
-  const [mostDiscountedTariff, setMostDiscountedTariff] =
-    useState<MostDiscountedTariffResponse | null>(null);
+    useState<UsersWithoutTariffResponse>();
+  const [usersWithoutTariffError, setUsersWithoutTariffError] = useState("");
+
+  const [tariffAgeGroupStatistics, setTariffAgeGroupStatistics] =
+    useState<TariffAgeGroupStatisticsResponse[]>();
+  const [tariffAgeGroupStatisticsError, setTariffAgeGroupStatisticsError] =
+    useState("");
+
+  const [tariffAdjustmentCount, setTariffAdjustmentCount] =
+    useState<TariffAdjustmentCountResponse[]>();
+  const [tariffAdjustmentCountError, setTariffAdjustmentCountError] =
+    useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    fetchUsersByTariff();
-    fetchUsersWithoutTariff();
-    fetchAdjustmentsByTariff();
-    fetchMostDiscountedTariff();
+    const controller = new AbortController();
+    setIsLoading(true);
+    if (key === "usersByTariff" && !usersByTariff) {
+      fetchUsersByTariff(controller);
+    } else if (key === "usersWithoutTariff" && !usersWithoutTariff) {
+      fetchUsersWithoutTariff(controller);
+    } else if (key === "tariffAgeGroup" && !tariffAgeGroupStatistics) {
+      fetchTariffAgeGroupStatistics(controller);
+    } else if (key === "tariffAdjustmentCount" && !tariffAdjustmentCount) {
+      fetchTariffAdjustmentCount(controller);
+    }
+    setIsLoading(false);
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
-  const fetchUsersByTariff = async () => {
-    const result = await getUsersByTariff();
-    setUsersByTariff(result);
+  const fetchUsersByTariff = async (controller: AbortController) => {
+    try {
+      const result = await getUsersByTariff(controller);
+      setUsersByTariff(result);
+      setUsersByTariffError("");
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        setUsersByTariffError("Error fetching users by tariff");
+      }
+    }
   };
 
-  const fetchUsersWithoutTariff = async () => {
-    const result = await getUsersWithoutTariff();
-    setUsersWithoutTariff(result);
+  const fetchUsersWithoutTariff = async (controller: AbortController) => {
+    try {
+      const result = await getUsersWithoutTariff(controller);
+      setUsersWithoutTariff(result);
+      setUsersWithoutTariffError("");
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        setUsersWithoutTariffError("Error fetching users without tariff");
+      }
+    }
   };
 
-  const fetchAdjustmentsByTariff = async () => {
-    const result = await getAdjustmentsByTariff();
-    setAdjustmentsByTariff(result);
+  const fetchTariffAgeGroupStatistics = async (controller: AbortController) => {
+    try {
+      const result = await getTariffAgeGroupStatistics(controller);
+      setTariffAgeGroupStatistics(result);
+      setTariffAgeGroupStatisticsError("");
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        setTariffAgeGroupStatisticsError("Error fetching age group statistics");
+      }
+    }
   };
 
-  const fetchMostDiscountedTariff = async () => {
-    const result = await getMostDiscountedTariff();
-    setMostDiscountedTariff(result);
+  const fetchTariffAdjustmentCount = async (controller: AbortController) => {
+    try {
+      const result = await getTariffAdjustmentCount(controller);
+      setTariffAdjustmentCount(result);
+      setTariffAdjustmentCountError("");
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        setTariffAdjustmentCountError("Error fetching tariff adjustment count");
+      }
+    }
   };
 
   return (
     <div>
-      <h2>Statistics Dashboard</h2>
-      <Tabs defaultActiveKey="usersByTariff">
+      <Tabs activeKey={key} onSelect={(k) => setKey(k!)}>
         <Tab eventKey="usersByTariff" title="Users by Tariff">
           <h3>Users by Tariff</h3>
-          <BarChart width={600} height={300} data={usersByTariff}>
-            <XAxis dataKey="tariffName" />
-            <YAxis />
-            <Tooltip />
-            <CartesianGrid strokeDasharray="3 3" />
-            <Bar dataKey="userCount" fill="#8884d8" />
-          </BarChart>
+          {isLoading && (
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          )}
+          {usersByTariffError && <p>Something went wrong...</p>}
+          {!usersByTariffError && usersByTariff && (
+            <BarChart width={600} height={300} data={usersByTariff}>
+              <XAxis dataKey="tariffName" />
+              <YAxis />
+              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Bar dataKey="userCount" fill="#8884d8" />
+            </BarChart>
+          )}
         </Tab>
         <Tab eventKey="usersWithoutTariff" title="Users Without Tariff">
           <h3>Users Without Tariff</h3>
-          {usersWithoutTariff && (
+          {isLoading && (
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          )}
+          {usersWithoutTariffError && <p>Something went wrong...</p>}
+          {!usersWithoutTariffError && usersWithoutTariff && (
             <div>
               <p>Total Users Without Tariff: {usersWithoutTariff.count}</p>
             </div>
           )}
         </Tab>
-        <Tab eventKey="adjustmentsByTariff" title="Adjustments by Tariff">
-          <h3>Adjustments by Tariff</h3>
-          <PieChart width={400} height={400}>
-            <Pie
-              data={adjustmentsByTariff}
-              dataKey="adjustmentCount"
-              nameKey="tariffName"
-              cx="50%"
-              cy="50%"
-              outerRadius={100}
-              fill="#8884d8"
-              label
-            >
-              {adjustmentsByTariff.map((_, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
+        <Tab eventKey="tariffAgeGroup" title="Tariff by Age Group">
+          <h3>Tariff by Age Group</h3>
+          {isLoading && (
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          )}
+          {tariffAgeGroupStatisticsError && <p>Something went wrong...</p>}
+          {!tariffAgeGroupStatisticsError && tariffAgeGroupStatistics && (
+            <PieChart width={400} height={400}>
+              <Pie
+                data={tariffAgeGroupStatistics}
+                dataKey="userCount"
+                nameKey="ageGroup"
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                fill="#8884d8"
+                label
+              >
+                {tariffAgeGroupStatistics.map((_, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          )}
         </Tab>
-        <Tab eventKey="mostDiscountedTariff" title="Most Discounted Tariff">
-          <h3>Most Discounted Tariff</h3>
-          {mostDiscountedTariff && (
-            <div>
-              <p>Tariff Name: {mostDiscountedTariff.tariffName}</p>
-              <p>Average Discount: {mostDiscountedTariff.averageDiscount}%</p>
-            </div>
+        <Tab eventKey="tariffAdjustmentCount" title="Adjustments by Tariff">
+          <h3>Adjustments by Tariff</h3>
+          {isLoading && (
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          )}
+          {tariffAdjustmentCountError && <p>Something went wrong...</p>}
+          {!tariffAdjustmentCountError && tariffAdjustmentCount && (
+            <PieChart width={400} height={400}>
+              <Pie
+                data={tariffAdjustmentCount}
+                dataKey="adjustmentCount"
+                nameKey="tariffName"
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                fill="#8884d8"
+                label
+              >
+                {tariffAdjustmentCount.map((_, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
           )}
         </Tab>
       </Tabs>

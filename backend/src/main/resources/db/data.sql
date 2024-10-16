@@ -36,7 +36,7 @@ VALUES
     ('55566677780', '$2a$10$mEOuDpNnEBuVay1eyORJiutNJEAvVGXq8n7dJDkrAAe2h6nsFGVui', 'customer13.new@example.com', 'Mia', 'Harris', 'ROLE_CUSTOMER', '1992-06-11', 4);
 
 -- Insert tariff adjustments for customers
-INSERT INTO tariff_adjustment (adjusted_data_limit, adjusted_call_minutes, adjusted_sms_limit, discount_percentage, tariff_id, user_id)
+INSERT INTO tariff_adjustment (data_limit, call_minutes, sms_limit, price, tariff_id, user_id)
 VALUES
     (6000, 120, 60, 10.00, 1, 3),
     (22000, 550, 220, 5.00, 2, 4),

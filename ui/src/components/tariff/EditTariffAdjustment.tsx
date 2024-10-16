@@ -11,7 +11,6 @@ import { useEffect, useRef, useState } from "react";
 import { TariffAdjustment } from "../../models/TariffAdjustment";
 import {
   deleteTariffAdjustment,
-  getTariffAdjustment,
   getTariffAdjustmentByUserId,
   updateTariffAdjustment,
 } from "../../clients/TariffAdjustmentClient";

@@ -9,9 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsersByTariff {
+public class TariffAgeGroupStatistics {
 
     private String tariffName;
+    private String ageGroup;
     private Long userCount;
 
 }

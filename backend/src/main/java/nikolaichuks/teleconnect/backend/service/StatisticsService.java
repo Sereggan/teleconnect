@@ -1,11 +1,11 @@
 package nikolaichuks.teleconnect.backend.service;
 
 import lombok.RequiredArgsConstructor;
-import nikolaichuks.teleconnect.backend.repository.TariffAdjustmentRepository;
+import nikolaichuks.teleconnect.backend.repository.TariffRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
-import teleconnect.statistics.model.AdjustmentByTariffResponse;
-import teleconnect.statistics.model.MostDiscountedTariffResponse;
+import teleconnect.statistics.model.TariffAdjustmentCountResponse;
+import teleconnect.statistics.model.TariffAgeGroupStatisticsResponse;
 import teleconnect.statistics.model.UserByTariffResponse;
 import teleconnect.statistics.model.UsersWithoutTariffResponse;
 
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class StatisticsService {
 
     private final UserRepository userRepository;
-    private final TariffAdjustmentRepository tariffAdjustmentRepository;
+    private final TariffRepository tariffRepository;
 
     public List<UserByTariffResponse> getUsersByTariff() {
         return userRepository.countUsersByTariff().stream()
@@ -33,10 +33,10 @@ public class StatisticsService {
                 .collect(Collectors.toList());
     }
 
-    public List<AdjustmentByTariffResponse> getAdjustmentsByTariff() {
-        return tariffAdjustmentRepository.countAdjustmentsByTariff().stream()
+    public List<TariffAdjustmentCountResponse> getTariffAdjustmentCount() {
+        return tariffRepository.countTariffAdjustmentByTariff().stream()
                 .map(ta -> {
-                    AdjustmentByTariffResponse response = new AdjustmentByTariffResponse();
+                    TariffAdjustmentCountResponse response = new TariffAdjustmentCountResponse();
                     response.setTariffName(ta.getTariffName());
                     response.setAdjustmentCount(ta.getAdjustmentCount());
                     return response;
@@ -44,16 +44,16 @@ public class StatisticsService {
                 .collect(Collectors.toList());
     }
 
-    public MostDiscountedTariffResponse getMostDiscountedTariff() {
-        return tariffAdjustmentRepository.findMostDiscountedTariff().stream()
-                .findFirst()
+    public List<TariffAgeGroupStatisticsResponse> getTariffAgeStatistics() {
+        return tariffRepository.getTariffAgeGroupStatistics().stream()
                 .map(tariff -> {
-                    MostDiscountedTariffResponse response = new MostDiscountedTariffResponse();
+                    TariffAgeGroupStatisticsResponse response = new TariffAgeGroupStatisticsResponse();
                     response.setTariffName(tariff.getTariffName());
-                    response.setAverageDiscount(tariff.getMaxDiscountPercentage());
+                    response.setAgeGroup(tariff.getAgeGroup());
+                    response.setUserCount(tariff.getUserCount());
                     return response;
                 })
-                .orElse(null);
+                .toList();
     }
 
 

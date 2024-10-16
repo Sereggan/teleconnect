@@ -3,16 +3,17 @@ export interface UserByTariffResponse {
   userCount: number;
 }
 
-export interface AdjustmentByTariffResponse {
-  tariffName: string;
-  adjustmentCount: number;
-}
-
-export interface MostDiscountedTariffResponse {
-  tariffName: string;
-  averageDiscount: number;
-}
-
 export interface UsersWithoutTariffResponse {
   count: number;
+}
+
+export interface TariffAgeGroupStatisticsResponse {
+  tariffName: string;
+  ageGroup: string;
+  userCount: number;
+}
+
+export interface TariffAdjustmentCountResponse {
+  tariffName: string;
+  adjustmentCount: number;
 }
