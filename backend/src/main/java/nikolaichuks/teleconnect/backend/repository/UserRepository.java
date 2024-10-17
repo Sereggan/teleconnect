@@ -19,7 +19,8 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
     @Query("SELECT u FROM User u WHERE u.email = :userName OR u.phoneNumber = :userName")
     Optional<User> findByEmailOrPhoneNumber(@Param("userName") String userName);
 
-    @Query("SELECT new nikolaichuks.teleconnect.backend.model.statistics.UsersByTariff(u.tariff.name, COUNT(u)) FROM User u WHERE u.tariff IS NOT NULL GROUP BY u.tariff.name")
+    @Query("SELECT new nikolaichuks.teleconnect.backend.model.statistics.UsersByTariff(u.tariff.name, COUNT(u)) " +
+            "FROM User u WHERE u.tariff IS NOT NULL GROUP BY u.tariff.name")
     List<UsersByTariff> countUsersByTariff();
 
     Long countByTariffIsNull();

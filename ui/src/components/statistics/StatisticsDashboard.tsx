@@ -115,7 +115,12 @@ export default function StatisticsDashboard() {
 
   return (
     <div>
-      <Tabs activeKey={key} onSelect={(k) => setKey(k!)}>
+      <Tabs
+        activeKey={key}
+        onSelect={(k) => setKey(k!)}
+        className="mb-3"
+        justify
+      >
         <Tab eventKey="usersByTariff" title="Users by Tariff">
           <h3>Users by Tariff</h3>
           {isLoading && (

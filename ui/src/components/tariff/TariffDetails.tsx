@@ -45,11 +45,17 @@ export default function TariffDetails() {
     };
   }, [id]);
 
+  if (error) {
+    return <Alert variant="danger">Something went wrong.</Alert>;
+  }
+
+  if (isLoading) {
+    <Spinner animation="border" />;
+  }
+
   return (
     <Container>
-      {error && <Alert variant="danger">{error}</Alert>}
-      {isLoading && <Spinner animation="border" />}
-      {!isLoading && tariff && (
+      {!isLoading && !error && tariff && (
         <Card className="mb-3">
           <Card.Body>
             <Card.Title>Tariff Details</Card.Title>
