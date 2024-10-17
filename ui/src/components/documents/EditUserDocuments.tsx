@@ -1,18 +1,32 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, Button, Container, ListGroup, Spinner } from "react-bootstrap";
+import {
+  Alert,
+  Button,
+  Col,
+  Container,
+  Form,
+  ListGroup,
+  Row,
+  Spinner,
+} from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import {
+  deleteDocument,
   downloadDocument,
   getDocumentsList,
+  uploadDocument,
 } from "../../clients/DocumentsClient";
 import { DocumentFile } from "../../models/Document";
 
-export default function UserDocument() {
+export default function EditUserDocuments() {
   const { id } = useParams<{ id: string }>();
   const [documents, setDocuments] = useState<DocumentFile[]>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   useEffect(() => {
     const fetchDocuments = async (controller: AbortController) => {
@@ -65,6 +79,64 @@ export default function UserDocument() {
       });
   }
 
+  async function deleteFile(file: DocumentFile) {
+    controllerRef.current = new AbortController();
+    if (id) {
+      try {
+        setIsLoading(true);
+        await deleteDocument(file.documentId, controllerRef.current);
+
+        const updatedDocuments = await getDocumentsList(
+          id,
+          new AbortController()
+        );
+        setDocuments(updatedDocuments.files);
+      } catch (error) {
+        if (!controllerRef.current?.signal.aborted) {
+          setError("Error during file deletion:");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      setError("Empty user id");
+    }
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFile(e.target.files[0]);
+    }
+  }
+
+  async function handleUploadFile() {
+    if (id && selectedFile) {
+      controllerRef.current = new AbortController();
+      setIsLoading(true);
+      try {
+        setError("");
+        setSuccessMessage("");
+
+        await uploadDocument(
+          selectedFile,
+          selectedFile.name,
+          parseInt(id),
+          controllerRef.current
+        );
+        setSuccessMessage(`File uploaded successfully.`);
+        const updatedDocuments = await getDocumentsList(
+          id,
+          new AbortController()
+        );
+        setDocuments(updatedDocuments.files);
+      } catch (error) {
+        setError("Error uploading the document");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }
+
   function formatFileSize(bytes: number): string {
     if (bytes === 0) return "0 KB";
 
@@ -91,7 +163,7 @@ export default function UserDocument() {
 
   return (
     <Container>
-      <h2>My Documents:</h2>
+      <h2>Customer's documents:</h2>
       {documents?.length ? (
         <ListGroup>
           {documents.map((document) => (
@@ -106,12 +178,41 @@ export default function UserDocument() {
               <Button variant="primary" onClick={() => downloadFile(document)}>
                 Download
               </Button>
+              <Button variant="primary" onClick={() => deleteFile(document)}>
+                Delete
+              </Button>
             </ListGroup.Item>
           ))}
         </ListGroup>
       ) : (
         <p>No documents available.</p>
       )}
+
+      <Container className="mt-4">
+        <Form.Group controlId="formFile" className="mb-3">
+          <Form.Label>Upload Document</Form.Label>
+          <Form.Control type="file" onChange={handleFileChange} />
+          <Button
+            variant="primary"
+            onClick={handleUploadFile}
+            disabled={!selectedFile}
+          >
+            Upload
+          </Button>
+          {selectedFile && (
+            <Form.Text>
+              {selectedFile.name} {formatFileSize(selectedFile.size)}
+            </Form.Text>
+          )}
+        </Form.Group>
+        {successMessage && (
+          <Row className="mt-3">
+            <Col>
+              <Alert variant="success">{successMessage}</Alert>
+            </Col>
+          </Row>
+        )}
+      </Container>
     </Container>
   );
 }

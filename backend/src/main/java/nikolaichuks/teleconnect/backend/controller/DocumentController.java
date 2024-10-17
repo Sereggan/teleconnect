@@ -30,7 +30,6 @@ public class DocumentController implements DocumentApi {
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
     }
 
     @Override

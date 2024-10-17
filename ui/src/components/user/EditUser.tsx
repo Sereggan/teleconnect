@@ -353,6 +353,15 @@ export default function EditUser() {
                   </Container>
                 </>
               )}
+            {user && (
+              <Nav.Link
+                className="text-primary fw-bold"
+                as={Link}
+                to={`users/${user.id!}/edit-documents`}
+              >
+                View documents
+              </Nav.Link>
+            )}
             <Button onClick={onSubmit} variant="primary" className="mt-3">
               Update User
             </Button>

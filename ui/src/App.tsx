@@ -18,6 +18,7 @@ import StatisticsDashboard from "./components/statistics/StatisticsDashboard";
 import ResetPassword from "./components/auth/ResetPassword";
 import EditTariffAdjustment from "./components/tariff/EditTariffAdjustment";
 import UserDocument from "./components/documents/UserDocuments";
+import EditUserDocuments from "./components/documents/EditUserDocuments";
 
 const router = createBrowserRouter([
   {
@@ -67,6 +68,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute requiredRoles={[UserRole.ROLE_CUSTOMER]}>
             <UserDocument />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "users/:id/edit-documents",
+        element: (
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
+            <EditUserDocuments />
           </ProtectedRoute>
         ),
       },
