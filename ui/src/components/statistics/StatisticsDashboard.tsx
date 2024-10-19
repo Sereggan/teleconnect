@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Spinner, Tab, Tabs } from "react-bootstrap";
+import { Container, Spinner, Tab, Tabs } from "react-bootstrap";
 import {
   PieChart,
   Pie,
@@ -63,7 +63,7 @@ export default function StatisticsDashboard() {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [key]);
 
   const fetchUsersByTariff = async (controller: AbortController) => {
     try {
@@ -114,7 +114,7 @@ export default function StatisticsDashboard() {
   };
 
   return (
-    <div>
+    <Container>
       <Tabs
         activeKey={key}
         onSelect={(k) => setKey(k!)}
@@ -216,6 +216,6 @@ export default function StatisticsDashboard() {
           )}
         </Tab>
       </Tabs>
-    </div>
+    </Container>
   );
 }

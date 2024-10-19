@@ -19,7 +19,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { getTariffByUserId } from "../../clients/TariffClient";
 
-export default function EditTariffAdjustment() {
+export default function EditUserTariffAdjustment() {
   const { userId } = useParams();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -42,10 +42,9 @@ export default function EditTariffAdjustment() {
 
     const loadTariff = async () => {
       try {
-        const fetchedTariff = await getTariffByUserId(
-          Number(userId),
-          controller
-        );
+        setError("");
+        const id = parseInt(userId);
+        const fetchedTariff = await getTariffByUserId(id, controller);
         if (fetchedTariff) {
           setTariff(fetchedTariff);
         } else {
@@ -78,6 +77,7 @@ export default function EditTariffAdjustment() {
     const loadTariffAdjustment = async () => {
       if (tariff) {
         try {
+          setError("");
           const fetchedTariffAdjustment = await getTariffAdjustmentByUserId(
             Number(userId),
             controller
@@ -140,7 +140,7 @@ export default function EditTariffAdjustment() {
           controllerRef.current
         );
       }
-      navigate(`/users/edit/${userId}`);
+      navigate(`/users/${userId}/edit`);
     } catch (error) {
       if (!controllerRef.current.signal.aborted) {
         setError("Error deleting tariff adjustment");

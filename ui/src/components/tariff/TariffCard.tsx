@@ -33,11 +33,6 @@ export default function TariffCard({ tariff }: { tariff: Tariff }) {
                 Active: {tariff.isActive ? "Yes" : "No"}
               </ListGroup.Item>
             )}
-            {userRole === UserRole.ROLE_EMPLOYEE && (
-              <ListGroup.Item>
-                Is used by users: {tariff.isUsed ? "Yes" : "No"}
-              </ListGroup.Item>
-            )}
           </ListGroup>
 
           <Button
@@ -51,7 +46,7 @@ export default function TariffCard({ tariff }: { tariff: Tariff }) {
             <Button
               className="mt-2"
               variant="secondary"
-              onClick={() => navigate(`/tariffs/edit/${tariff.id}`)}
+              onClick={() => navigate(`/tariffs/${tariff.id}/edit`)}
             >
               Edit Tariff
             </Button>

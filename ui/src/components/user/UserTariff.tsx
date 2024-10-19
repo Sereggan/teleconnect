@@ -79,10 +79,20 @@ export default function UserTariff() {
     return <Alert variant="info">You have no active tariffs.</Alert>;
   }
 
+  if (error) {
+    return <p>Something went wrong...</p>;
+  }
+
+  if (isLoading) {
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    );
+  }
+
   return (
     <Container>
-      {error && <Alert variant="danger">{error}</Alert>}
-      {isLoading && <Spinner animation="border" />}
       {!isLoading && !error && tariff && (
         <Card className="mb-3">
           <Card.Body>
@@ -98,7 +108,7 @@ export default function UserTariff() {
                 SMS: {getValue(tariff?.smsLimit, adjustment?.smsLimit, "")}
               </ListGroup.Item>
               <ListGroup.Item>
-                Calls:{" "}
+                Calls:
                 {getValue(
                   tariff?.callMinutes,
                   adjustment?.callMinutes,

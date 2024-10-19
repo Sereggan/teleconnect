@@ -47,13 +47,13 @@ export const nameValidation = {
   requirred: false,
   disabled: false,
   validation: {
-    maxLength: {
-      value: 30,
-      message: "Name cannot exceed 30 characters",
-    },
     minLength: {
       value: 3,
       message: "Name must be longer than 3 characters",
+    },
+    maxLength: {
+      value: 30,
+      message: "Name cannot exceed 30 characters",
     },
   },
 };
@@ -67,13 +67,13 @@ export const familyNameValidation = {
   requirred: false,
   disabled: false,
   validation: {
-    maxLength: {
-      value: 30,
-      message: "Family Name cannot exceed 30 characters",
-    },
     minLength: {
       value: 3,
       message: "Family Name must be longer than 3 characters",
+    },
+    maxLength: {
+      value: 30,
+      message: "Family Name cannot exceed 30 characters",
     },
   },
 };

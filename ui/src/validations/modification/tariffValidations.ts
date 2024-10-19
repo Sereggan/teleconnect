@@ -6,9 +6,9 @@ export const idValidation = {
   placeholder: "",
   disabled: true,
   validation: {
-    required: {
-      value: true,
-      message: "Id is required",
+    min: {
+      value: 0,
+      message: "Tariff ID must be a positive number",
     },
   },
 };

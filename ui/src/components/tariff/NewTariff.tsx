@@ -24,6 +24,7 @@ export default function NewTariff() {
 
   const onSubmit = methods.handleSubmit(async (tariff: Tariff) => {
     try {
+      setError("");
       const controller = new AbortController();
       controllerRef.current = controller;
       await createTariff(tariff, controller);
@@ -34,10 +35,12 @@ export default function NewTariff() {
     }
   });
 
+  if (error) {
+    return <p>Something went wrong...</p>;
+  }
+
   return (
     <Container>
-      {error && <Alert variant="danger">{error}</Alert>}
-
       <FormProvider {...methods}>
         <Form
           onSubmit={(e) => e.preventDefault()}
@@ -46,7 +49,7 @@ export default function NewTariff() {
           className="mb-4"
         >
           <Row>
-            <Col md={12}>
+            <Col md={6}>
               <FormInput {...nameValidation} />
             </Col>
           </Row>
@@ -55,6 +58,8 @@ export default function NewTariff() {
             <Col md={6}>
               <FormInput {...priceValidation} />
             </Col>
+          </Row>
+          <Row>
             <Col md={6}>
               <FormInput {...descriptionValidation} />
             </Col>
@@ -64,6 +69,8 @@ export default function NewTariff() {
             <Col md={6}>
               <FormInput {...dataLimitValidation} />
             </Col>
+          </Row>
+          <Row>
             <Col md={6}>
               <FormInput {...callMinutesValidation} />
             </Col>
@@ -73,14 +80,17 @@ export default function NewTariff() {
             <Col md={6}>
               <FormInput {...smsLimitValidation} />
             </Col>
+          </Row>
+          <Row>
             <Col md={6}>
               <FormInput {...isActiveValidation} />
             </Col>
           </Row>
-
-          <Button onClick={onSubmit} variant="primary" className="mt-3">
-            Create Tariff
-          </Button>
+          <Row>
+            <Button onClick={onSubmit} variant="primary" className="mt-3">
+              Create Tariff
+            </Button>
+          </Row>
         </Form>
       </FormProvider>
     </Container>

@@ -34,9 +34,12 @@ export default function NewUser() {
     }
   });
 
+  if (error) {
+    return <p>Something went wrong...</p>;
+  }
+
   return (
     <Container>
-      {error && <Alert variant="danger">{error}</Alert>}
       {!error && (
         <FormProvider {...methods}>
           <Form

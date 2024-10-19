@@ -18,6 +18,7 @@ export default function UserDocument() {
     const fetchDocuments = async (controller: AbortController) => {
       if (id) {
         setIsLoading(true);
+        setError("");
         try {
           setError("");
           const documents = await getDocumentsList(id, controller);

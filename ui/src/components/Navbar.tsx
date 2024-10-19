@@ -1,5 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { getUserIdFromToken, getUserRoleFromToken } from "./auth/AuthUtils";
+import {
+  getEmailFromToken,
+  getUserIdFromToken,
+  getUserRoleFromToken,
+} from "./auth/AuthUtils";
 import { UserRole } from "../models/User";
 import { Button, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -9,6 +13,7 @@ function Header() {
   const navigate = useNavigate();
   const userRole: UserRole | null = getUserRoleFromToken();
   const userId: string | null = getUserIdFromToken();
+  const email: string | null = getEmailFromToken();
 
   const handleLogout = () => {
     const abortController = new AbortController();
@@ -47,17 +52,14 @@ function Header() {
           {userRole && (
             <NavDropdown title="Me" id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to={`users/${userId}`}>
-                My profile
+                {email ? email : "My info"}
               </NavDropdown.Item>
               {userRole === UserRole.ROLE_CUSTOMER && (
                 <>
-                  <NavDropdown.Item as={Link} to={`/users/${userId}/my-tariff`}>
+                  <NavDropdown.Item as={Link} to={`/users/${userId}/tariff`}>
                     My Tariff
                   </NavDropdown.Item>
-                  <NavDropdown.Item
-                    as={Link}
-                    to={`/users/${userId}/my-documents`}
-                  >
+                  <NavDropdown.Item as={Link} to={`/users/${userId}/documents`}>
                     My Documents
                   </NavDropdown.Item>
                 </>

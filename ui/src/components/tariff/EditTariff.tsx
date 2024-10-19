@@ -43,6 +43,7 @@ export default function EditTariff() {
     const fetchTariff = async () => {
       if (id) {
         setIsLoading(true);
+        setError("");
         try {
           const tariffId = parseInt(id);
           const fetchedTariff = await getTariffById(tariffId, controller);
@@ -64,7 +65,7 @@ export default function EditTariff() {
 
     fetchTariff();
     return () => controller.abort();
-  }, []);
+  }, [id]);
 
   const onSubmit = methods.handleSubmit(async (tariffFilter: Tariff) => {
     if (!tariff) return;
@@ -99,10 +100,20 @@ export default function EditTariff() {
     }
   };
 
+  if (error) {
+    return <p>Something went wrong...</p>;
+  }
+
+  if (isLoading) {
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    );
+  }
+
   return (
     <Container>
-      {error && <Alert variant="danger">{error}</Alert>}
-      {isLoading && <Spinner animation="border" />}
       {!isLoading && !error && (
         <FormProvider {...methods}>
           <Form
@@ -118,6 +129,8 @@ export default function EditTariff() {
                   value={tariff?.id ? tariff?.id : 0}
                 />
               </Col>
+            </Row>
+            <Row>
               <Col md={6}>
                 <FormInput
                   {...nameValidation}
@@ -133,6 +146,8 @@ export default function EditTariff() {
                   value={tariff?.price ? tariff?.price : ""}
                 />
               </Col>
+            </Row>
+            <Row>
               <Col md={6}>
                 <FormInput
                   {...descriptionValidation}
@@ -148,6 +163,8 @@ export default function EditTariff() {
                   value={tariff?.dataLimit ? tariff?.dataLimit : ""}
                 />
               </Col>
+            </Row>
+            <Row>
               <Col md={6}>
                 <FormInput
                   {...callMinutesValidation}
@@ -163,6 +180,8 @@ export default function EditTariff() {
                   value={tariff?.smsLimit ? tariff?.smsLimit : ""}
                 />
               </Col>
+            </Row>
+            <Row>
               <Col md={6}>
                 <FormSelect
                   {...isActiveValidation}
@@ -172,7 +191,13 @@ export default function EditTariff() {
                 />
               </Col>
             </Row>
-
+            {tariff && (
+              <Row>
+                <Col md={6}>
+                  <p>Tariff is used by users: {tariff.isUsed}</p>
+                </Col>
+              </Row>
+            )}
             <Button onClick={onSubmit} variant="primary" className="mt-3">
               Save Tariff
             </Button>
@@ -181,6 +206,7 @@ export default function EditTariff() {
               variant="danger"
               className="mt-3 ms-2"
               onClick={handleDelete}
+              disabled={tariff?.isUsed}
             >
               Delete Tariff
             </Button>

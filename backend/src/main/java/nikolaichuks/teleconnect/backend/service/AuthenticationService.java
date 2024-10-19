@@ -7,7 +7,6 @@ import nikolaichuks.teleconnect.backend.model.auth.PasswordResetToken;
 import nikolaichuks.teleconnect.backend.model.auth.TokenBlacklist;
 import nikolaichuks.teleconnect.backend.model.auth.TokenType;
 import nikolaichuks.teleconnect.backend.model.user.User;
-import nikolaichuks.teleconnect.backend.model.user.UserRole;
 import nikolaichuks.teleconnect.backend.repository.PasswordResetTokenRepository;
 import nikolaichuks.teleconnect.backend.repository.TokenBlacklistRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
@@ -46,21 +45,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final EmailService emailService;
 
-    public AuthResponse signup(RegisterUserRequest newUser) {
-        var user = User.builder()
-                .name(newUser.getName())
-                .familyName(newUser.getFamilyName())
-                .email(newUser.getEmail())
-                .phoneNumber(newUser.getPhoneNumber())
-                .password(passwordEncoder.encode(newUser.getPassword()))
-                .role(UserRole.ROLE_CUSTOMER)
-                .build();
-        userRepository.save(user);
-
-        return getAuthResponse(user);
-    }
-
-    public AuthResponse authenticate(LoginRequest loginRequest) {
+    public AuthResponse login(LoginRequest loginRequest) {
         User user = userRepository.findByEmailOrPhoneNumber(loginRequest.getUsername())
                 .orElseThrow(() -> new CustomRestException("Auth error", HttpStatus.UNAUTHORIZED));
 

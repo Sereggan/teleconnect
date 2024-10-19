@@ -3,6 +3,7 @@ package nikolaichuks.teleconnect.backend.service;
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
 import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
+import nikolaichuks.teleconnect.backend.model.tariff.Tariff;
 import nikolaichuks.teleconnect.backend.model.user.User;
 import nikolaichuks.teleconnect.backend.repository.TariffAdjustmentRepository;
 import nikolaichuks.teleconnect.backend.repository.TariffRepository;
@@ -53,6 +54,7 @@ public class UserService {
 
         if (user.getTariffId() != null) {
             tariffRepository.findById(user.getTariffId())
+                    .filter(Tariff::getIsActive)
                     .ifPresent(updatedUser::setTariff);
         } else {
             updatedUser.setTariff(null);

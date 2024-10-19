@@ -8,8 +8,8 @@ export const priceMinValidation = {
   disabled: false,
   validation: {
     min: {
-      value: 0,
-      message: "Minimum value must be 0 or more",
+      value: 1,
+      message: "Minimum price must be 1 or more",
     },
   },
 };
@@ -24,12 +24,12 @@ export const priceMaxValidation = {
   disabled: false,
   validation: {
     min: {
-      value: 0,
-      message: "Maximum value must be 0 or more",
+      value: 1,
+      message: "Maximum price must be 1 or more",
     },
     max: {
       value: 1000,
-      message: "Maximum value must not exceed 1000",
+      message: "Maximum value must not exceed 1 000",
     },
   },
 };
@@ -44,8 +44,8 @@ export const dataLimitMinValidation = {
   disabled: false,
   validation: {
     min: {
-      value: 0,
-      message: "Minimum value must be 0 or more",
+      value: 1,
+      message: "Minimum value must be 1 or more",
     },
   },
 };
@@ -116,8 +116,8 @@ export const callMinutesMinValidation = {
   disabled: false,
   validation: {
     min: {
-      value: 0,
-      message: "Minimum call minutes must be 0 or more",
+      value: 1,
+      message: "Minimum call minutes must be 1 or more",
     },
   },
 };
@@ -133,7 +133,7 @@ export const callMinutesMaxValidation = {
   validation: {
     max: {
       value: 10_000,
-      message: "Maximum call minutes must not exceed 10000",
+      message: "Maximum call minutes must not exceed 10 000",
     },
   },
 };
@@ -148,8 +148,8 @@ export const smsLimitMinValidation = {
   disabled: false,
   validation: {
     min: {
-      value: 0,
-      message: "Minimum SMS limit must be 0 or more",
+      value: 1,
+      message: "Minimum SMS limit must be 1 or more",
     },
   },
 };
@@ -165,7 +165,7 @@ export const smsLimitMaxValidation = {
   validation: {
     max: {
       value: 10_000,
-      message: "Maximum SMS limit must not exceed 10000",
+      message: "Maximum SMS limit must not exceed 10 000",
     },
   },
 };

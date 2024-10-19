@@ -32,13 +32,15 @@ public class UserSpecification {
 
         if (name != null) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get(FIELD_NAME), name + "%")
+                    criteriaBuilder.like(
+                            criteriaBuilder.lower(root.get(FIELD_NAME)), name + "%")
             );
         }
 
         if (familyName != null) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get(FIELD_familyName), familyName + "%")
+                    criteriaBuilder.like(
+                            criteriaBuilder.lower(root.get(FIELD_familyName)), familyName + "%")
             );
         }
 

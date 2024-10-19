@@ -1,174 +1,205 @@
 import { useState } from "react";
-import { Button, Container, Form } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import {
   resetPassword,
   sendResetPasswordMail,
   validateResetPasswordCode,
 } from "../../clients/AuthClient";
 import { useNavigate } from "react-router-dom";
+import { FormProvider, useForm } from "react-hook-form";
+import { FormInput } from "../common/FormInput";
+import {
+  codeValidation,
+  emailValidation,
+  passwordValidation,
+} from "../../validations/auth/authValidations";
+
+interface SendCodeForm {
+  email: string;
+}
+
+interface ValidateCodeForm {
+  code: string;
+}
+
+interface PasswordResetForm {
+  password: string;
+  verifyPassword: string;
+}
 
 export default function ResetPassword() {
-  const [email, setEmail] = useState("");
-  const [emailValidationError, setEmailValidationError] = useState("");
+  const sendCodeMethods = useForm<SendCodeForm>();
+  const validateCodeMethods = useForm<ValidateCodeForm>();
+  const resetPasswordMethod = useForm<PasswordResetForm>();
+
+  const [isSendCodeDisabled, setIsSendCodeDisabled] = useState(false);
+  const [isValidateCodeDisabled, setIsValidateCodeDisabled] = useState(false);
 
   const [isCodeSent, setIsCodeSent] = useState(false);
-  const [code, setCode] = useState("");
-  const [codeValidationError, setCodeValidationError] = useState("");
-  const [sendCodeError, setSendCodeError] = useState("");
-
+  const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordVerify, setPaswordVerify] = useState("");
   const [resetPasswordError, setResetPasswordError] = useState("");
-  const [passwordValidationError, setPasswordValidationError] = useState("");
 
   const navigate = useNavigate();
 
-  const sendCode = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (email.length < 3) {
-      setEmailValidationError("Email is too short");
-      return;
+  const sendCode = sendCodeMethods.handleSubmit(
+    async ({ email }: SendCodeForm) => {
+      setIsSendCodeDisabled(true);
+      setTimeout(() => setIsSendCodeDisabled(false), 30_000);
+      const abortController = new AbortController();
+      try {
+        await sendResetPasswordMail(email, abortController);
+        setEmail(email);
+      } catch (err) {
+        console.log(err);
+      }
+
+      setIsCodeSent(true);
+
+      abortController.abort();
     }
-    const abortController = new AbortController();
-    try {
-      sendResetPasswordMail(email, abortController);
-    } catch (err) {
-      console.log(err);
-    }
+  );
 
-    setIsCodeSent(true);
+  const validateCode = validateCodeMethods.handleSubmit(
+    async ({ code }: ValidateCodeForm) => {
+      setIsValidateCodeDisabled(true);
+      setTimeout(() => setIsValidateCodeDisabled(false), 30_000);
 
-    return () => abortController.abort();
-  };
+      const abortController = new AbortController();
 
-  const validateCode = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (code.length != 6 || isNaN(Number(code))) {
-      setCodeValidationError("Code must be 6 digits long");
-      return;
-    } else {
-      setCodeValidationError("");
-    }
-    const abortController = new AbortController();
-
-    validateResetPasswordCode(email, code, abortController)
-      .then((val) => {
+      validateResetPasswordCode(email, code, abortController).then((val) => {
         if (val) {
           setToken(val?.resetToken);
         }
-        setSendCodeError("");
-      })
-      .catch(() => {
-        setSendCodeError("Could not validate code.");
       });
-    setToken("fake token");
-
-    return () => abortController.abort();
-  };
-
-  const handleResetPassword = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (password !== passwordVerify) {
-      setPasswordValidationError("Passwords should be the same!");
-      return;
-    } else if (password.length < 6) {
-      setPasswordValidationError(
-        "Password should be contain at least 6 symbols!"
-      );
-      return;
+      abortController.abort();
     }
-    setPasswordValidationError("");
+  );
 
-    const abortController = new AbortController();
+  const handleResetPassword = resetPasswordMethod.handleSubmit(
+    async ({ password, verifyPassword }: PasswordResetForm) => {
+      setResetPasswordError("");
+      if (password !== verifyPassword) {
+        resetPasswordMethod.setError("verifyPassword", {
+          type: "manual",
+          message: "Password must match",
+        });
+        resetPasswordMethod.resetField("verifyPassword");
+        return;
+      }
+      const abortController = new AbortController();
 
-    resetPassword(token, password, abortController)
-      .then(() => {
-        navigate("/");
-      })
-      .catch((err) => {
-        console.log(err);
-        setResetPasswordError("Could not reset password.");
-      });
+      resetPassword(token, password, abortController)
+        .then(() => {
+          navigate("/");
+        })
+        .catch((err) => {
+          console.log(err);
+          setResetPasswordError("Could not reset password.");
+        });
 
-    return () => abortController.abort();
-  };
+      abortController.abort();
+    }
+  );
 
   if (token) {
     return (
       <Container>
-        <Form noValidate onSubmit={handleResetPassword}>
-          <Form.Group controlId="passwordGroup">
-            <Form.Label>New password</Form.Label>
-            <Form.Control
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <div className="text-danger mt-2">{emailValidationError}</div>
-          </Form.Group>
-          <Form.Group controlId="passwordVerifyGroup">
-            <Form.Label>Verify password</Form.Label>
-            <Form.Control
-              type="password"
-              value={passwordVerify}
-              onChange={(e) => setPaswordVerify(e.target.value)}
-            />
-            <div className="text-danger mt-2">{passwordValidationError}</div>
-          </Form.Group>
-          <Button className="mt-3" variant="light" type="submit">
-            Reset password
-          </Button>
-          <div className="text-danger mt-2">{resetPasswordError}</div>
-        </Form>
+        <FormProvider {...resetPasswordMethod}>
+          <Form
+            onSubmit={(e) => e.preventDefault()}
+            noValidate
+            autoComplete="off"
+            className="mb-4"
+          >
+            <Row>
+              <Col md={6}>
+                <FormInput {...passwordValidation} />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6}>
+                <FormInput
+                  {...{
+                    ...passwordValidation,
+                    label: "Verify password",
+                  }}
+                />
+              </Col>
+            </Row>
+
+            <Button
+              onClick={handleResetPassword}
+              variant="primary"
+              className="mt-3"
+            >
+              Reset password
+            </Button>
+            {resetPasswordError && (
+              <div className="alert alert-danger mt-3" role="alert">
+                Could not reset password
+              </div>
+            )}
+          </Form>
+        </FormProvider>
       </Container>
     );
-  }
-
-  return (
-    <Container>
-      <Form noValidate onSubmit={sendCode}>
-        <Form.Group controlId="emailGroup">
-          <Form.Label>Email address </Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <div className="text-danger mt-2">{emailValidationError}</div>
-        </Form.Group>
-
-        <Button className="mt-3" variant="light" type="submit">
-          Send code
-        </Button>
+  } else {
+    return (
+      <Container>
+        <FormProvider {...sendCodeMethods}>
+          <Form
+            onSubmit={(e) => e.preventDefault()}
+            noValidate
+            autoComplete="off"
+            className="mb-4"
+          >
+            <Row>
+              <Col md={6}>
+                <FormInput {...emailValidation} />
+              </Col>
+            </Row>
+            <Button
+              onClick={sendCode}
+              variant="primary"
+              className="mt-3"
+              disabled={isSendCodeDisabled}
+            >
+              Send verification code
+            </Button>
+          </Form>
+        </FormProvider>
         {isCodeSent && (
           <p>
             Code was sent to mentioned email address. Check address again if you
             didn't receive any code and press "send code" again.
           </p>
         )}
-      </Form>
-
-      {isCodeSent && (
-        <Form noValidate onSubmit={validateCode}>
-          <Form.Group controlId="codeGroup">
-            <Form.Label>Code</Form.Label>
-            <Form.Control
-              type="text"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-            />
-            <div className="text-danger mt-2">{codeValidationError}</div>
-          </Form.Group>
-
-          <Button className="mt-3" variant="light" type="submit">
-            Validate code
-          </Button>
-          <div className="text-danger mt-2">{sendCodeError}</div>
-        </Form>
-      )}
-    </Container>
-  );
+        {isCodeSent && (
+          <FormProvider {...validateCodeMethods}>
+            <Form
+              onSubmit={(e) => e.preventDefault()}
+              noValidate
+              autoComplete="off"
+              className="mb-4"
+            >
+              <Row>
+                <Col md={6}>
+                  <FormInput {...codeValidation} />
+                </Col>
+              </Row>
+              <Button
+                onClick={validateCode}
+                variant="primary"
+                className="mt-3"
+                disabled={isValidateCodeDisabled}
+              >
+                Validate code
+              </Button>
+            </Form>
+          </FormProvider>
+        )}
+      </Container>
+    );
+  }
 }

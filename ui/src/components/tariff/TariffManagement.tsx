@@ -176,27 +176,25 @@ export default function TariffManagement() {
           className="mb-4"
         >
           <Row>
-            <Col md={6}>
+            <Col md={3}>
               <FormInput {...priceMinValidation} />
             </Col>
-            <Col md={6}>
+            <Col md={3}>
               <FormInput {...priceMaxValidation} />
             </Col>
-          </Row>
-          <Row>
-            <Col md={6}>
+            <Col md={3}>
               <FormInput {...dataLimitMinValidation} />
             </Col>
-            <Col>
+            <Col md={3}>
               <FormInput {...dataLimitMaxValidation} />
             </Col>
           </Row>
           {userRole === UserRole.ROLE_EMPLOYEE && (
             <Row>
-              <Col md={6}>
+              <Col md={3}>
                 <FormSelect {...isActiveValidation} />
               </Col>
-              <Col md={6}>
+              <Col md={3}>
                 <FormSelect {...isUsedValidation} />
               </Col>
             </Row>
@@ -225,17 +223,19 @@ export default function TariffManagement() {
             )}
           </Row>
 
-          <Pagination>
-            {[...Array(pagination.totalPages)].map((_, i) => (
-              <Pagination.Item
-                key={i}
-                active={i === pagination.currentPage}
-                onClick={() => handlePageChange(i)}
-              >
-                {i + 1}
-              </Pagination.Item>
-            ))}
-          </Pagination>
+          {pagination.totalPages > 1 && (
+            <Pagination>
+              {[...Array(pagination.totalPages)].map((_, i) => (
+                <Pagination.Item
+                  key={i}
+                  active={i === pagination.currentPage}
+                  onClick={() => handlePageChange(i)}
+                >
+                  {i + 1}
+                </Pagination.Item>
+              ))}
+            </Pagination>
+          )}
         </>
       )}
     </Container>

@@ -138,33 +138,32 @@ export default function UserManagement() {
           className="mb-4"
         >
           <Row>
-            <Col md={6}>
+            <Col md={3}>
               <FormInput {...phoneNumberValidation} />
             </Col>
-            <Col md={6}>
+            <Col md={3}>
               <FormInput {...emailValidation} />
             </Col>
-          </Row>
-          <Row>
-            <Col md={6}>
+            <Col md={3}>
               <FormInput {...nameValidation} />
             </Col>
-            <Col md={6}>
+            <Col md={3}>
               <FormInput {...familyNameValidation} />
             </Col>
           </Row>
           <Row>
-            <Col md={6}>
+            <Col md={3}>
               <FormInput {...roleValidation} />
             </Col>
-            <Col md={6}>
+            <Col md={3}>
               <FormInput {...tariffIdValidation} />
             </Col>
+            <Col md={6}>
+              <Button onClick={onSubmit} variant="primary" className="mt-3">
+                Search
+              </Button>
+            </Col>
           </Row>
-
-          <Button onClick={onSubmit} variant="primary" className="mt-3">
-            Search
-          </Button>
         </Form>
       </FormProvider>
 
@@ -186,17 +185,19 @@ export default function UserManagement() {
             )}
           </Row>
 
-          <Pagination>
-            {[...Array(pagination.totalPages)].map((_, i) => (
-              <Pagination.Item
-                key={i}
-                active={i === pagination.currentPage}
-                onClick={() => handlePageChange(i)}
-              >
-                {i + 1}
-              </Pagination.Item>
-            ))}
-          </Pagination>
+          {pagination.totalPages > 1 && (
+            <Pagination>
+              {[...Array(pagination.totalPages)].map((_, i) => (
+                <Pagination.Item
+                  key={i}
+                  active={i === pagination.currentPage}
+                  onClick={() => handlePageChange(i)}
+                >
+                  {i + 1}
+                </Pagination.Item>
+              ))}
+            </Pagination>
+          )}
         </Container>
       )}
     </Container>

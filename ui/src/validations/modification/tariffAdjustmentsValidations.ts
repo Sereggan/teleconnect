@@ -5,7 +5,12 @@ export const idValidation = {
   id: "id",
   placeholder: "",
   disabled: true,
-  validation: {},
+  validation: {
+    min: {
+      value: 0,
+      message: "Tariff ID must be a positive number",
+    },
+  },
 };
 
 export const priceValidation = {

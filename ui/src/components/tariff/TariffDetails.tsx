@@ -18,6 +18,7 @@ export default function TariffDetails() {
     const fetchTariff = async (controller: AbortController) => {
       if (id) {
         setIsLoading(true);
+        setError("");
         try {
           const tariffId = parseInt(id);
           const tariff = await getTariffById(tariffId, controller);
@@ -50,7 +51,9 @@ export default function TariffDetails() {
   }
 
   if (isLoading) {
-    <Spinner animation="border" />;
+    <Spinner animation="border" role="status">
+      <span className="visually-hidden">Loading...</span>
+    </Spinner>;
   }
 
   return (
@@ -80,11 +83,6 @@ export default function TariffDetails() {
                 {userRole === UserRole.ROLE_EMPLOYEE && (
                   <ListGroup.Item>
                     Active: {tariff.isActive ? "Yes" : "No"}
-                  </ListGroup.Item>
-                )}
-                {userRole === UserRole.ROLE_EMPLOYEE && (
-                  <ListGroup.Item>
-                    Is used by users: {tariff.isUsed ? "Yes" : "No"}
                   </ListGroup.Item>
                 )}
               </ListGroup>

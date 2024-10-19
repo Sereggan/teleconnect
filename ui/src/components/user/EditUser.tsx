@@ -4,7 +4,15 @@ import { deleteUser, getUserById, updateUser } from "../../clients/UserClient";
 import { getAllTariffs, getTariffById } from "../../clients/TariffClient";
 import { User, UserRole } from "../../models/User";
 import { Tariff } from "../../models/Tariff";
-import { Button, Col, Container, Form, Nav, Row } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Container,
+  Form,
+  Nav,
+  Row,
+  Spinner,
+} from "react-bootstrap";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormInput } from "../common/FormInput";
 import { FormSelect } from "../common/FormSelect";
@@ -47,6 +55,7 @@ export default function EditUser() {
     const controller = new AbortController();
     const loadUserData = async () => {
       setIsLoading(true);
+      setError("");
       try {
         if (id) {
           const userId = parseInt(id);
@@ -121,6 +130,7 @@ export default function EditUser() {
 
     controllerRef.current = new AbortController();
     setIsLoading(true);
+    setError("");
     try {
       let updatedUser = { ...user, ...filterUser };
 
@@ -172,8 +182,8 @@ export default function EditUser() {
       if (updatedUser) {
         setUser(updatedUser);
         setCurrentTariff(undefined);
+        setSelectedTariff(undefined);
       }
-      setSelectedTariff(undefined);
     } catch (error) {
       if (!controllerRef.current.signal.aborted) {
         setError("Error disabling tariff");
@@ -189,6 +199,7 @@ export default function EditUser() {
     controllerRef.current = controller;
 
     setIsLoading(true);
+    setError("");
     try {
       await deleteUser(user.id, controller);
       navigate("/users");
@@ -227,11 +238,21 @@ export default function EditUser() {
     return null;
   }, [currentTariff, selectedTariff]);
 
+  if (error) {
+    return <p>Something went wrong...</p>;
+  }
+
+  if (isLoading) {
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    );
+  }
+
   return (
     <Container>
-      {error && <div>{error}</div>}
-      {isLoading && <div>Loading...</div>}
-      {!isLoading && (
+      {!isLoading && !error && (
         <FormProvider {...methods}>
           <Form
             onSubmit={(e) => e.preventDefault()}
@@ -335,11 +356,10 @@ export default function EditUser() {
                     >
                       Current basic tariff Info
                     </Nav.Link>
-
                     <Nav.Link
                       className="text-primary fw-bold"
                       as={Link}
-                      to={`users/${user.id!}/tariff-adjustment`}
+                      to={`users/${user.id!}/edit/tariff-adjustment`}
                     >
                       {user.tariffAdjustmentId
                         ? "User's special tariff plan"
@@ -353,15 +373,6 @@ export default function EditUser() {
                   </Container>
                 </>
               )}
-            {user && (
-              <Nav.Link
-                className="text-primary fw-bold"
-                as={Link}
-                to={`users/${user.id!}/edit-documents`}
-              >
-                View documents
-              </Nav.Link>
-            )}
             <Button onClick={onSubmit} variant="primary" className="mt-3">
               Update User
             </Button>
