@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import nikolaichuks.teleconnect.backend.model.user.User;
 
+import java.time.LocalDateTime;
+
 /**
  * Entity for storing ticket information.
  */
@@ -22,18 +24,14 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(nullable = false)
     private String title;
-
-    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
-
     private String resolution;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

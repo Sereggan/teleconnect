@@ -17,6 +17,7 @@ import teleconnect.ticket.model.PaginatedTicketResponse;
 import teleconnect.ticket.model.TicketDto;
 import teleconnect.ticket.model.TicketListResponse;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -36,6 +37,8 @@ public class TicketService {
                 .map(user -> {
                     Ticket ticket = mapperUtil.mapTicketDtoToTicket(ticketDto);
                     ticket.setUser(user);
+                    ticket.setStatus(Ticket.Status.New);
+                    ticket.setCreatedAt(LocalDateTime.now());
                     return mapperUtil.mapTicketToTicketDto(ticketRepository.save(ticket));
                 })
                 .orElseThrow(() -> new CustomRestException("User not found", HttpStatus.NOT_FOUND));
@@ -50,7 +53,7 @@ public class TicketService {
     public PaginatedTicketResponse listTickets(String status, Integer limit, Integer offset) {
         Specification<Ticket> specification = ticketSpecification.getTicketSpecification(status);
 
-        PageRequest page = PageRequest.of(offset, limit, Sort.Direction.ASC, "title");
+        PageRequest page = PageRequest.of(offset, limit, Sort.Direction.DESC, "created_at");
         Page<Ticket> ticketPage = ticketRepository.findAll(specification, page);
 
         List<TicketDto> tickets = ticketPage.getContent().stream()

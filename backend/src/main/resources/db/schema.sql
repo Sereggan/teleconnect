@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS tickets (
     description TEXT NOT NULL,
     status VARCHAR(20) NOT NULL,
     resolution TEXT,
+    created_at TIMESTAMP NOT NULL,
     user_id INTEGER NOT NULL,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
     );

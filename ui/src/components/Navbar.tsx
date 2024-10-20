@@ -49,6 +49,11 @@ function Header() {
               Statistics
             </Nav.Link>
           )}
+          {userRole === UserRole.ROLE_EMPLOYEE && (
+            <Nav.Link as={Link} to="/tickets">
+              Tickets
+            </Nav.Link>
+          )}
           {userRole && (
             <NavDropdown title="Me" id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to={`users/${userId}`}>
@@ -61,6 +66,12 @@ function Header() {
                   </NavDropdown.Item>
                   <NavDropdown.Item as={Link} to={`/users/${userId}/documents`}>
                     My Documents
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to={`/users/${userId}/tickets`}>
+                    My requests
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to={`/tickets/add`}>
+                    Contact us
                   </NavDropdown.Item>
                 </>
               )}

@@ -18,6 +18,10 @@ import ResetPassword from "./components/auth/ResetPassword";
 import EditUserTariffAdjustment from "./components/user/EditUserTariffAdjustment";
 import UserDocument from "./components/documents/UserDocuments";
 import EditUserDocuments from "./components/documents/EditUserDocuments";
+import TicketManagment from "./components/ticket/TicketManagement";
+import NewTicket from "./components/ticket/NewTicket";
+import UserTickets from "./components/user/UserTickets";
+import EditTicket from "./components/ticket/EditTicket";
 
 const router = createBrowserRouter([
   {
@@ -99,6 +103,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "users/:id/tickets",
+        element: (
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_CUSTOMER]}>
+            <UserTickets />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "tariffs/:id",
         element: <TariffDetails />,
       },
@@ -115,6 +127,30 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
             <EditTariff />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "tickets",
+        element: (
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
+            <TicketManagment />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "tickets/add",
+        element: (
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_CUSTOMER]}>
+            <NewTicket />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "tickets/:id/edit",
+        element: (
+          <ProtectedRoute requiredRoles={[UserRole.ROLE_EMPLOYEE]}>
+            <EditTicket />
           </ProtectedRoute>
         ),
       },

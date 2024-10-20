@@ -8,9 +8,13 @@ export default function TariffCard({ tariff }: { tariff: Tariff }) {
   const userRole = getUserRoleFromToken();
   const navigate = useNavigate();
 
+  const cardStyle = tariff.isActive
+    ? {}
+    : { backgroundColor: "#f8d7da", borderColor: "#f5c6cb" };
+
   return (
     <Container>
-      <Card className="mb-3">
+      <Card className="mb-3" style={cardStyle}>
         <Card.Body>
           <Card.Title>{tariff.name}</Card.Title>
           <Card.Text>{tariff.description}</Card.Text>

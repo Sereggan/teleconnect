@@ -187,15 +187,18 @@ export default function UserManagement() {
 
           {pagination.totalPages > 1 && (
             <Pagination>
-              {[...Array(pagination.totalPages)].map((_, i) => (
-                <Pagination.Item
-                  key={i}
-                  active={i === pagination.currentPage}
-                  onClick={() => handlePageChange(i)}
-                >
-                  {i + 1}
-                </Pagination.Item>
-              ))}
+              {[...Array(pagination.totalPages)].map(
+                (_, i) =>
+                  Math.abs(i - pagination.currentPage) <= 2 && (
+                    <Pagination.Item
+                      key={i}
+                      active={i === pagination.currentPage}
+                      onClick={() => handlePageChange(i)}
+                    >
+                      {i + 1}
+                    </Pagination.Item>
+                  )
+              )}
             </Pagination>
           )}
         </Container>

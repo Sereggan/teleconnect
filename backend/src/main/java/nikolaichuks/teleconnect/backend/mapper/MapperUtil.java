@@ -25,7 +25,6 @@ public class MapperUtil {
     public MapperUtil() {
         Converter<UserRole, String> userRoleToStringConverter = context -> context.getSource().getName();
         Converter<String, UserRole> userRoleConverter = context -> UserRole.fromString(context.getSource());
-        Converter<String, Ticket.Status> statustoTicketStatusConverter = context -> Ticket.Status.valueOf(context.getSource());
 
         mapper.addMappings(new PropertyMap<User, UserDto>() {
             @Override
@@ -48,13 +47,6 @@ public class MapperUtil {
             @Override
             protected void configure() {
                 skip(destination.getId());
-            }
-        });
-
-        mapper.addMappings(new PropertyMap<TicketDto, Ticket>() {
-            @Override
-            protected void configure() {
-                using(statustoTicketStatusConverter).map(source.getStatus()).setStatus(null);
             }
         });
     }
