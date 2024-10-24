@@ -83,7 +83,7 @@ function Header() {
             </Nav.Link>
           )}
           {userRole && (
-            <Button className="ms-auto" variant="danger" onClick={handleLogout}>
+            <Button className="ms-auto" onClick={handleLogout}>
               Logout
             </Button>
           )}

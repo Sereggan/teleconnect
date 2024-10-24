@@ -27,6 +27,7 @@ export default function EditUserDocuments() {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [successMessage, setSuccessMessage] = useState<string>("");
+  const [selectedFileInvalid, setSelectedFileInvalid] = useState("");
 
   useEffect(() => {
     const fetchDocuments = async (controller: AbortController) => {
@@ -105,7 +106,21 @@ export default function EditUserDocuments() {
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
-      setSelectedFile(e.target.files[0]);
+      const file = e.target.files[0];
+      const maxFileSize = 10 * 1024 * 1024;
+      const fileExtension = file.name.split(".").pop()?.toLowerCase();
+      const validExtensions = ["doc", "docx", "pdf"];
+
+      if (file.size > maxFileSize) {
+        setSelectedFileInvalid("Maxim allowed file size in 10 MB.");
+        return;
+      } else if (!fileExtension || !validExtensions.includes(fileExtension)) {
+        setSelectedFileInvalid(
+          "Invalid file format. Only .doc, .docx, and .pdf are allowed."
+        );
+        return;
+      }
+      setSelectedFile(file);
     }
   }
 
@@ -175,12 +190,18 @@ export default function EditUserDocuments() {
               <span className="text-muted ml-2">
                 ({formatFileSize(document.fileSize)})
               </span>
-              <Button variant="primary" onClick={() => downloadFile(document)}>
-                Download
-              </Button>
-              <Button variant="primary" onClick={() => deleteFile(document)}>
-                Delete
-              </Button>
+              <span>{new Date(document.createdAt).toLocaleString()}</span>
+              <div className="w-25 d-flex justify-content-around">
+                <Button
+                  variant="primary"
+                  onClick={() => downloadFile(document)}
+                >
+                  Download
+                </Button>
+                <Button variant="primary" onClick={() => deleteFile(document)}>
+                  Delete
+                </Button>
+              </div>
             </ListGroup.Item>
           ))}
         </ListGroup>
@@ -193,12 +214,14 @@ export default function EditUserDocuments() {
           <Form.Label>Upload Document</Form.Label>
           <Form.Control type="file" onChange={handleFileChange} />
           <Button
+            className="mt-2"
             variant="primary"
             onClick={handleUploadFile}
-            disabled={!selectedFile}
+            disabled={!selectedFile || selectedFileInvalid !== ""}
           >
             Upload
           </Button>
+          <p>{selectedFileInvalid}</p>
           {selectedFile && (
             <Form.Text>
               {selectedFile.name} {formatFileSize(selectedFile.size)}

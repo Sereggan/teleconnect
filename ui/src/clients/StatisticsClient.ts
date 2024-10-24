@@ -31,16 +31,6 @@ export const getUsersWithoutTariff = async (
   return response.data;
 };
 
-export const getTariffAgeGroupStatistics = async (
-  abortController: AbortController
-): Promise<TariffAgeGroupStatisticsResponse[]> => {
-  const response = await statisticsClient.get(
-    `${statisticsEndpoint}/tariff-age-group`,
-    { signal: abortController.signal }
-  );
-  return response.data;
-};
-
 export const getTariffAdjustmentCount = async (
   abortController: AbortController
 ): Promise<TariffAdjustmentCountResponse[]> => {

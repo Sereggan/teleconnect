@@ -359,17 +359,12 @@ export default function EditUser() {
                     <Nav.Link
                       className="text-primary fw-bold"
                       as={Link}
-                      to={`users/${user.id!}/edit/tariff-adjustment`}
+                      to={`/users/${user.id}/edit/tariff-adjustment`}
                     >
                       {user.tariffAdjustmentId
                         ? "User's special tariff plan"
                         : "Create special tariff plan"}
                     </Nav.Link>
-                    {currentTariff && (
-                      <Button className="mt-3" onClick={handleDisableTariff}>
-                        Disable Tariff
-                      </Button>
-                    )}
                   </Container>
                 </>
               )}
@@ -384,6 +379,11 @@ export default function EditUser() {
             >
               Delete User
             </Button>
+            {currentTariff && (
+              <Button className="mt-3 ms-2" onClick={handleDisableTariff}>
+                Disable Tariff
+              </Button>
+            )}
           </Form>
         </FormProvider>
       )}

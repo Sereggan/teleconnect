@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import teleconnect.statistics.api.StatisticsApi;
 import teleconnect.statistics.model.TariffAdjustmentCountResponse;
-import teleconnect.statistics.model.TariffAgeGroupStatisticsResponse;
 import teleconnect.statistics.model.UserByTariffResponse;
 import teleconnect.statistics.model.UsersWithoutTariffResponse;
 
@@ -24,14 +23,6 @@ public class StatisticsController implements StatisticsApi {
     @Override
     public ResponseEntity<List<TariffAdjustmentCountResponse>> getTariffAdjustmentCount() {
         return ResponseEntity.ok(statisticsService.getTariffAdjustmentCount());
-    }
-
-    /*
-     * {@inheritDoc}
-     */
-    @Override
-    public ResponseEntity<List<TariffAgeGroupStatisticsResponse>> getTariffAgeGroupStatistics() {
-        return ResponseEntity.ok(statisticsService.getTariffAgeStatistics());
     }
 
     /*

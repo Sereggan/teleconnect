@@ -53,7 +53,7 @@ public class TicketService {
     public PaginatedTicketResponse listTickets(String status, Integer limit, Integer offset) {
         Specification<Ticket> specification = ticketSpecification.getTicketSpecification(status);
 
-        PageRequest page = PageRequest.of(offset, limit, Sort.Direction.DESC, "created_at");
+        PageRequest page = PageRequest.of(offset, limit, Sort.Direction.DESC, "createdAt");
         Page<Ticket> ticketPage = ticketRepository.findAll(specification, page);
 
         List<TicketDto> tickets = ticketPage.getContent().stream()

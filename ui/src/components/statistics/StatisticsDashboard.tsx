@@ -10,17 +10,16 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
+  Legend,
 } from "recharts";
 import {
   getUsersByTariff,
   getUsersWithoutTariff,
-  getTariffAgeGroupStatistics,
   getTariffAdjustmentCount,
 } from "../../clients/StatisticsClient";
 import {
   UserByTariffResponse,
   UsersWithoutTariffResponse,
-  TariffAgeGroupStatisticsResponse,
   TariffAdjustmentCountResponse,
 } from "../../models/Statistics";
 
@@ -35,11 +34,6 @@ export default function StatisticsDashboard() {
     useState<UsersWithoutTariffResponse>();
   const [usersWithoutTariffError, setUsersWithoutTariffError] = useState("");
 
-  const [tariffAgeGroupStatistics, setTariffAgeGroupStatistics] =
-    useState<TariffAgeGroupStatisticsResponse[]>();
-  const [tariffAgeGroupStatisticsError, setTariffAgeGroupStatisticsError] =
-    useState("");
-
   const [tariffAdjustmentCount, setTariffAdjustmentCount] =
     useState<TariffAdjustmentCountResponse[]>();
   const [tariffAdjustmentCountError, setTariffAdjustmentCountError] =
@@ -53,8 +47,6 @@ export default function StatisticsDashboard() {
       fetchUsersByTariff(controller);
     } else if (key === "usersWithoutTariff" && !usersWithoutTariff) {
       fetchUsersWithoutTariff(controller);
-    } else if (key === "tariffAgeGroup" && !tariffAgeGroupStatistics) {
-      fetchTariffAgeGroupStatistics(controller);
     } else if (key === "tariffAdjustmentCount" && !tariffAdjustmentCount) {
       fetchTariffAdjustmentCount(controller);
     }
@@ -68,6 +60,10 @@ export default function StatisticsDashboard() {
   const fetchUsersByTariff = async (controller: AbortController) => {
     try {
       const result = await getUsersByTariff(controller);
+      result.sort((a, b) =>
+        a.userCount < b.userCount ? 1 : b.userCount < a.userCount ? -1 : 0
+      );
+
       setUsersByTariff(result);
       setUsersByTariffError("");
     } catch (error) {
@@ -85,18 +81,6 @@ export default function StatisticsDashboard() {
     } catch (error) {
       if (!controller.signal.aborted) {
         setUsersWithoutTariffError("Error fetching users without tariff");
-      }
-    }
-  };
-
-  const fetchTariffAgeGroupStatistics = async (controller: AbortController) => {
-    try {
-      const result = await getTariffAgeGroupStatistics(controller);
-      setTariffAgeGroupStatistics(result);
-      setTariffAgeGroupStatisticsError("");
-    } catch (error) {
-      if (!controller.signal.aborted) {
-        setTariffAgeGroupStatisticsError("Error fetching age group statistics");
       }
     }
   };
@@ -130,10 +114,11 @@ export default function StatisticsDashboard() {
           )}
           {usersByTariffError && <p>Something went wrong...</p>}
           {!usersByTariffError && usersByTariff && (
-            <BarChart width={600} height={300} data={usersByTariff}>
+            <BarChart width={1500} height={300} data={usersByTariff}>
               <XAxis dataKey="tariffName" />
               <YAxis />
               <Tooltip />
+              <Legend />
               <CartesianGrid strokeDasharray="3 3" />
               <Bar dataKey="userCount" fill="#8884d8" />
             </BarChart>
@@ -149,39 +134,8 @@ export default function StatisticsDashboard() {
           {usersWithoutTariffError && <p>Something went wrong...</p>}
           {!usersWithoutTariffError && usersWithoutTariff && (
             <div>
-              <p>Total Users Without Tariff: {usersWithoutTariff.count}</p>
+              <p>Users Without Tariff: {usersWithoutTariff.count}</p>
             </div>
-          )}
-        </Tab>
-        <Tab eventKey="tariffAgeGroup" title="Tariff by Age Group">
-          <h3>Tariff by Age Group</h3>
-          {isLoading && (
-            <Spinner animation="border" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
-          )}
-          {tariffAgeGroupStatisticsError && <p>Something went wrong...</p>}
-          {!tariffAgeGroupStatisticsError && tariffAgeGroupStatistics && (
-            <PieChart width={400} height={400}>
-              <Pie
-                data={tariffAgeGroupStatistics}
-                dataKey="userCount"
-                nameKey="ageGroup"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                fill="#8884d8"
-                label
-              >
-                {tariffAgeGroupStatistics.map((_, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
           )}
         </Tab>
         <Tab eventKey="tariffAdjustmentCount" title="Adjustments by Tariff">

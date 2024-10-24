@@ -10,7 +10,7 @@ import {
   titleValidation,
 } from "../../validations/modification/ticketValidation";
 import { getUserIdFromToken } from "../auth/AuthUtils";
-import { FormTextarea } from "../common/FormTextArea";
+import { FormTextArea } from "../common/FormTextArea";
 
 export default function NewTicket() {
   const methods = useForm<Ticket>();
@@ -26,7 +26,7 @@ export default function NewTicket() {
       controllerRef.current = controller;
       ticket.userId = Number(userId);
       await createTicket(ticket, controller);
-      navigate("/tickets");
+      navigate(`/users/${userId}/tickets`);
     } catch (error) {
       console.log(error);
       setError("Error creating ticket");
@@ -54,7 +54,7 @@ export default function NewTicket() {
 
           <Row>
             <Col md={9}>
-              <FormTextarea {...descriptionValidation} />
+              <FormTextArea {...descriptionValidation} />
             </Col>
           </Row>
 

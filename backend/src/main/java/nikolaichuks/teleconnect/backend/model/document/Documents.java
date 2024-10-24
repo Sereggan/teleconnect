@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import nikolaichuks.teleconnect.backend.model.user.User;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * Entity for storing document information associated with a user
@@ -26,7 +26,7 @@ public class Documents {
     private Integer id;
     private String documentId;
     private String originalFileName;
-    private LocalDateTime creationTime;
+    private OffsetDateTime createdAt;
     private Integer fileSize;
 
     @ManyToOne

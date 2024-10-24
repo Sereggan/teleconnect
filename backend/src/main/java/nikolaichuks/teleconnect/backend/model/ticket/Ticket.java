@@ -38,6 +38,6 @@ public class Ticket {
     private User user;
 
     public enum Status {
-        New, InProgress, Resolved, Rejected
+        New, InProgress, Resolved
     }
 }

@@ -20,7 +20,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getTariffByUserId } from "../../clients/TariffClient";
 
 export default function EditUserTariffAdjustment() {
-  const { userId } = useParams();
+  const { id } = useParams();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -35,7 +35,7 @@ export default function EditUserTariffAdjustment() {
   useEffect(() => {
     const controller = new AbortController();
 
-    if (!userId) {
+    if (!id) {
       setError("Cannot fetch tariff without userId");
       return;
     }
@@ -43,8 +43,7 @@ export default function EditUserTariffAdjustment() {
     const loadTariff = async () => {
       try {
         setError("");
-        const id = parseInt(userId);
-        const fetchedTariff = await getTariffByUserId(id, controller);
+        const fetchedTariff = await getTariffByUserId(parseInt(id), controller);
         if (fetchedTariff) {
           setTariff(fetchedTariff);
         } else {
@@ -52,8 +51,10 @@ export default function EditUserTariffAdjustment() {
           return;
         }
       } catch (err) {
-        setError("Could not fetch tariff");
-        console.log(err);
+        if (!controller.signal.aborted) {
+          setError("Could not fetch tariff");
+          console.log(err);
+        }
       }
     };
 
@@ -65,11 +66,11 @@ export default function EditUserTariffAdjustment() {
       controller.abort();
       controllerRef.current?.abort();
     };
-  }, [userId]);
+  }, [id]);
 
   useEffect(() => {
     const controller = new AbortController();
-    if (!userId) {
+    if (!id) {
       setError("Cannot fetch tariff adjsutment without userId");
       return;
     }
@@ -79,21 +80,23 @@ export default function EditUserTariffAdjustment() {
         try {
           setError("");
           const fetchedTariffAdjustment = await getTariffAdjustmentByUserId(
-            Number(userId),
+            parseInt(id),
             controller
           );
 
-          if (tariffAdjustment) {
+          if (fetchedTariffAdjustment) {
             setTarifAdjustment(fetchedTariffAdjustment);
           } else {
             setTarifAdjustment({
-              userId: Number(userId),
+              userId: parseInt(id),
               tariffId: tariff!.id!,
             });
           }
         } catch (err) {
-          console.log(err);
-          setError("Could not fetch tariff adjustment");
+          if (!controller.signal.aborted) {
+            console.log(err);
+            setError("Could not fetch tariff adjustment");
+          }
         }
       } else {
         setError("Cannot create adjustment without tariff");
@@ -111,7 +114,7 @@ export default function EditUserTariffAdjustment() {
       controller.abort();
       controllerRef.current?.abort();
     };
-  }, [tariff, userId]);
+  }, [tariff, id]);
 
   const onSubmit = methods.handleSubmit(
     async (filteredAdjustment: TariffAdjustment) => {
@@ -121,11 +124,20 @@ export default function EditUserTariffAdjustment() {
         ...tariffAdjustment,
         ...filteredAdjustment,
       };
-      const fetcheTariffAdjustment = await updateTariffAdjustment(
-        updatedTariffAdjustment,
-        controllerRef.current
-      );
-      setTarifAdjustment(fetcheTariffAdjustment);
+      try {
+        const fetcheTariffAdjustment = await updateTariffAdjustment(
+          updatedTariffAdjustment,
+          controllerRef.current
+        );
+        setTarifAdjustment(fetcheTariffAdjustment);
+      } catch (err) {
+        if (!controllerRef.current.signal.aborted) {
+          console.log(err);
+          setError("Could not update tariff adjustment");
+        }
+      } finally {
+        setIsLoading(false);
+      }
     }
   );
 
@@ -140,7 +152,7 @@ export default function EditUserTariffAdjustment() {
           controllerRef.current
         );
       }
-      navigate(`/users/${userId}/edit`);
+      navigate(`/users/${id}/edit`);
     } catch (error) {
       if (!controllerRef.current.signal.aborted) {
         setError("Error deleting tariff adjustment");
@@ -166,14 +178,19 @@ export default function EditUserTariffAdjustment() {
     <FormProvider {...methods}>
       <Form onSubmit={(e) => e.preventDefault()} noValidate autoComplete="off">
         <h3>Tariff Adjustments</h3>
+        {tariffAdjustment?.id && (
+          <Row>
+            <Col md={6}>
+              <FormInput
+                {...idValidation}
+                value={tariffAdjustment?.id ? tariffAdjustment.id : ""}
+              />
+            </Col>
+          </Row>
+        )}
         <Row>
           <Col md={6}>
-            <FormInput {...idValidation} value={tariffAdjustment!.id!} />
-          </Col>
-        </Row>
-        <Row>
-          <Col md={6}>
-            <Form.Text>Tariff default price: {tariff!.price}</Form.Text>
+            <Form.Text>Tariff default price: {tariff?.price}</Form.Text>
             <FormInput
               {...priceValidation}
               value={
@@ -185,8 +202,8 @@ export default function EditUserTariffAdjustment() {
         <Row>
           <Col md={6}>
             <Form.Text>
-              Tariff default data limit:{" "}
-              {tariff!.dataLimit ? tariff!.dataLimit : "Unlimited"}
+              Tariff default data limit:
+              {tariff?.dataLimit ? tariff.dataLimit : "Unlimited"}
             </Form.Text>
             <FormInput
               {...dataLimitValidation}
@@ -200,8 +217,8 @@ export default function EditUserTariffAdjustment() {
         </Row>
         <Row>
           <Col md={6}>
-            Tariff default SMS limit:{" "}
-            {tariff!.smsLimit ? tariff!.smsLimit : "Unlimited"}
+            Tariff default SMS limit:
+            {tariff?.smsLimit ? tariff!.smsLimit : "Unlimited"}
             <FormInput
               {...smsLimitValidation}
               value={
@@ -215,7 +232,7 @@ export default function EditUserTariffAdjustment() {
         <Row>
           <Col md={6}>
             Tariff default call minutes limit:{" "}
-            {tariff!.callMinutes ? tariff!.callMinutes : "Unlimited"}
+            {tariff?.callMinutes ? tariff?.callMinutes : "Unlimited"}
             <FormInput
               {...callMinutesValidation}
               value={
@@ -229,14 +246,16 @@ export default function EditUserTariffAdjustment() {
         <Button onClick={onSubmit} variant="primary" className="mt-3">
           Update Tariff Adjustment
         </Button>
-        <Button
-          variant="danger"
-          type="button"
-          onClick={handleDelete}
-          className="mt-3 ms-2"
-        >
-          Delete Tariff Adjustment
-        </Button>
+        {tariffAdjustment?.id && (
+          <Button
+            variant="danger"
+            type="button"
+            onClick={handleDelete}
+            className="mt-3 ms-2"
+          >
+            Delete Tariff Adjustment
+          </Button>
+        )}
       </Form>
     </FormProvider>
   );

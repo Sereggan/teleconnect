@@ -22,14 +22,17 @@ import TicketManagment from "./components/ticket/TicketManagement";
 import NewTicket from "./components/ticket/NewTicket";
 import UserTickets from "./components/user/UserTickets";
 import EditTicket from "./components/ticket/EditTicket";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <AuthProvider>
-        <Layout />
-      </AuthProvider>
+      <ErrorBoundary>
+        <AuthProvider>
+          <Layout />
+        </AuthProvider>
+      </ErrorBoundary>
     ),
     children: [
       {
@@ -73,7 +76,9 @@ const router = createBrowserRouter([
       {
         path: "users/:id/tariff",
         element: (
-          <ProtectedRoute requiredRoles={[UserRole.ROLE_CUSTOMER]}>
+          <ProtectedRoute
+            requiredRoles={[UserRole.ROLE_CUSTOMER, UserRole.ROLE_EMPLOYEE]}
+          >
             <UserTariff />
           </ProtectedRoute>
         ),

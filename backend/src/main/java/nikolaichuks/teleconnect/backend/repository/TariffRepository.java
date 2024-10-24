@@ -1,7 +1,6 @@
 package nikolaichuks.teleconnect.backend.repository;
 
 import nikolaichuks.teleconnect.backend.model.statistics.TariffAdjustmentsCount;
-import nikolaichuks.teleconnect.backend.model.statistics.TariffAgeGroupStatistics;
 import nikolaichuks.teleconnect.backend.model.tariff.Tariff;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -22,17 +21,4 @@ public interface TariffRepository extends JpaRepository<Tariff, Integer>, JpaSpe
             "GROUP BY t.name")
     List<TariffAdjustmentsCount> countTariffAdjustmentByTariff();
 
-    @Query(value = "SELECT t.name AS tariffName, " +
-            "CASE " +
-            "WHEN EXTRACT(YEAR FROM AGE(u.birth_date)) < 18 THEN 'Under 18' " +
-            "WHEN EXTRACT(YEAR FROM AGE(u.birth_date)) BETWEEN 18 AND 25 THEN '18-25' " +
-            "WHEN EXTRACT(YEAR FROM AGE(u.birth_date)) BETWEEN 26 AND 35 THEN '26-35' " +
-            "WHEN EXTRACT(YEAR FROM AGE(u.birth_date)) BETWEEN 36 AND 50 THEN '36-50' " +
-            "ELSE 'Above 50' END AS ageGroup, " +
-            "COUNT(u.id) AS userCount " +
-            "FROM users u " +
-            "JOIN tariff t ON u.tariff_id = t.id " +
-            "GROUP BY t.name, ageGroup",
-            nativeQuery = true)
-    List<TariffAgeGroupStatistics> getTariffAgeGroupStatistics();
 }

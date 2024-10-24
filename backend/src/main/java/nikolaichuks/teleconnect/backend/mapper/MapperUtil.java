@@ -1,5 +1,6 @@
 package nikolaichuks.teleconnect.backend.mapper;
 
+import nikolaichuks.teleconnect.backend.model.document.Documents;
 import nikolaichuks.teleconnect.backend.model.tariff.Tariff;
 import nikolaichuks.teleconnect.backend.model.tariff.TariffAdjustment;
 import nikolaichuks.teleconnect.backend.model.ticket.Ticket;
@@ -9,6 +10,7 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
+import teleconnect.document.model.DocumentFile;
 import teleconnect.tariff.model.TariffDTO;
 import teleconnect.tariffadjustment.model.TariffAdjustmentDTO;
 import teleconnect.ticket.model.TicketDto;
@@ -111,11 +113,16 @@ public class MapperUtil {
         ticket.setTitle(ticketDto.getTitle());
         ticket.setDescription(ticketDto.getDescription());
         ticket.setStatus(Ticket.Status.valueOf(ticketDto.getStatus()));
-        ticket.setResolution(ticketDto.getResolution());
+        ticket.setResolution(ticketDto.getResolution());;
         return ticket;
     }
 
     public TicketDto mapTicketToTicketDto(Ticket ticket) {
         return mapper.map(ticket, TicketDto.class);
     }
+
+    public DocumentFile mapDocumentToDocumentFile(Documents document) {
+        return mapper.map(document, DocumentFile.class);
+    }
+
 }

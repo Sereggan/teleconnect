@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import {
   FieldErrors,
@@ -17,9 +17,10 @@ interface FormTextareaProps {
   validation?: RegisterOptions<FieldValues, string> | undefined;
   disabled: boolean;
   rows?: number;
+  value?: string;
 }
 
-export const FormTextarea: React.FC<FormTextareaProps> = ({
+export const FormTextArea: React.FC<FormTextareaProps> = ({
   name,
   label,
   id,
@@ -27,10 +28,12 @@ export const FormTextarea: React.FC<FormTextareaProps> = ({
   validation,
   disabled,
   rows = 4,
+  value = "",
 }) => {
   const {
     register,
     formState: { errors },
+    setValue,
   } = useFormContext();
 
   const inputErrors: FieldErrors<FieldValues> = findInputError(errors, name);
@@ -40,6 +43,10 @@ export const FormTextarea: React.FC<FormTextareaProps> = ({
     inputErrors?.error?.message && typeof inputErrors.error.message === "string"
       ? inputErrors.error.message
       : null;
+
+  useEffect(() => {
+    setValue(name, value);
+  }, [value]);
 
   return (
     <Form.Group>

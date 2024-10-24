@@ -166,6 +166,10 @@ components:
         fileSize:
           type: integer
           description: File size in bytes
+        createdAt:
+            type: string
+            format: date-time
+            description: Date and time of the document upload
     DocumentListResponse:
       type: object
       properties:

@@ -7,7 +7,7 @@ import { TariffAdjustment } from "../../models/TariffAdjustment";
 import { useParams } from "react-router-dom";
 
 export default function UserTariff() {
-  const { userId } = useParams();
+  const { id } = useParams();
   const [tariff, setTariff] = useState<Tariff>();
   const [adjustment, setAdjustment] = useState<TariffAdjustment | undefined>();
   const [isLoading, setIsLoading] = useState(false);
@@ -39,33 +39,44 @@ export default function UserTariff() {
     };
 
     controllerRef.current = new AbortController();
-    if (userId) {
-      fetchTariffAndAdjustment(parseInt(userId), controllerRef.current);
+    if (id) {
+      fetchTariffAndAdjustment(parseInt(id), controllerRef.current);
     } else {
       setError("Could not fetch user.");
     }
 
     return () => controllerRef.current?.abort();
-  }, [userId]);
+  }, [id]);
 
   function getValue(
     tariffValue: string | number | undefined,
     adjustedValue: string | number | undefined,
     unit: string
   ) {
-    if (tariffValue === undefined && adjustedValue === undefined) {
-      return <p>Unlimited</p>;
-    } else if (tariffValue !== undefined) {
+    if (tariffValue && !adjustedValue) {
       return (
         <p>
           {tariffValue} {unit}
         </p>
       );
-    } else {
+    } else if (tariffValue && adjustedValue) {
       return (
         <p>
           <span className="text-muted text-decoration-line-through me-2">
             {tariffValue}
+          </span>
+          <span className="text-success fw-bold">
+            {adjustedValue} {unit}
+          </span>
+        </p>
+      );
+    } else if (!adjustedValue) {
+      return <p>Unlimited</p>;
+    } else {
+      return (
+        <p>
+          <span className="text-muted text-decoration-line-through me-2">
+            "Unlimited"
           </span>
           <span className="text-success fw-bold">
             {adjustedValue} {unit}

@@ -68,8 +68,6 @@ export default function UserManagement() {
 
     try {
       setError("");
-      console.log(filters);
-      console.log(filters.familyName);
       const { users, totalPages, currentPage } = await getAllUsers(
         {
           phoneNumber: filters.phoneNumber || undefined,
@@ -124,7 +122,11 @@ export default function UserManagement() {
           <h1>User Management</h1>
         </Col>
         <Col className="text-end">
-          <Button variant="success" onClick={() => nagivate("/users/add")}>
+          <Button
+            className="mt-3"
+            variant="success"
+            onClick={() => nagivate("/users/add")}
+          >
             Add New User
           </Button>
         </Col>
@@ -152,12 +154,6 @@ export default function UserManagement() {
             </Col>
           </Row>
           <Row>
-            <Col md={3}>
-              <FormInput {...roleValidation} />
-            </Col>
-            <Col md={3}>
-              <FormInput {...tariffIdValidation} />
-            </Col>
             <Col md={6}>
               <Button onClick={onSubmit} variant="primary" className="mt-3">
                 Search

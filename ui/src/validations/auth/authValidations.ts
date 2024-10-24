@@ -12,7 +12,7 @@ export const usernameValidation = {
         message: "Required",
       },
       value: 6,
-      message: "Must be longer than 6 characters",
+      message: "Must contain at least 6 characters",
     },
   },
 };

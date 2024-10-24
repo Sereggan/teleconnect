@@ -133,7 +133,7 @@ paths:
           required: false
           schema:
             type: string
-          description: The status to filter tickets by(New, InProgress, Resolver or Rejected)
+          description: The status to filter tickets by(New, InProgress or Resolver)
         - name: limit
           in: query
           required: false

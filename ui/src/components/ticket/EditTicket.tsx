@@ -16,12 +16,13 @@ import { Ticket } from "../../models/Ticket";
 import { getTicketById, updateTicket } from "../../clients/TicketClient";
 import {
   descriptionValidation,
+  idValidation,
   resoltuionValidation,
   ticketStatusValidation,
   titleValidation,
 } from "../../validations/modification/ticketValidation";
-import { FormTextarea } from "../common/FormTextArea";
 import { Link } from "react-router-dom";
+import { FormTextArea } from "../common/FormTextArea";
 
 export default function EditTicket() {
   const { id } = useParams<{ id: string }>();
@@ -70,8 +71,10 @@ export default function EditTicket() {
       await updateTicket(ticketFilter, controller);
       navigate("/tickets");
     } catch (error) {
-      console.log(error);
-      setError("Error updating ticket");
+      if (!controller.signal.aborted) {
+        console.log(error);
+        setError("Error updating ticket");
+      }
     } finally {
       setIsLoading(false);
       controller.abort();
@@ -94,7 +97,7 @@ export default function EditTicket() {
     <Nav.Link
       className="text-primary fw-bold"
       as={Link}
-      to={`/users/${ticket!.userId}`}
+      to={`/users/${ticket?.userId}`}
     >
       User
     </Nav.Link>
@@ -113,13 +116,25 @@ export default function EditTicket() {
             <Form.Text>Ticket for {ticketAuthor}</Form.Text>
             <Row>
               <Col md={6}>
-                <FormInput {...{ ...titleValidation, disabled: true }} />
+                <FormInput
+                  {...idValidation}
+                  value={ticket?.id ? ticket?.id : ""}
+                />
               </Col>
             </Row>
             <Row>
               <Col md={6}>
-                <FormTextarea
+                <FormInput
+                  {...{ ...titleValidation, disabled: true }}
+                  value={ticket?.title}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6}>
+                <FormTextArea
                   {...{ ...descriptionValidation, disabled: true }}
+                  value={ticket?.description}
                 />
               </Col>
             </Row>
@@ -133,7 +148,7 @@ export default function EditTicket() {
             </Row>
             <Row>
               <Col md={6}>
-                <FormTextarea {...{ ...resoltuionValidation }} />
+                <FormTextArea {...{ ...resoltuionValidation }} />
               </Col>
             </Row>
             <Button onClick={onSubmit} variant="primary" className="mt-3">

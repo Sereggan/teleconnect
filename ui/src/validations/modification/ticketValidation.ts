@@ -1,5 +1,20 @@
 import { TicketStatus } from "../../models/Ticket";
 
+export const idValidation = {
+  name: "id",
+  label: "Id",
+  type: "number",
+  id: "id",
+  placeholder: "",
+  disabled: true,
+  validation: {
+    min: {
+      value: 0,
+      message: "Ticket id must be a positive number",
+    },
+  },
+};
+
 export const titleValidation = {
   name: "title",
   label: "Ticket title",
@@ -20,9 +35,9 @@ export const titleValidation = {
 };
 
 export const descriptionValidation = {
-  name: "title",
+  name: "description",
   label: "Ticket description",
-  id: "title",
+  id: "description",
   placeholder: "",
   disabled: false,
   validation: {
@@ -42,10 +57,10 @@ export const descriptionValidation = {
 };
 
 export const ticketStatusValidation = {
-  name: "ticketStatus",
+  name: "status",
   label: "Status",
   type: "select",
-  id: "ticketStatus",
+  id: "status",
   validation: {
     required: {
       value: true,
@@ -65,10 +80,6 @@ export const ticketStatusValidation = {
     {
       value: TicketStatus.Resolved,
       label: "Resolved",
-    },
-    {
-      value: TicketStatus.Rejected,
-      label: "Rejected",
     },
   ],
 };

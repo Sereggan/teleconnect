@@ -104,6 +104,7 @@ export default function UserDocument() {
               <span className="text-muted ml-2">
                 ({formatFileSize(document.fileSize)})
               </span>
+              <span>{new Date(document.createdAt).toLocaleString()}</span>
               <Button variant="primary" onClick={() => downloadFile(document)}>
                 Download
               </Button>

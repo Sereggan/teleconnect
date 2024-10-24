@@ -2,6 +2,4 @@ spring:
   docker:
     compose:
       file: ./docker-compose-local.yml
-  sql:
-    init:
-      data-locations: classpath:db/data.sql
+      enabled: true

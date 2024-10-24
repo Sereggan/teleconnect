@@ -62,31 +62,28 @@ export default function TariffDetails() {
         <Card className="mb-3">
           <Card.Body>
             <Card.Title>Tariff Details</Card.Title>
-            <Card.Text>
-              <ListGroup>
-                <ListGroup.Item>Name: {tariff.name}</ListGroup.Item>
-                <ListGroup.Item>Price: {tariff.price} Euro</ListGroup.Item>
+
+            <ListGroup>
+              <ListGroup.Item>Name: {tariff.name}</ListGroup.Item>
+              <ListGroup.Item>Price: {tariff.price} Euro</ListGroup.Item>
+              <ListGroup.Item>Description: {tariff.description}</ListGroup.Item>
+              <ListGroup.Item>
+                Data Limit:{" "}
+                {tariff.dataLimit ? tariff.dataLimit + " GB" : "Unlimited"}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                Call Minutes:{" "}
+                {tariff.callMinutes ? tariff.callMinutes : "Unlimited"}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                SMS Limit: {tariff.smsLimit ? tariff.smsLimit : "Unlimited"}
+              </ListGroup.Item>
+              {userRole === UserRole.ROLE_EMPLOYEE && (
                 <ListGroup.Item>
-                  Description: {tariff.description}
+                  Active: {tariff.isActive ? "Yes" : "No"}
                 </ListGroup.Item>
-                <ListGroup.Item>
-                  Data Limit:{" "}
-                  {tariff.dataLimit ? tariff.dataLimit + " GB" : "Unlimited"}
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  Call Minutes:{" "}
-                  {tariff.callMinutes ? tariff.callMinutes : "Unlimited"}
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  SMS Limit: {tariff.smsLimit ? tariff.smsLimit : "Unlimited"}
-                </ListGroup.Item>
-                {userRole === UserRole.ROLE_EMPLOYEE && (
-                  <ListGroup.Item>
-                    Active: {tariff.isActive ? "Yes" : "No"}
-                  </ListGroup.Item>
-                )}
-              </ListGroup>
-            </Card.Text>
+              )}
+            </ListGroup>
           </Card.Body>
         </Card>
       )}

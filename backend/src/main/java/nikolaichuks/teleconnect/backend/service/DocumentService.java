@@ -3,6 +3,7 @@ package nikolaichuks.teleconnect.backend.service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import nikolaichuks.teleconnect.backend.exception.CustomRestException;
+import nikolaichuks.teleconnect.backend.mapper.MapperUtil;
 import nikolaichuks.teleconnect.backend.model.document.Documents;
 import nikolaichuks.teleconnect.backend.model.user.User;
 import nikolaichuks.teleconnect.backend.repository.DocumentsRepository;
@@ -26,7 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +38,7 @@ public class DocumentService {
     private final AuthUtil authUtil;
     private final UserRepository userRepository;
     private final DocumentsRepository documentsRepository;
+    private final MapperUtil mapperUtil;
 
     @Value("${document.filePath}")
     String basePath;
@@ -71,13 +73,7 @@ public class DocumentService {
 
     public DocumentListResponse getDocumentsList(String userId) {
         List<DocumentFile> documents = documentsRepository.findAllByUserId(Integer.parseInt(userId)).stream()
-                .map(userDocument -> {
-                    DocumentFile document = new DocumentFile();
-                    document.setDocumentId(userDocument.getDocumentId());
-                    document.setOriginalFileName(userDocument.getOriginalFileName());
-                    document.setFileSize(userDocument.getFileSize());
-                    return document;
-                })
+                .map(mapperUtil::mapDocumentToDocumentFile)
                 .toList();
         DocumentListResponse response = new DocumentListResponse();
         response.setFiles(documents);
@@ -109,7 +105,7 @@ public class DocumentService {
         Documents documents = Documents.builder()
                 .documentId(generatedFileName)
                 .originalFileName(fileName)
-                .creationTime(LocalDateTime.now())
+                .createdAt(OffsetDateTime.now())
                 .fileSize((int) file.getSize())
                 .user(user)
                 .build();

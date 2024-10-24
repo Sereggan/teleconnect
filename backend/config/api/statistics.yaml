@@ -61,34 +61,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
 
-  /statistics/tariff-age-group:
-    get:
-      summary: Get statistics on the relation between tariffs and age groups
-      operationId: getTariffAgeGroupStatistics
-      tags:
-        - statistics
-      responses:
-        '200':
-          description: Statistics on the relation between tariffs and age groups
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TariffAgeGroupStatisticsResponse'
-        '401':
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthError'
-        '403':
-          description: Forbidden, insufficient permissions
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenError'
-
   /statistics/tariff-adjustment-count:
     get:
       summary: Get number of adjustments by each tariff

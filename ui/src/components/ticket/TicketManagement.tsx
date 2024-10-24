@@ -37,9 +37,14 @@ export default function TicketManagment() {
   const methods = useForm<Filters>();
 
   useEffect(() => {
-    isMountedRef.current = true;
+    const controller = new AbortController();
+    fetchTickets(pagination.currentPage, controller, {
+      ...filters,
+      status: TicketStatus.New,
+    });
+
     return () => {
-      isMountedRef.current = false;
+      controller.abort();
     };
   }, []);
 
@@ -50,7 +55,7 @@ export default function TicketManagment() {
   ) => {
     setIsLoading(true);
     setError("");
-
+    console.log(status);
     try {
       const { tickets, totalPages, currentPage } = await getAllTickets(
         {
@@ -81,6 +86,7 @@ export default function TicketManagment() {
   const onSubmit = methods.handleSubmit((data: Filters) => {
     const controller = new AbortController();
     setFilters(data);
+    console.log(data);
     fetchTickets(0, controller, data);
     return () => {
       controller.abort();
@@ -91,15 +97,6 @@ export default function TicketManagment() {
     const controller = new AbortController();
     fetchTickets(page, controller, filters);
   };
-
-  useEffect(() => {
-    const controller = new AbortController();
-    fetchTickets(pagination.currentPage, controller, filters);
-
-    return () => {
-      controller.abort();
-    };
-  }, []);
 
   return (
     <Container>

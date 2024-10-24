@@ -5,7 +5,6 @@ import nikolaichuks.teleconnect.backend.repository.TariffRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import teleconnect.statistics.model.TariffAdjustmentCountResponse;
-import teleconnect.statistics.model.TariffAgeGroupStatisticsResponse;
 import teleconnect.statistics.model.UserByTariffResponse;
 import teleconnect.statistics.model.UsersWithoutTariffResponse;
 
@@ -42,18 +41,6 @@ public class StatisticsService {
                     return response;
                 })
                 .collect(Collectors.toList());
-    }
-
-    public List<TariffAgeGroupStatisticsResponse> getTariffAgeStatistics() {
-        return tariffRepository.getTariffAgeGroupStatistics().stream()
-                .map(tariff -> {
-                    TariffAgeGroupStatisticsResponse response = new TariffAgeGroupStatisticsResponse();
-                    response.setTariffName(tariff.getTariffName());
-                    response.setAgeGroup(tariff.getAgeGroup());
-                    response.setUserCount(tariff.getUserCount());
-                    return response;
-                })
-                .toList();
     }
 
 

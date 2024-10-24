@@ -76,7 +76,6 @@ export default function TariffManagement() {
     setError("");
 
     try {
-      console.log(filters.isActive);
       let isActiveFlag: boolean | undefined;
       if (userRole === UserRole.ROLE_CUSTOMER) {
         isActiveFlag = true;

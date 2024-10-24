@@ -48,7 +48,7 @@ export default function TariffCard({ tariff }: { tariff: Tariff }) {
 
           {userRole === UserRole.ROLE_EMPLOYEE && (
             <Button
-              className="mt-2"
+              className="mt-2 mx-2"
               variant="secondary"
               onClick={() => navigate(`/tariffs/${tariff.id}/edit`)}
             >

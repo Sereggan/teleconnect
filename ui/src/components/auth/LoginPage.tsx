@@ -9,6 +9,7 @@ import {
   passwordValidation,
   usernameValidation,
 } from "../../validations/auth/authValidations";
+import axios from "axios";
 
 interface LoginForm {
   username: string;
@@ -18,7 +19,8 @@ interface LoginForm {
 export default function LoginPage() {
   const methods = useForm<LoginForm>();
 
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string>("");
+  const [authError, setAuthError] = useState<string>("");
   const [isLoginDisabled, setIsLoginDisabled] = useState(false);
 
   const navigate = useNavigate();
@@ -30,6 +32,7 @@ export default function LoginPage() {
     const abortController = new AbortController();
     try {
       setError("");
+      setAuthError("");
       const { token, refreshToken, userId } = await signInUser(
         { username: loginDetails.username, password: loginDetails.password },
         abortController
@@ -39,7 +42,13 @@ export default function LoginPage() {
       localStorage.setItem("userId", userId);
       navigate("/");
     } catch (error) {
-      setError("Something went wrong during login, please try again later");
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          setAuthError("Provided credentials are wrong.");
+        }
+      } else {
+        setError("Something went wrong during login, please try again later");
+      }
     }
 
     return () => abortController.abort();
@@ -71,10 +80,12 @@ export default function LoginPage() {
           <Nav.Link as={Link} to="/resetPassword">
             Forgot password?
           </Nav.Link>
+          {authError && (
+            <p className="text-danger">Provided credentials are wrong.</p>
+          )}
           <Button
             onClick={handleLogin}
             variant="primary"
-            className="mt-3"
             disabled={isLoginDisabled}
           >
             Login

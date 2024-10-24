@@ -1,16 +1,6 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import { getUserById } from "../../clients/UserClient";
-import {
-  Container,
-  Spinner,
-  Alert,
-  Nav,
-  Card,
-  ListGroup,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { useParams } from "react-router-dom";
+import { Container, Spinner, Row, Col } from "react-bootstrap";
 import { Ticket } from "../../models/Ticket";
 import { getTicketsByUserId } from "../../clients/TicketClient";
 import TicketCard from "../ticket/TicketCard";
@@ -32,11 +22,8 @@ export default function UserTickets() {
             userId,
             abortController
           );
-          if (fetchedTickets) {
-            setTickets(fetchedTickets);
-          } else {
-            setTickets([]);
-          }
+          console.log(fetchedTickets);
+          setTickets(fetchedTickets ?? []);
         } catch (error) {
           if (!abortController.signal.aborted) {
             console.log(error);
@@ -68,19 +55,19 @@ export default function UserTickets() {
   return (
     <Container>
       <Row>
-        {tickets.length === 0 ? (
+        {!tickets && (
           <Col>
             <p>No tickets.</p>
           </Col>
-        ) : (
+        )}
+        {tickets &&
           tickets.map((ticket) => (
-            <Col key={ticket.id} md={4}>
+            <Row key={ticket.id} md={4}>
               <Col key={ticket.id} md={4}>
                 <TicketCard ticket={ticket} />
               </Col>
-            </Col>
-          ))
-        )}
+            </Row>
+          ))}
       </Row>
     </Container>
   );

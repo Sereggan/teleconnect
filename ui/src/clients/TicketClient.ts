@@ -72,5 +72,5 @@ export const getTicketsByUserId = async (
     `${basePath}${ticketEndpoint}/user/${userId}`,
     { signal: abortController.signal }
   );
-  return response.data;
+  return response.data.tickets;
 };

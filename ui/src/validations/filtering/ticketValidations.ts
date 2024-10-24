@@ -1,10 +1,10 @@
 import { TicketStatus } from "../../models/Ticket";
 
 export const ticketStatusValidation = {
-  name: "ticketStatus",
+  name: "status",
   label: "Status",
   type: "select",
-  id: "ticketStatus",
+  id: "status",
   validation: {},
   requirred: false,
   disabled: false,
@@ -20,10 +20,6 @@ export const ticketStatusValidation = {
     {
       value: TicketStatus.Resolved,
       label: "Resolved",
-    },
-    {
-      value: TicketStatus.Rejected,
-      label: "Rejected",
     },
   ],
 };

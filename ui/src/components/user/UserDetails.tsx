@@ -10,12 +10,14 @@ import {
   Card,
   ListGroup,
 } from "react-bootstrap";
+import { getUserRoleFromToken } from "../auth/AuthUtils";
 
 export default function UserDetails() {
   const { id } = useParams<{ id: string }>();
   const [user, setUser] = useState<User>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const currentUserRole: string | null = getUserRoleFromToken();
 
   useEffect(() => {
     const fetchUser = async (abortController: AbortController) => {
@@ -73,10 +75,10 @@ export default function UserDetails() {
             <ListGroup.Item>Phone Number: {user.phoneNumber}</ListGroup.Item>
             <ListGroup.Item>Email: {user.email}</ListGroup.Item>
             <ListGroup.Item>Birh date: {user.birthDate}</ListGroup.Item>
-            {user.role === UserRole.ROLE_EMPLOYEE && (
+            {currentUserRole === UserRole.ROLE_EMPLOYEE && (
               <ListGroup.Item>Role: {user.role}</ListGroup.Item>
             )}
-            {user.role === UserRole.ROLE_CUSTOMER && !user.tariffId && (
+            {currentUserRole === UserRole.ROLE_CUSTOMER && !user.tariffId && (
               <p>No active tariffs.</p>
             )}
             {user.tariffId && (
@@ -90,12 +92,12 @@ export default function UserDetails() {
                 </Nav.Link>
               </ListGroup.Item>
             )}
-            {user.role === UserRole.ROLE_EMPLOYEE && (
+            {currentUserRole === UserRole.ROLE_EMPLOYEE && (
               <ListGroup.Item>
                 <Nav.Link
                   className="text-primary fw-bold"
                   as={Link}
-                  to={`users/${user.id!}/edit/documents`}
+                  to={`/users/${user.id!}/edit/documents`}
                 >
                   Documents
                 </Nav.Link>

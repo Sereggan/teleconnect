@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS tariff CASCADE;
 DROP TABLE IF EXISTS token_blacklist CASCADE;
 DROP TABLE IF EXISTS tariff_adjustment CASCADE;
 DROP TABLE IF EXISTS password_reset_token CASCADE;
-DROP TABLE IF EXISTS user_documents CASCADE;
+DROP TABLE IF EXISTS documents CASCADE;
 DROP TABLE IF EXISTS tickets CASCADE;
 
 CREATE TABLE IF NOT EXISTS tariff (
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS tariff_adjustment (
     call_minutes INTEGER,
     sms_limit INTEGER,
     price NUMERIC(5, 2),
-    tariff_id INTEGER NOT NULL UNIQUE,
+    tariff_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL UNIQUE,
     CONSTRAINT fk_tariff FOREIGN KEY (tariff_id) REFERENCES tariff(id),
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS documents (
     id SERIAL PRIMARY KEY,
     document_id VARCHAR(100) NOT NULL,
     original_file_name VARCHAR(100) NOT NULL,
-    creation_time TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL,
     file_size INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
