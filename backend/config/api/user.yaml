@@ -225,17 +225,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/UserDto'
-        pagination:
-          type: object
-          properties:
-            currentPage:
-              type: integer
-            totalPages:
-              type: integer
-            totalItems:
-              type: integer
-            itemsOnPage:
-              type: integer
+        totalItems:
+          type: integer
+        totalPages:
+          type: integer
+        currentPage:
+          type: integer
+        itemsOnPage:
+          type: integer
+
     UserDto:
       type: object
       properties:

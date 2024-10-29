@@ -77,7 +77,7 @@ export default function TariffManagement() {
 
     try {
       let isActiveFlag: boolean | undefined;
-      if (userRole === UserRole.ROLE_CUSTOMER) {
+      if (!userRole || userRole === UserRole.ROLE_CUSTOMER) {
         isActiveFlag = true;
       } else if (filters.isActive === "" || filters.isActive === undefined) {
         isActiveFlag = undefined;
@@ -86,7 +86,7 @@ export default function TariffManagement() {
       }
 
       let isUsedFlag: boolean | undefined;
-      if (userRole === UserRole.ROLE_CUSTOMER) {
+      if (!userRole || userRole === UserRole.ROLE_CUSTOMER) {
         isUsedFlag = undefined;
       } else if (filters.isUsed === "" || filters.isUsed === undefined) {
         isUsedFlag = undefined;
@@ -222,22 +222,17 @@ export default function TariffManagement() {
             )}
           </Row>
 
-          {pagination.totalPages > 1 && (
-            <Pagination>
-              {[...Array(pagination.totalPages)].map(
-                (_, i) =>
-                  Math.abs(i - pagination.currentPage) <= 2 && (
-                    <Pagination.Item
-                      key={i}
-                      active={i === pagination.currentPage}
-                      onClick={() => handlePageChange(i)}
-                    >
-                      {i + 1}
-                    </Pagination.Item>
-                  )
-              )}
-            </Pagination>
-          )}
+          <Pagination>
+            {[...Array(pagination.totalPages)].map((_, i) => (
+              <Pagination.Item
+                key={i}
+                active={i === pagination.currentPage}
+                onClick={() => handlePageChange(i)}
+              >
+                {i + 1}
+              </Pagination.Item>
+            ))}
+          </Pagination>
         </>
       )}
     </Container>

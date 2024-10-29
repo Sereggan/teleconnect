@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import teleconnect.user.model.PaginatedUserResponse;
-import teleconnect.user.model.PaginatedUserResponsePagination;
 import teleconnect.user.model.UserDto;
 
 import java.util.List;
@@ -88,9 +87,10 @@ public class UserService {
 
         var response = new PaginatedUserResponse();
         response.setUsers(users);
-
-        var pagination = getPaginationResponse(offset, usersPage, users.size());
-        response.setPagination(pagination);
+        response.setTotalItems((int) usersPage.getTotalElements());
+        response.setTotalPages(usersPage.getTotalPages());
+        response.setCurrentPage(offset);
+        response.setItemsOnPage(users.size());
 
         return response;
     }
@@ -99,14 +99,4 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    private PaginatedUserResponsePagination getPaginationResponse(Integer offset, Page<User> usersPage, Integer numberOfItems) {
-        var pagination = new PaginatedUserResponsePagination();
-
-        pagination.setTotalItems((int) usersPage.getTotalElements());
-        pagination.setTotalPages(usersPage.getTotalPages());
-        pagination.setCurrentPage(offset);
-        pagination.setItemsOnPage(numberOfItems);
-
-        return pagination;
-    }
 }

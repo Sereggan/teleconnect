@@ -55,9 +55,13 @@ function Header() {
             </Nav.Link>
           )}
           {userRole && (
-            <NavDropdown title="Me" id="basic-nav-dropdown">
+            <NavDropdown
+              className="ms-auto"
+              title={email ? email : "Me"}
+              id="basic-nav-dropdown"
+            >
               <NavDropdown.Item as={Link} to={`users/${userId}`}>
-                {email ? email : "My info"}
+                My information
               </NavDropdown.Item>
               {userRole === UserRole.ROLE_CUSTOMER && (
                 <>
@@ -75,17 +79,17 @@ function Header() {
                   </NavDropdown.Item>
                 </>
               )}
+              {userRole && (
+                <NavDropdown.Item as="button" onClick={handleLogout}>
+                  Logout
+                </NavDropdown.Item>
+              )}
             </NavDropdown>
           )}
           {!userRole && (
             <Nav.Link className="ms-auto" as={Link} to="/login">
               Login
             </Nav.Link>
-          )}
-          {userRole && (
-            <Button className="ms-auto" onClick={handleLogout}>
-              Logout
-            </Button>
           )}
         </Nav>
       </Container>

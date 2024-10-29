@@ -122,6 +122,7 @@ export default function EditUser() {
             label: `${tariff.name} - $${tariff.price}`,
           }))
       );
+      console.log(tariffOptions);
     }
   }, [tariffs]);
 
@@ -217,7 +218,7 @@ export default function EditUser() {
     input: string
   ) => {
     if (input) {
-      return candidate.value === input;
+      return candidate.label.toLowerCase().includes(input.toLowerCase());
     } else {
       return true;
     }

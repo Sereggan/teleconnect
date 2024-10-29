@@ -60,7 +60,7 @@ export default function NewTicket() {
 
           <Row>
             <Button onClick={onSubmit} variant="primary" className="mt-3">
-              Create Tariff
+              Create Ticket
             </Button>
           </Row>
         </Form>
