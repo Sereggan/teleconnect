@@ -22,7 +22,45 @@ export const passwordValidation = {
   label: "Password",
   type: "password",
   id: "password",
-  placeholder: "Password",
+  placeholder: "",
+  disabled: false,
+  validation: {
+    required: {
+      value: true,
+      message: "Password is required",
+    },
+    minLength: {
+      value: 6,
+      message: "Password must be at least 6 characters long",
+    },
+  },
+};
+
+export const newPasswordValidation = {
+  name: "newPassword",
+  label: "New password",
+  type: "password",
+  id: "newPassword",
+  placeholder: "",
+  disabled: false,
+  validation: {
+    required: {
+      value: true,
+      message: "Password is required",
+    },
+    minLength: {
+      value: 6,
+      message: "Password must be at least 6 characters long",
+    },
+  },
+};
+
+export const verifyPasswordValidation = {
+  name: "verifyPassword",
+  label: "VerifyPassword",
+  type: "password",
+  id: "verify Password",
+  placeholder: "",
   disabled: false,
   validation: {
     required: {
@@ -77,11 +115,11 @@ export const codeValidation = {
     },
     minLength: {
       value: 6,
-      message: "Email must be 6 digits long",
+      message: "Code must be 6 digits long",
     },
     maxLength: {
       value: 6,
-      message: "Email must be 6 digits long",
+      message: "Code must be 6 digits long",
     },
   },
 };

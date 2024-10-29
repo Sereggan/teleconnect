@@ -14,7 +14,7 @@ import {
   getTariffAdjustmentByUserId,
   updateTariffAdjustment,
 } from "../../clients/TariffAdjustmentClient";
-import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
+import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { getTariffByUserId } from "../../clients/TariffClient";
@@ -175,88 +175,94 @@ export default function EditUserTariffAdjustment() {
   }
 
   return (
-    <FormProvider {...methods}>
-      <Form onSubmit={(e) => e.preventDefault()} noValidate autoComplete="off">
-        <h3>Tariff Adjustments</h3>
-        {tariffAdjustment?.id && (
+    <Container>
+      <FormProvider {...methods}>
+        <Form
+          onSubmit={(e) => e.preventDefault()}
+          noValidate
+          autoComplete="off"
+        >
+          <h3>Tariff Adjustments</h3>
+          {tariffAdjustment?.id && (
+            <Row>
+              <Col md={6}>
+                <FormInput
+                  {...idValidation}
+                  value={tariffAdjustment?.id ? tariffAdjustment.id : ""}
+                />
+              </Col>
+            </Row>
+          )}
           <Row>
             <Col md={6}>
+              <Form.Text>Tariff default price: {tariff?.price}</Form.Text>
               <FormInput
-                {...idValidation}
-                value={tariffAdjustment?.id ? tariffAdjustment.id : ""}
+                {...priceValidation}
+                value={
+                  tariffAdjustment?.price ? tariffAdjustment?.price : undefined
+                }
               />
             </Col>
           </Row>
-        )}
-        <Row>
-          <Col md={6}>
-            <Form.Text>Tariff default price: {tariff?.price}</Form.Text>
-            <FormInput
-              {...priceValidation}
-              value={
-                tariffAdjustment?.price ? tariffAdjustment?.price : undefined
-              }
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col md={6}>
-            <Form.Text>
-              Tariff default data limit:
-              {tariff?.dataLimit ? tariff.dataLimit : "Unlimited"}
-            </Form.Text>
-            <FormInput
-              {...dataLimitValidation}
-              value={
-                tariffAdjustment?.dataLimit
-                  ? tariffAdjustment?.dataLimit
-                  : undefined
-              }
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col md={6}>
-            Tariff default SMS limit:
-            {tariff?.smsLimit ? tariff!.smsLimit : "Unlimited"}
-            <FormInput
-              {...smsLimitValidation}
-              value={
-                tariffAdjustment?.smsLimit
-                  ? tariffAdjustment?.smsLimit
-                  : undefined
-              }
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col md={6}>
-            Tariff default call minutes limit:{" "}
-            {tariff?.callMinutes ? tariff?.callMinutes : "Unlimited"}
-            <FormInput
-              {...callMinutesValidation}
-              value={
-                tariffAdjustment?.callMinutes
-                  ? tariffAdjustment?.callMinutes
-                  : undefined
-              }
-            />
-          </Col>
-        </Row>
-        <Button onClick={onSubmit} variant="primary" className="mt-3">
-          Update Tariff Adjustment
-        </Button>
-        {tariffAdjustment?.id && (
-          <Button
-            variant="danger"
-            type="button"
-            onClick={handleDelete}
-            className="mt-3 ms-2"
-          >
-            Delete Tariff Adjustment
+          <Row>
+            <Col md={6}>
+              <Form.Text>
+                Tariff default data limit:
+                {tariff?.dataLimit ? tariff.dataLimit : "Unlimited"}
+              </Form.Text>
+              <FormInput
+                {...dataLimitValidation}
+                value={
+                  tariffAdjustment?.dataLimit
+                    ? tariffAdjustment?.dataLimit
+                    : undefined
+                }
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+              Tariff default SMS limit:
+              {tariff?.smsLimit ? tariff!.smsLimit : "Unlimited"}
+              <FormInput
+                {...smsLimitValidation}
+                value={
+                  tariffAdjustment?.smsLimit
+                    ? tariffAdjustment?.smsLimit
+                    : undefined
+                }
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+              Tariff default call minutes limit:{" "}
+              {tariff?.callMinutes ? tariff?.callMinutes : "Unlimited"}
+              <FormInput
+                {...callMinutesValidation}
+                value={
+                  tariffAdjustment?.callMinutes
+                    ? tariffAdjustment?.callMinutes
+                    : undefined
+                }
+              />
+            </Col>
+          </Row>
+          <Button onClick={onSubmit} variant="primary" className="mt-3">
+            Update Tariff Adjustment
           </Button>
-        )}
-      </Form>
-    </FormProvider>
+          {tariffAdjustment?.id && (
+            <Button
+              variant="danger"
+              type="button"
+              onClick={handleDelete}
+              className="mt-3 ms-2"
+            >
+              Delete Tariff Adjustment
+            </Button>
+          )}
+        </Form>
+      </FormProvider>
+    </Container>
   );
 }

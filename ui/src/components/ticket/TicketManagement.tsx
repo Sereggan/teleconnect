@@ -111,9 +111,13 @@ export default function TicketManagment() {
             <Col md={3}>
               <FormSelect {...ticketStatusValidation} />
             </Col>
-            <Button onClick={onSubmit} variant="primary" className="mt-3">
-              Search Tickets
-            </Button>
+          </Row>
+          <Row>
+            <Col md={3}>
+              <Button onClick={onSubmit} variant="primary" className="mt-3">
+                Search Tickets
+              </Button>
+            </Col>
           </Row>
         </Form>
       </FormProvider>
@@ -135,22 +139,20 @@ export default function TicketManagment() {
             )}
           </Row>
 
-          {pagination.totalPages > 1 && (
-            <Pagination>
-              {[...Array(pagination.totalPages)].map(
-                (_, i) =>
-                  Math.abs(i - pagination.currentPage) <= 2 && (
-                    <Pagination.Item
-                      key={i}
-                      active={i === pagination.currentPage}
-                      onClick={() => handlePageChange(i)}
-                    >
-                      {i + 1}
-                    </Pagination.Item>
-                  )
-              )}
-            </Pagination>
-          )}
+          <Pagination>
+            {[...Array(pagination.totalPages)].map(
+              (_, i) =>
+                Math.abs(i - pagination.currentPage) <= 2 && (
+                  <Pagination.Item
+                    key={i}
+                    active={i === pagination.currentPage}
+                    onClick={() => handlePageChange(i)}
+                  >
+                    {i + 1}
+                  </Pagination.Item>
+                )
+            )}
+          </Pagination>
         </>
       )}
     </Container>

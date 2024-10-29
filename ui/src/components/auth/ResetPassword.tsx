@@ -11,8 +11,11 @@ import { FormInput } from "../common/FormInput";
 import {
   codeValidation,
   emailValidation,
-  passwordValidation,
+  newPasswordValidation,
+  restPasswordValidation,
+  verifyPasswordValidation,
 } from "../../validations/auth/authValidations";
+import axios from "axios";
 
 interface SendCodeForm {
   email: string;
@@ -23,7 +26,7 @@ interface ValidateCodeForm {
 }
 
 interface PasswordResetForm {
-  password: string;
+  newPassword: string;
   verifyPassword: string;
 }
 
@@ -38,6 +41,7 @@ export default function ResetPassword() {
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
+  const [validateCodeError, setValidateCodeError] = useState("");
   const [resetPasswordError, setResetPasswordError] = useState("");
 
   const navigate = useNavigate();
@@ -46,12 +50,15 @@ export default function ResetPassword() {
     async ({ email }: SendCodeForm) => {
       setIsSendCodeDisabled(true);
       setTimeout(() => setIsSendCodeDisabled(false), 30_000);
+
       const abortController = new AbortController();
       try {
-        await sendResetPasswordMail(email, abortController);
+        sendResetPasswordMail(email, abortController);
         setEmail(email);
       } catch (err) {
-        console.log(err);
+        if (!abortController.signal.aborted) {
+          console.log(err);
+        }
       }
 
       setIsCodeSent(true);
@@ -63,41 +70,59 @@ export default function ResetPassword() {
   const validateCode = validateCodeMethods.handleSubmit(
     async ({ code }: ValidateCodeForm) => {
       setIsValidateCodeDisabled(true);
+      setValidateCodeError("");
       setTimeout(() => setIsValidateCodeDisabled(false), 30_000);
 
       const abortController = new AbortController();
-
-      validateResetPasswordCode(email, code, abortController).then((val) => {
-        if (val) {
-          setToken(val?.resetToken);
+      try {
+        const response = await validateResetPasswordCode(
+          email,
+          code,
+          abortController
+        );
+        if (response?.resetToken) {
+          setToken(response.resetToken);
         }
-      });
+      } catch (err) {
+        if (!abortController.signal.aborted) {
+          console.log(err);
+          if (axios.isAxiosError(err)) {
+            if (err.response?.data.message === "Invalid code") {
+              setValidateCodeError(
+                "Code is invalid. Please try againa fter timeout."
+              );
+            }
+          }
+        }
+      }
+
       abortController.abort();
     }
   );
 
   const handleResetPassword = resetPasswordMethod.handleSubmit(
-    async ({ password, verifyPassword }: PasswordResetForm) => {
+    async ({ newPassword, verifyPassword }: PasswordResetForm) => {
+      console.log("adsdas");
+      console.log(newPassword, verifyPassword);
       setResetPasswordError("");
-      if (password !== verifyPassword) {
+      if (newPassword !== verifyPassword) {
         resetPasswordMethod.setError("verifyPassword", {
           type: "manual",
           message: "Password must match",
         });
-        resetPasswordMethod.resetField("verifyPassword");
         return;
       }
       const abortController = new AbortController();
 
-      resetPassword(token, password, abortController)
-        .then(() => {
-          navigate("/");
-        })
-        .catch((err) => {
+      try {
+        await resetPassword(token, newPassword, abortController);
+        navigate("/");
+      } catch (err) {
+        if (!abortController.signal.aborted) {
           console.log(err);
           setResetPasswordError("Could not reset password.");
-        });
-
+        }
+      }
       abortController.abort();
     }
   );
@@ -114,17 +139,12 @@ export default function ResetPassword() {
           >
             <Row>
               <Col md={6}>
-                <FormInput {...passwordValidation} />
+                <FormInput {...newPasswordValidation} />
               </Col>
             </Row>
             <Row>
               <Col md={6}>
-                <FormInput
-                  {...{
-                    ...passwordValidation,
-                    label: "Verify password",
-                  }}
-                />
+                <FormInput {...verifyPasswordValidation} />
               </Col>
             </Row>
 
@@ -165,7 +185,7 @@ export default function ResetPassword() {
               className="mt-3"
               disabled={isSendCodeDisabled}
             >
-              Send verification code
+              Send code
             </Button>
           </Form>
         </FormProvider>
@@ -196,6 +216,11 @@ export default function ResetPassword() {
               >
                 Validate code
               </Button>
+              {validateCodeError && (
+                <p className="text-danger">
+                  Code is invalid. Try again after timeout.
+                </p>
+              )}
             </Form>
           </FormProvider>
         )}

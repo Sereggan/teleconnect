@@ -194,7 +194,7 @@ export default function EditTariff() {
             {tariff && (
               <Row>
                 <Col md={6}>
-                  <p>Tariff is used by users: {tariff.isUsed}</p>
+                  <p>Tariff is {!tariff.isUsed && "not"} used by users</p>
                 </Col>
               </Row>
             )}

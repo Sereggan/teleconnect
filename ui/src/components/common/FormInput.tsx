@@ -58,6 +58,7 @@ export const FormInput: React.FC<FormInputProps> = ({
         {...register(name, validation)}
         isInvalid={isInvalid}
         disabled={disabled}
+        defaultValue={value}
       />
       {inputErrors && (
         <Form.Control.Feedback type="invalid">
