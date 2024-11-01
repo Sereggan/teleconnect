@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 import nikolaichuks.teleconnect.backend.model.tariff.Tariff;
 import nikolaichuks.teleconnect.backend.model.tariff.TariffAdjustment;
@@ -24,6 +21,7 @@ import java.util.List;
 @Data
 @Entity
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")

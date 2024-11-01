@@ -61,11 +61,12 @@ CREATE TABLE password_reset_token (
 
 CREATE TABLE IF NOT EXISTS documents (
     id SERIAL PRIMARY KEY,
-    document_id VARCHAR(100) NOT NULL,
-    original_file_name VARCHAR(100) NOT NULL,
+    document_id VARCHAR(101) NOT NULL,
+    original_file_name VARCHAR(200) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     file_size INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
+    data BYTEA NOT NULL,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
     );
 

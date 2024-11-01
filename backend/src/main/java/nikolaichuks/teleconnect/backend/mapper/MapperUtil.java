@@ -25,6 +25,7 @@ public class MapperUtil {
     ModelMapper mapper = new ModelMapper();
 
     public MapperUtil() {
+        mapper.getConfiguration().setSkipNullEnabled(true);
         Converter<UserRole, String> userRoleToStringConverter = context -> context.getSource().getName();
         Converter<String, UserRole> userRoleConverter = context -> UserRole.fromString(context.getSource());
 

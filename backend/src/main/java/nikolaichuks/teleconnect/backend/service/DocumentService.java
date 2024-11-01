@@ -9,24 +9,16 @@ import nikolaichuks.teleconnect.backend.model.user.User;
 import nikolaichuks.teleconnect.backend.repository.DocumentsRepository;
 import nikolaichuks.teleconnect.backend.repository.UserRepository;
 import nikolaichuks.teleconnect.backend.util.AuthUtil;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import teleconnect.document.model.DocumentFile;
 import teleconnect.document.model.DocumentListResponse;
 import teleconnect.document.model.UploadDocumentResponse;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -40,35 +32,17 @@ public class DocumentService {
     private final DocumentsRepository documentsRepository;
     private final MapperUtil mapperUtil;
 
-    @Value("${document.filePath}")
-    String basePath;
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024;  // 10 MB
 
     public Resource downloadDocument(String id) {
-        documentsRepository.findByDocumentId(id)
-                .ifPresentOrElse(userDocument -> {
-                    if (!authUtil.hasEmployeeRoleOrEqualToUserId(userDocument.getUser().getId().toString())) {
-                        throw new CustomRestException("Access denied", HttpStatus.FORBIDDEN);
-                    }
-                }, () -> {
-                    throw new CustomRestException("Document not found: " + id, HttpStatus.NOT_FOUND);
-                });
-        try {
-            Path filePath = Paths.get(basePath).toAbsolutePath().normalize().resolve(id).normalize();
+        Documents document = documentsRepository.findByDocumentId(id)
+                .orElseThrow(() -> new CustomRestException("Document not found: " + id, HttpStatus.NOT_FOUND));
 
-            if (!Files.exists(filePath)) {
-                throw new CustomRestException("Document not found: " + id, HttpStatus.NOT_FOUND);
-            }
-
-            Resource resource = new UrlResource(filePath.toUri());
-            if (resource.exists()) {
-                return resource;
-            } else {
-                throw new CustomRestException("Resource not found: " + id, HttpStatus.NOT_FOUND);
-            }
-        } catch (MalformedURLException ex) {
-            throw new CustomRestException("Error while reading document: " + id, HttpStatus.INTERNAL_SERVER_ERROR);
+        if (!authUtil.hasEmployeeRoleOrEqualToUserId(document.getUser().getId().toString())) {
+            throw new CustomRestException("Access denied", HttpStatus.FORBIDDEN);
         }
+
+        return new ByteArrayResource(document.getData());
     }
 
     public DocumentListResponse getDocumentsList(String userId) {
@@ -80,8 +54,39 @@ public class DocumentService {
         return response;
     }
 
-    @Transactional
     public UploadDocumentResponse uploadFile(@Valid String fileName, MultipartFile file, @Valid Integer userId) {
+        validateFile(fileName, file);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomRestException("User not found: " + userId, HttpStatus.NOT_FOUND));
+        String generatedFileName = UUID.randomUUID() + "_" + sanitizeFileName(fileName);
+        try {
+            Documents document = Documents.builder()
+                    .documentId(generatedFileName)
+                    .originalFileName(fileName)
+                    .createdAt(OffsetDateTime.now())
+                    .fileSize((int) file.getSize())
+                    .user(user)
+                    .data(file.getBytes())
+                    .build();
+            documentsRepository.save(document);
+
+            UploadDocumentResponse response = new UploadDocumentResponse();
+            response.setDocumentId(generatedFileName);
+            return response;
+        } catch (IOException e) {
+            throw new CustomRestException("Could not store file: " + userId, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public void deleteDocument(String id) {
+        documentsRepository.findByDocumentId(id)
+                .ifPresentOrElse(documentsRepository::delete, () -> {
+                    throw new CustomRestException("Document not found: " + id, HttpStatus.NOT_FOUND);
+                });
+    }
+
+    private void validateFile(String fileName, MultipartFile file) {
         if (file.isEmpty()) {
             throw new CustomRestException("File is empty", HttpStatus.BAD_REQUEST);
         }
@@ -97,45 +102,6 @@ public class DocumentService {
         String fileExtension = getFileExtension(fileName);
         if (!isAllowedExtension(fileExtension)) {
             throw new CustomRestException("File type is not supported. Only .doc, .docx, and .pdf are allowed.", HttpStatus.BAD_REQUEST);
-        }
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomRestException("User not found: " + userId, HttpStatus.NOT_FOUND));
-        String generatedFileName = UUID.randomUUID() + "_" + sanitizeFileName(fileName);
-        Documents documents = Documents.builder()
-                .documentId(generatedFileName)
-                .originalFileName(fileName)
-                .createdAt(OffsetDateTime.now())
-                .fileSize((int) file.getSize())
-                .user(user)
-                .build();
-
-        Path path = Paths.get(basePath, generatedFileName);
-        try (InputStream inputStream = file.getInputStream()) {
-            Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
-
-            documentsRepository.save(documents);
-
-            UploadDocumentResponse response = new UploadDocumentResponse();
-            response.setDocumentId(generatedFileName);
-            return response;
-        } catch (Exception e) {
-            throw new CustomRestException("Error while saving document: " + generatedFileName, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Transactional
-    public void deleteDocument(String id) {
-        Path path = Paths.get(basePath, id);
-        try {
-            if (Files.exists(path)) {
-                Files.delete(path);
-                documentsRepository.deleteByDocumentId(id);
-            } else {
-                throw new CustomRestException("File not found: " + id, HttpStatus.NOT_FOUND);
-            }
-        } catch (IOException e) {
-            throw new CustomRestException("Error deleting file: " + id, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

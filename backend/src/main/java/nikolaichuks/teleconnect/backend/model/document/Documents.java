@@ -2,10 +2,7 @@ package nikolaichuks.teleconnect.backend.model.document;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import nikolaichuks.teleconnect.backend.model.user.User;
 
 import java.time.OffsetDateTime;
@@ -16,6 +13,7 @@ import java.time.OffsetDateTime;
 @Data
 @Entity
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "documents")
@@ -28,6 +26,8 @@ public class Documents {
     private String originalFileName;
     private OffsetDateTime createdAt;
     private Integer fileSize;
+    @Column(name = "data", columnDefinition="bytea")
+    private byte[] data;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

@@ -44,6 +44,3 @@ security:
     expiration-time: 36000000
     refresh-expiration-time: 86400000
     reset-password-expiration-time: 360000
-
-document:
-  filePath: src/main/resources/static/documents
