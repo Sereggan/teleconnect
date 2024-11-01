@@ -42,7 +42,7 @@ export default function EditUserDocuments() {
         } catch (error) {
           if (!controller.signal.aborted) {
             console.log(error);
-            setError("Error fetching documents");
+            setError("Error during loading documents");
           }
         } finally {
           setIsLoading(false);
@@ -105,18 +105,23 @@ export default function EditUserDocuments() {
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setSelectedFileInvalid("");
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       const maxFileSize = 10 * 1024 * 1024;
       const fileExtension = file.name.split(".").pop()?.toLowerCase();
       const validExtensions = ["doc", "docx", "pdf"];
-
       if (file.size > maxFileSize) {
         setSelectedFileInvalid("Maxim allowed file size in 10 MB.");
         return;
       } else if (!fileExtension || !validExtensions.includes(fileExtension)) {
         setSelectedFileInvalid(
           "Invalid file format. Only .doc, .docx, and .pdf are allowed."
+        );
+        return;
+      } else if (file.name.length > 250) {
+        setSelectedFileInvalid(
+          "File's name is too long. Maximum length is 250 characters."
         );
         return;
       }
@@ -145,7 +150,7 @@ export default function EditUserDocuments() {
         );
         setDocuments(updatedDocuments.files);
       } catch (error) {
-        setError("Error uploading the document");
+        setError("Error during uploading the document");
       } finally {
         setIsLoading(false);
       }
@@ -168,12 +173,6 @@ export default function EditUserDocuments() {
     <div className="d-flex justify-content-center my-4">
       <Spinner animation="border" />;
     </div>;
-  }
-
-  if (error) {
-    return (
-      <Alert variant="danger">Something went wrong during download.</Alert>
-    );
   }
 
   return (
@@ -236,6 +235,7 @@ export default function EditUserDocuments() {
           </Row>
         )}
       </Container>
+      {error && <Alert variant="danger">{error}</Alert>}
     </Container>
   );
 }

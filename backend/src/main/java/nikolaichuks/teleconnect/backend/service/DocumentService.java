@@ -59,11 +59,12 @@ public class DocumentService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomRestException("User not found: " + userId, HttpStatus.NOT_FOUND));
-        String generatedFileName = UUID.randomUUID() + "_" + sanitizeFileName(fileName);
+        String sanitizedFileName = sanitizeFileName(fileName);
+        String generatedFileName = UUID.randomUUID() + "_" + sanitizedFileName;
         try {
             Documents document = Documents.builder()
                     .documentId(generatedFileName)
-                    .originalFileName(fileName)
+                    .originalFileName(sanitizedFileName)
                     .createdAt(OffsetDateTime.now())
                     .fileSize((int) file.getSize())
                     .user(user)
@@ -103,10 +104,14 @@ public class DocumentService {
         if (!isAllowedExtension(fileExtension)) {
             throw new CustomRestException("File type is not supported. Only .doc, .docx, and .pdf are allowed.", HttpStatus.BAD_REQUEST);
         }
+
+        if(fileName.length()>250){
+            throw new CustomRestException("Filename is too long. Maximum length is 250 characters.", HttpStatus.BAD_REQUEST);
+        }
     }
 
     private String sanitizeFileName(String fileName) {
-        return fileName.replaceAll("[^a-zA-Z0-9\\._-]", "_");
+        return fileName.replaceAll("[^\\p{L}\\p{N}._-]", "_");
     }
 
     private boolean isAllowedExtension(String fileExtension) {

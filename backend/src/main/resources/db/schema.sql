@@ -61,8 +61,8 @@ CREATE TABLE password_reset_token (
 
 CREATE TABLE IF NOT EXISTS documents (
     id SERIAL PRIMARY KEY,
-    document_id VARCHAR(101) NOT NULL,
-    original_file_name VARCHAR(200) NOT NULL,
+    document_id VARCHAR(300) NOT NULL,
+    original_file_name VARCHAR(300) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     file_size INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
