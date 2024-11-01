@@ -51,7 +51,6 @@ const createAxiosClient = (baseURL: string): AxiosInstance => {
           } catch (refreshError) {
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
-            window.location.href = "/";
           }
         }
       }

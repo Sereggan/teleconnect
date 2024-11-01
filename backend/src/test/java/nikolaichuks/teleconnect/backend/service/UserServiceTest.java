@@ -224,10 +224,11 @@ class UserServiceTest {
 
         assertThat(result).isNotNull();
         assertThat(result.getUsers()).contains(userDto);
-        assertThat(result.getPagination().getTotalItems()).isEqualTo(1);
-        assertThat(result.getPagination().getTotalPages()).isEqualTo(1);
-        assertThat(result.getPagination().getCurrentPage()).isEqualTo(offset);
-        assertThat(result.getPagination().getItemsOnPage()).isEqualTo(1);
+        assertThat(result.getTotalItems()).isEqualTo(1);
+
+        assertThat(result.getTotalPages()).isEqualTo(1);
+        assertThat(result.getCurrentPage()).isEqualTo(offset);
+        assertThat(result.getItemsOnPage()).isEqualTo(1);
     }
 
 

@@ -33,13 +33,12 @@ export default function LoginPage() {
     try {
       setError("");
       setAuthError("");
-      const { token, refreshToken, userId } = await signInUser(
+      const { token, refreshToken } = await signInUser(
         { username: loginDetails.username, password: loginDetails.password },
         abortController
       );
       localStorage.setItem("accessToken", token);
       localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("userId", userId);
       navigate("/");
     } catch (error) {
       if (axios.isAxiosError(error)) {

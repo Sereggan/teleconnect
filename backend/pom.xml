@@ -129,7 +129,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/config/api/tariff.yaml</inputSpec>
+                            <inputSpec>src/main/resources/api/tariff.yaml</inputSpec>
                             <output>${project.build.directory}/generated-sources</output>
                             <generatorName>spring</generatorName>
                             <apiPackage>teleconnect.tariff.api</apiPackage>
@@ -148,7 +148,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/config/api/user.yaml</inputSpec>
+                            <inputSpec>src/main/resources/api/user.yaml</inputSpec>
                             <output>${project.build.directory}/generated-sources</output>
                             <generatorName>spring</generatorName>
                             <apiPackage>teleconnect.user.api</apiPackage>
@@ -167,7 +167,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/config/api/auth.yaml</inputSpec>
+                            <inputSpec>src/main/resources/api/auth.yaml</inputSpec>
                             <output>${project.build.directory}/generated-sources</output>
                             <generatorName>spring</generatorName>
                             <apiPackage>teleconnect.auth.api</apiPackage>
@@ -185,7 +185,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/config/api/tariff-adjustment.yaml</inputSpec>
+                            <inputSpec>src/main/resources/api/tariff-adjustment.yaml</inputSpec>
                             <output>${project.build.directory}/generated-sources</output>
                             <generatorName>spring</generatorName>
                             <apiPackage>teleconnect.tariffadjustment.api</apiPackage>
@@ -203,7 +203,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/config/api/statistics.yaml</inputSpec>
+                            <inputSpec>src/main/resources/api/statistics.yaml</inputSpec>
                             <output>${project.build.directory}/generated-sources</output>
                             <generatorName>spring</generatorName>
                             <apiPackage>teleconnect.statistics.api</apiPackage>
@@ -221,7 +221,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/config/api/document.yaml</inputSpec>
+                            <inputSpec>src/main/resources/api/document.yaml</inputSpec>
                             <output>${project.build.directory}/generated-sources</output>
                             <generatorName>spring</generatorName>
                             <apiPackage>teleconnect.document.api</apiPackage>
@@ -239,7 +239,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/config/api/ticket.yaml</inputSpec>
+                            <inputSpec>src/main/resources/api/ticket.yaml</inputSpec>
                             <output>${project.build.directory}/generated-sources</output>
                             <generatorName>spring</generatorName>
                             <apiPackage>teleconnect.ticket.api</apiPackage>
