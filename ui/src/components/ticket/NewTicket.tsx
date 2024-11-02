@@ -10,7 +10,7 @@ import {
   titleValidation,
 } from "../../validations/modification/ticketValidation";
 import { getUserIdFromToken } from "../auth/AuthUtils";
-import { FormTextArea } from "../common/FormTextArea";
+import { FormTextarea } from "../common/FormTextarea";
 
 export default function NewTicket() {
   const methods = useForm<Ticket>();
@@ -54,7 +54,7 @@ export default function NewTicket() {
 
           <Row>
             <Col md={9}>
-              <FormTextArea {...descriptionValidation} />
+              <FormTextarea {...descriptionValidation} />
             </Col>
           </Row>
 

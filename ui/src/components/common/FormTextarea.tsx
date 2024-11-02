@@ -20,7 +20,7 @@ interface FormTextareaProps {
   value?: string;
 }
 
-export const FormTextArea: React.FC<FormTextareaProps> = ({
+export const FormTextarea: React.FC<FormTextareaProps> = ({
   name,
   label,
   id,

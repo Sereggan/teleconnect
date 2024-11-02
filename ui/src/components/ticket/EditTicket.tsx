@@ -22,7 +22,7 @@ import {
   titleValidation,
 } from "../../validations/modification/ticketValidation";
 import { Link } from "react-router-dom";
-import { FormTextArea } from "../common/FormTextArea";
+import { FormTextarea } from "../common/FormTextarea";
 
 export default function EditTicket() {
   const { id } = useParams<{ id: string }>();
@@ -132,7 +132,7 @@ export default function EditTicket() {
             </Row>
             <Row>
               <Col md={6}>
-                <FormTextArea
+                <FormTextarea
                   {...{ ...descriptionValidation, disabled: true }}
                   value={ticket?.description}
                 />
@@ -148,7 +148,7 @@ export default function EditTicket() {
             </Row>
             <Row>
               <Col md={6}>
-                <FormTextArea {...{ ...resoltuionValidation }} />
+                <FormTextarea {...{ ...resoltuionValidation }} />
               </Col>
             </Row>
             <Button onClick={onSubmit} variant="primary" className="mt-3">
