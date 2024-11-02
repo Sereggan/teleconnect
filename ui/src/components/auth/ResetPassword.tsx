@@ -102,8 +102,6 @@ export default function ResetPassword() {
 
   const handleResetPassword = resetPasswordMethod.handleSubmit(
     async ({ newPassword, verifyPassword }: PasswordResetForm) => {
-      console.log("adsdas");
-      console.log(newPassword, verifyPassword);
       setResetPasswordError("");
       if (newPassword !== verifyPassword) {
         resetPasswordMethod.setError("verifyPassword", {

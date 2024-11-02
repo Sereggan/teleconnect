@@ -122,7 +122,6 @@ export default function EditUser() {
             label: `${tariff.name} - $${tariff.price}`,
           }))
       );
-      console.log(tariffOptions);
     }
   }, [tariffs]);
 

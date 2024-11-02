@@ -22,7 +22,6 @@ export default function UserTickets() {
             userId,
             abortController
           );
-          console.log(fetchedTickets);
           setTickets(fetchedTickets ?? []);
         } catch (error) {
           if (!abortController.signal.aborted) {

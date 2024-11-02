@@ -3,3 +3,5 @@ spring:
     compose:
       file: ./docker-compose-local.yml
       enabled: true
+  jpa:
+    show-sql: true

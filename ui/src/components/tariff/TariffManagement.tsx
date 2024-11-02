@@ -132,7 +132,6 @@ export default function TariffManagement() {
   const onSubmit = methods.handleSubmit((data: Filters) => {
     const controller = new AbortController();
     setFilters(data);
-    console.log(data);
     fetchTariffs(0, controller, data);
     return () => {
       controller.abort();

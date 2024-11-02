@@ -55,7 +55,6 @@ export default function TicketManagment() {
   ) => {
     setIsLoading(true);
     setError("");
-    console.log(status);
     try {
       const { tickets, totalPages, currentPage } = await getAllTickets(
         {
@@ -86,7 +85,6 @@ export default function TicketManagment() {
   const onSubmit = methods.handleSubmit((data: Filters) => {
     const controller = new AbortController();
     setFilters(data);
-    console.log(data);
     fetchTickets(0, controller, data);
     return () => {
       controller.abort();
