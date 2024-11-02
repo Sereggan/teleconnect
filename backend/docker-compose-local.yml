@@ -8,4 +8,4 @@ services:
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=username
-      - POSTGRES_DB=teleconnect_db
+      - POSTGRES_DB=teleconnect
