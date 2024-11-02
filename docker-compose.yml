@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:15
-    container_name: postgres_db
+    container_name: teleconnect_postgres_db
     environment:
       POSTGRES_USER: username
       POSTGRES_PASSWORD: password
