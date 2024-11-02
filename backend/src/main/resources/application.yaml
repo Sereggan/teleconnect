@@ -2,7 +2,7 @@ spring:
   application:
     name: teleconnect
   datasource:
-    url: jdbc:postgresql://localhost:5432/teleconnect
+    url: jdbc:postgresql://localhost:5432/teleconnect_db
     username: username
     password: password
     driver-class-name: org.postgresql.Driver
