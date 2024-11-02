@@ -2,10 +2,10 @@ version: '3.9'
 
 services:
   postgres:
-    image: postgres:14-alpine
+    image: postgres:15
     ports:
       - 5432:5432
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=username
-      - POSTGRES_DB=TelekomShop
+      - POSTGRES_DB=teleconnect_db
