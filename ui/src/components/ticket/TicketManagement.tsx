@@ -72,7 +72,6 @@ export default function TicketManagment() {
       });
     } catch (error) {
       if (!controller.signal.aborted) {
-        console.log(error);
         setError("Could not load tickets.");
       }
     } finally {

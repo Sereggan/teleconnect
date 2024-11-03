@@ -84,7 +84,6 @@ export default function EditUser() {
                 );
                 setTariffs(tariffs);
               } catch (err) {
-                console.log(err);
                 setError("Could not fetch tariffs");
                 setTariffs(undefined);
               }

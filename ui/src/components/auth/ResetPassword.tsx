@@ -85,7 +85,6 @@ export default function ResetPassword() {
         }
       } catch (err) {
         if (!abortController.signal.aborted) {
-          console.log(err);
           if (axios.isAxiosError(err)) {
             if (err.response?.data.message === "Invalid code") {
               setValidateCodeError(
@@ -117,7 +116,6 @@ export default function ResetPassword() {
         navigate("/");
       } catch (err) {
         if (!abortController.signal.aborted) {
-          console.log(err);
           setResetPasswordError("Could not reset password.");
         }
       }

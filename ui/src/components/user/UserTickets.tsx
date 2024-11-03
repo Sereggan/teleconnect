@@ -25,7 +25,6 @@ export default function UserTickets() {
           setTickets(fetchedTickets ?? []);
         } catch (error) {
           if (!abortController.signal.aborted) {
-            console.log(error);
             setError("Error fetching user");
           }
         } finally {

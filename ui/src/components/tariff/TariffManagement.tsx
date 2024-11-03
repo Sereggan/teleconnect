@@ -119,7 +119,6 @@ export default function TariffManagement() {
       });
     } catch (error) {
       if (!controller.signal.aborted) {
-        console.log(error);
         setError("Could not load tariffs.");
       }
     } finally {
