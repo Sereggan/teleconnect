@@ -35,7 +35,7 @@ services:
     build:
       context: ./ui
       dockerfile: Dockerfile
-    container_name: ui
+    container_name: tekeconnect_ui
     ports:
       - "3000:3000"
     networks:

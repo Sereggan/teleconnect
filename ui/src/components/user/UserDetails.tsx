@@ -98,7 +98,7 @@ export default function UserDetails() {
                   as={Link}
                   to={`/users/${user.id!}/edit/documents`}
                 >
-                  Documents
+                  Edit documents
                 </Nav.Link>
               </ListGroup.Item>
             )}

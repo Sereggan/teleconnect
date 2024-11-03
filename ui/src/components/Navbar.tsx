@@ -5,7 +5,7 @@ import {
   getUserRoleFromToken,
 } from "./auth/AuthUtils";
 import { UserRole } from "../models/User";
-import { Button, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { logoutUser } from "../clients/AuthClient";
 
@@ -68,9 +68,6 @@ function Header() {
                   <NavDropdown.Item as={Link} to={`/users/${userId}/tariff`}>
                     My Tariff
                   </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to={`/users/${userId}/documents`}>
-                    My Documents
-                  </NavDropdown.Item>
                   <NavDropdown.Item as={Link} to={`/users/${userId}/tickets`}>
                     My requests
                   </NavDropdown.Item>
@@ -79,6 +76,9 @@ function Header() {
                   </NavDropdown.Item>
                 </>
               )}
+              <NavDropdown.Item as={Link} to={`/users/${userId}/documents`}>
+                My Documents
+              </NavDropdown.Item>
               {userRole && (
                 <NavDropdown.Item as="button" onClick={handleLogout}>
                   Logout

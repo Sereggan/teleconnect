@@ -11,6 +11,10 @@ export const priceMinValidation = {
       value: 1,
       message: "Minimum price must be 1 or more",
     },
+    pattern: {
+      value: /^\d+(\.\d{1,2})?$/,
+      message: "Only up to two decimal digits are allowed",
+    },
   },
 };
 
@@ -31,6 +35,10 @@ export const priceMaxValidation = {
       value: 1000,
       message: "Maximum value must not exceed 1 000",
     },
+    pattern: {
+      value: /^\d+(\.\d{1,2})?$/,
+      message: "Only up to two decimal digits are allowed",
+    },
   },
 };
 
@@ -47,6 +55,10 @@ export const dataLimitMinValidation = {
       value: 1,
       message: "Minimum value must be 1 or more",
     },
+    pattern: {
+      value: /^\d+$/,
+      message: "Only whole numbers are allowed",
+    },
   },
 };
 
@@ -62,6 +74,10 @@ export const dataLimitMaxValidation = {
     max: {
       value: 1000000,
       message: "Maximum value must noy exceed 1 000 000",
+    },
+    pattern: {
+      value: /^\d+$/,
+      message: "Only whole numbers are allowed",
     },
   },
 };
@@ -119,6 +135,10 @@ export const callMinutesMinValidation = {
       value: 1,
       message: "Minimum call minutes must be 1 or more",
     },
+    pattern: {
+      value: /^\d+$/,
+      message: "Only whole numbers are allowed",
+    },
   },
 };
 
@@ -134,6 +154,10 @@ export const callMinutesMaxValidation = {
     max: {
       value: 10_000,
       message: "Maximum call minutes must not exceed 10 000",
+    },
+    pattern: {
+      value: /^\d+$/,
+      message: "Only whole numbers are allowed",
     },
   },
 };
@@ -151,6 +175,10 @@ export const smsLimitMinValidation = {
       value: 1,
       message: "Minimum SMS limit must be 1 or more",
     },
+    pattern: {
+      value: /^\d+$/,
+      message: "Only whole numbers are allowed",
+    },
   },
 };
 
@@ -166,6 +194,10 @@ export const smsLimitMaxValidation = {
     max: {
       value: 10_000,
       message: "Maximum SMS limit must not exceed 10 000",
+    },
+    pattern: {
+      value: /^\d+$/,
+      message: "Only whole numbers are allowed",
     },
   },
 };

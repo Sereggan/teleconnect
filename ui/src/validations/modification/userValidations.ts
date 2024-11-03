@@ -18,7 +18,7 @@ export const idValidation = {
 export const phoneNumberValidation = {
   name: "phoneNumber",
   label: "Phone Number",
-  type: "text",
+  type: "tel",
   id: "phoneNumber",
   placeholder: "Phone Number",
   disabled: false,
@@ -34,6 +34,10 @@ export const phoneNumberValidation = {
     maxLength: {
       value: 15,
       message: "Phone Number cannot exceed 15 characters",
+    },
+    pattern: {
+      value: /^\d{10,15}$/,
+      message: "Phone Number must contain only digits (10 to 15 characters)",
     },
   },
 };

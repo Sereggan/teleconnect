@@ -202,7 +202,7 @@ export default function TariffManagement() {
           </Button>
         </Form>
       </FormProvider>
-      {error && <div>Something went wrong, please try again... {error}</div>}
+      {error && <div>{error}</div>}
       {isLoading && <Spinner animation="border" />}
       {!isLoading && !error && (
         <>

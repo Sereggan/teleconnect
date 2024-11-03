@@ -29,6 +29,10 @@ export const priceValidation = {
       value: 1000,
       message: "Price must not exceed 1000",
     },
+    pattern: {
+      value: /^\d+(\.\d{1,2})?$/,
+      message: "Only up to two decimal digits are allowed",
+    },
   },
 };
 
@@ -47,6 +51,10 @@ export const dataLimitValidation = {
     max: {
       value: 300,
       message: "Data limit must not exceed 300",
+    },
+    pattern: {
+      value: /^\d+$/,
+      message: "Only whole numbers are allowed",
     },
   },
 };
@@ -67,6 +75,10 @@ export const callMinutesValidation = {
       value: 10_000,
       message: "Call minutes must not exceed 10 000",
     },
+    pattern: {
+      value: /^\d+$/,
+      message: "Only whole numbers are allowed",
+    },
   },
 };
 
@@ -85,6 +97,10 @@ export const smsLimitValidation = {
     max: {
       value: 10_000,
       message: "Sms limit must not exceed 10 000",
+    },
+    pattern: {
+      value: /^\d+$/,
+      message: "Only whole numbers are allowed",
     },
   },
 };

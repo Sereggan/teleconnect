@@ -94,7 +94,9 @@ const router = createBrowserRouter([
       {
         path: "users/:id/documents",
         element: (
-          <ProtectedRoute requiredRoles={[UserRole.ROLE_CUSTOMER]}>
+          <ProtectedRoute
+            requiredRoles={[UserRole.ROLE_CUSTOMER, UserRole.ROLE_EMPLOYEE]}
+          >
             <UserDocument />
           </ProtectedRoute>
         ),

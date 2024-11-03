@@ -14,6 +14,7 @@ import {
   priceValidation,
   smsLimitValidation,
 } from "../../validations/modification/tariffValidations";
+import { FormSelect } from "../common/FormSelect";
 
 export default function NewTariff() {
   const methods = useForm<Tariff>();
@@ -82,13 +83,15 @@ export default function NewTariff() {
           </Row>
           <Row>
             <Col md={6}>
-              <FormInput {...isActiveValidation} />
+              <FormSelect {...isActiveValidation} />
             </Col>
           </Row>
           <Row>
-            <Button onClick={onSubmit} variant="primary" className="mt-3">
-              Create Tariff
-            </Button>
+            <Col md={6}>
+              <Button onClick={onSubmit} variant="primary" className="mt-3">
+                Create Tariff
+              </Button>
+            </Col>
           </Row>
         </Form>
       </FormProvider>
