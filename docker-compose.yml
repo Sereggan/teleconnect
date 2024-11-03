@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile
     container_name: tekeconnect_backend
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_db:5432/teleconnect
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/teleconnect
       SPRING_DATASOURCE_USERNAME: username
       SPRING_DATASOURCE_PASSWORD: password
     depends_on:
