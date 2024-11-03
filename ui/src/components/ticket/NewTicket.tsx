@@ -28,7 +28,6 @@ export default function NewTicket() {
       await createTicket(ticket, controller);
       navigate(`/users/${userId}/tickets`);
     } catch (error) {
-      console.log(error);
       setError("Error creating ticket");
     }
   });

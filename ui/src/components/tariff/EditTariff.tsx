@@ -54,7 +54,6 @@ export default function EditTariff() {
           }
         } catch (error) {
           if (!controller.signal.aborted) {
-            console.log(error);
             setError("Error fetching tariff");
           }
         } finally {
@@ -76,7 +75,6 @@ export default function EditTariff() {
       await updateTariff(tariffFilter, controller);
       navigate("/tariffs");
     } catch (error) {
-      console.log(error);
       setError("Error updating tariff");
     } finally {
       setIsLoading(false);
@@ -92,7 +90,6 @@ export default function EditTariff() {
       await deleteTariff(tariff.id, controller);
       navigate("/tariffs");
     } catch (error) {
-      console.log(error);
       setError("Error deleting tariff");
     } finally {
       setIsLoading(false);

@@ -53,7 +53,6 @@ export default function EditUserTariffAdjustment() {
       } catch (err) {
         if (!controller.signal.aborted) {
           setError("Could not fetch tariff");
-          console.log(err);
         }
       }
     };
@@ -94,7 +93,6 @@ export default function EditUserTariffAdjustment() {
           }
         } catch (err) {
           if (!controller.signal.aborted) {
-            console.log(err);
             setError("Could not fetch tariff adjustment");
           }
         }
@@ -132,7 +130,6 @@ export default function EditUserTariffAdjustment() {
         setTarifAdjustment(fetcheTariffAdjustment);
       } catch (err) {
         if (!controllerRef.current.signal.aborted) {
-          console.log(err);
           setError("Could not update tariff adjustment");
         }
       } finally {

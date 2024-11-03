@@ -32,7 +32,3 @@ export const getEmailFromToken = (): string | null => {
   }
   return null;
 };
-
-export const isLoggedIn = (): boolean => {
-  return localStorage.getItem("accessToken") ? true : false;
-};

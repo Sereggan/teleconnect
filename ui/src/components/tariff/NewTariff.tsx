@@ -30,7 +30,6 @@ export default function NewTariff() {
       await createTariff(tariff, controller);
       navigate("/tariffs");
     } catch (error) {
-      console.log(error);
       setError("Error creating tariff");
     }
   });

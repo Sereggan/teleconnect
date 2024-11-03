@@ -29,7 +29,6 @@ export default function TariffDetails() {
           }
         } catch (error) {
           if (!controller.signal.aborted) {
-            console.log(error);
             setError("Error fetching tariff");
           }
         } finally {

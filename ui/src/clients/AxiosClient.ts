@@ -32,8 +32,7 @@ const createAxiosClient = (baseURL: string): AxiosInstance => {
     (response) => response,
     async (error: AxiosError) => {
       const originalRequest = error.config as CustomAxiosRequestConfig;
-
-      if (error.response?.status === 401 && !originalRequest?._retry) {
+      if (error.response?.status === 403 && !originalRequest?._retry) {
         originalRequest._retry = true;
 
         const refreshToken = localStorage.getItem("refreshToken");

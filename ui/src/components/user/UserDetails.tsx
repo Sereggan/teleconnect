@@ -34,7 +34,6 @@ export default function UserDetails() {
           }
         } catch (error) {
           if (!abortController.signal.aborted) {
-            console.log(error);
             setError("Error fetching user");
           }
         } finally {

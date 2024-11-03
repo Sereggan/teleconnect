@@ -41,7 +41,6 @@ export default function EditUserDocuments() {
           }
         } catch (error) {
           if (!controller.signal.aborted) {
-            console.log(error);
             setError("Error during loading documents");
           }
         } finally {

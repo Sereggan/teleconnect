@@ -49,7 +49,6 @@ export default function EditTicket() {
           }
         } catch (error) {
           if (!controller.signal.aborted) {
-            console.log(error);
             setError("Error fetching ticket");
           }
         } finally {
@@ -72,7 +71,6 @@ export default function EditTicket() {
       navigate("/tickets");
     } catch (error) {
       if (!controller.signal.aborted) {
-        console.log(error);
         setError("Error updating ticket");
       }
     } finally {

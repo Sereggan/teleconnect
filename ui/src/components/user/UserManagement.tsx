@@ -87,7 +87,6 @@ export default function UserManagement() {
       });
     } catch (error) {
       if (!controller.signal.aborted) {
-        console.log(error);
         setError("Could not fetch tariffs");
       }
     } finally {

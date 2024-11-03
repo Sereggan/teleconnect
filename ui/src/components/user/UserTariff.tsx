@@ -30,7 +30,6 @@ export default function UserTariff() {
         setAdjustment(adjustment);
       } catch (error) {
         if (!controller.signal.aborted) {
-          console.log(error);
           setError("Error fetching tariff or adjustment");
         }
       } finally {

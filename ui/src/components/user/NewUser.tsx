@@ -29,7 +29,6 @@ export default function NewUser() {
       await createUser(user, controller);
       navigate("/users");
     } catch (error) {
-      console.log(error);
       setError("Error creating user");
     }
   });

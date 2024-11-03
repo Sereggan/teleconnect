@@ -27,7 +27,6 @@ export default function UserDocument() {
           }
         } catch (error) {
           if (!controller.signal.aborted) {
-            console.log(error);
             setError("Error fetching documents");
           }
         } finally {

@@ -15,7 +15,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const checkAuth = async () => {
       const token = localStorage.getItem("accessToken");
       if (token) {
-        setIsAuthenticated(true);
+        const payloadBase64 = token.split(".")[1];
+        const decodedPayload = atob(payloadBase64);
+        const payload = JSON.parse(decodedPayload);
+        const expirationTime = payload.exp * 1000;
+        setIsAuthenticated(Date.now() < expirationTime);
       } else {
         setIsAuthenticated(false);
         navigate("/");
